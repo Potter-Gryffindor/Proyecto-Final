@@ -426,7 +426,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>Electric Bus Recharging Analyzer - Route</string>
+   <string>Electric Bus Charging Analyzer - Route</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -660,14 +660,14 @@ Parameters</string>
       </font>
      </property>
      <property name="statusTip">
-      <string>Push to go to the Dynamic Recharge tab</string>
+      <string>Push to go to the In Motion Charging tab</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(159, 159, 159);</string>
      </property>
      <property name="text">
-      <string>Dynamic
-Recharge</string>
+      <string>In Motion
+Charging</string>
      </property>
     </widget>
     <widget class="QPushButton" name="OportunityButton">
@@ -688,14 +688,14 @@ Recharge</string>
       </font>
      </property>
      <property name="statusTip">
-      <string>Push to go to the Oportunity Recharge tab</string>
+      <string>Push to go to the Oportunity Charging tab</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(159, 159, 159);</string>
      </property>
      <property name="text">
       <string>Oportunity
-Recharge</string>
+Charging</string>
      </property>
     </widget>
     <widget class="QPushButton" name="GridButton">

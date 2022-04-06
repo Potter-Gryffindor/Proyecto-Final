@@ -654,14 +654,14 @@ Parameters</string>
       </font>
      </property>
      <property name="statusTip">
-      <string>Push to go to the Dynamic Recharge tab</string>
+      <string>Push to go to the In Motion Charging tab</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(159, 159, 159);</string>
      </property>
      <property name="text">
-      <string>Dynamic
-Recharge</string>
+      <string>In Motion
+Charging</string>
      </property>
     </widget>
     <widget class="QPushButton" name="OportunityButton">
@@ -682,14 +682,14 @@ Recharge</string>
       </font>
      </property>
      <property name="statusTip">
-      <string>Push to go to the Oportunity Recharge tab</string>
+      <string>Push to go to the Oportunity Charging tab</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(159, 159, 159);</string>
      </property>
      <property name="text">
       <string>Oportunity
-Recharge</string>
+Charging</string>
      </property>
     </widget>
     <widget class="QPushButton" name="GridButton">
@@ -1031,7 +1031,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </property>
       <row>
        <property name="text">
-        <string>Aceleración [m/s2]:</string>
+        <string>Aceleration [m/s2]:</string>
        </property>
        <property name="font">
         <font>
@@ -1044,7 +1044,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </row>
       <row>
        <property name="text">
-        <string>Frenado [m/s2]</string>
+        <string>Braking [m/s2]</string>
        </property>
        <property name="font">
         <font>
@@ -1057,7 +1057,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </row>
       <row>
        <property name="text">
-        <string>Velocidad máxima [km/h]: </string>
+        <string>Maximum speed [km/h]: </string>
        </property>
        <property name="font">
         <font>

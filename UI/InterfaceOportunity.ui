@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>891</width>
-    <height>677</height>
+    <width>967</width>
+    <height>686</height>
    </rect>
   </property>
   <property name="palette">
@@ -426,7 +426,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>Electric Bus Recharging Analyzer - Oportunity Recharge</string>
+   <string>Electric Bus Recharging Analyzer - Oportunity Charging</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -660,14 +660,14 @@ Parameters</string>
       </font>
      </property>
      <property name="statusTip">
-      <string>Push to go to the Dynamic Recharge tab</string>
+      <string>Push to go to the In Motion Charging tab</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(159, 159, 159);</string>
      </property>
      <property name="text">
-      <string>Dynamic
-Recharge</string>
+      <string>In Motion
+Charging</string>
      </property>
     </widget>
     <widget class="QPushButton" name="OportunityButton">
@@ -691,14 +691,14 @@ Recharge</string>
       </font>
      </property>
      <property name="statusTip">
-      <string>Push to go to the Oportunity Recharge tab</string>
+      <string>Push to go to the Oportunity Charging tab</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(159, 159, 159);</string>
      </property>
      <property name="text">
       <string>Oportunity
-Recharge</string>
+Charging</string>
      </property>
     </widget>
     <widget class="QPushButton" name="GridButton">
@@ -757,7 +757,7 @@ Impact</string>
 gridline-color: rgb(0, 0, 0);</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="ParametersOportunityTab">
      <attribute name="title">
@@ -781,7 +781,7 @@ gridline-color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Recharge Parameters</string>
+       <string>Charging Parameters</string>
       </property>
      </widget>
      <widget class="QTableWidget" name="FleetParametersTable">
@@ -1167,7 +1167,7 @@ gridline-color: rgb(0, 0, 0);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>891</width>
+     <width>967</width>
      <height>26</height>
     </rect>
    </property>
