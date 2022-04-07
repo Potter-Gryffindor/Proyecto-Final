@@ -6,7 +6,6 @@ import csv
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-import matplotlib.ticker as ticker
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     # Definición de características de la Interfaz
