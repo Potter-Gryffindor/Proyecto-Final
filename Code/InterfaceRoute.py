@@ -1,8 +1,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 from pandas import read_csv
 import csv 
 
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+import matplotlib.ticker as ticker
+
 class Ui_MainWindow(QtWidgets.QMainWindow):
+    # Definición de características de la Interfaz
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(964, 677)
@@ -356,6 +363,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # Llamadas a funciones
         self.SearchFileButton.clicked.connect(self.pressedSearchFileButton)
         self.SimulateFileButton.clicked.connect(self.pressedSimulateFileButton)
+        self.setupRouteFigures()
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -381,7 +389,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ProfileMapFrame.setAccessibleName(_translate("MainWindow", ".csv"))
         self.RouteFileLineFrame.setAccessibleName(_translate("MainWindow", ".csv"))
 
-    #Buscar y definir la extensión del archivo .CSV
+    # Buscar y definir la extensión del archivo .CSV
     def pressedSearchFileButton(self):
         filename, extension = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv)")
         self.RouteFileLine.setText(filename)
@@ -396,7 +404,74 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             return
 
         print(self.routeData)
-        #self.plot_route()
+        self.plotRoute()
+
+    # Definir Plots (MAPA Y PERFIL)
+    def setupRouteFigures(self):
+        self.figureMapRoute = Figure(tight_layout=True)  
+        self.figureProfRoute = Figure(tight_layout=True)  
+        self.canvasMapRoute = FigureCanvas(self.figureMapRoute)  
+        self.canvasProfRoute = FigureCanvas(self.figureProfRoute)
+        self.toolbarMaproute = NavigationToolbar(self.canvasMapRoute, self)
+        self.toolbarProfRoute = NavigationToolbar(self.canvasProfRoute, self)
+        self.layoutMapRoute = QtWidgets.QVBoxLayout(self.RouteMapWidget)  
+        self.layoutProfRoute = QtWidgets.QVBoxLayout(self.ProfileMapWidget)  
+        self.layoutMapRoute.addWidget(self.toolbarMaproute)  
+        self.layoutMapRoute.addWidget(self.canvasMapRoute)  
+        self.layoutProfRoute.addWidget(self.toolbarProfRoute)  
+        self.layoutProfRoute.addWidget(self.canvasProfRoute)  
+        self.axMapRoute = self.figureMapRoute.add_subplot(111)  
+        self.axProfRoute = self.figureProfRoute.add_subplot(111)     
+
+    #Plotear dos gráficas = Latitud vs Longitud / Altitud vs Distancia
+    def plotRoute(self):
+        # Map Figure
+        long = self.routeData[['LONG']]
+        lat = self.routeData[['LAT']]
+        self.axMapRoute.cla()
+        self.axMapRoute.plot(long, lat, label='LONG-LAT')
+        self.axMapRoute.set_title('Route Map',  fontsize=12, fontweight="bold")
+        self.axMapRoute.set_xlabel('Longitude', fontsize=10, fontweight="bold")
+        self.axMapRoute.set_ylabel('Latitude', fontsize=10, fontweight="bold")
+        self.axMapRoute.tick_params(labelsize=8)
+        self.axMapRoute.grid()
+        #self.axMapRoute.legend(frameon=False, loc='best')
+        self.canvasMapRoute.draw()
+        
+        # Profile Figure
+        dist = self.routeData[['DIST']]
+        alt = self.routeData[['ALT']]
+        self.axProfRoute.cla()
+        self.axProfRoute.plot(dist, alt, label='ALT')
+        self.axProfRoute.set_title('Route Profile', fontsize=12, fontweight="bold")
+        self.axProfRoute.set_xlabel('Distance [km]', fontsize=10, fontweight="bold")
+        self.axProfRoute.set_ylabel('Altitude [m]', fontsize=10, fontweight="bold")
+        self.axProfRoute.tick_params(labelsize=9)
+        self.axProfRoute.grid()
+        #self.axProfRoute.legend(frameon=False, loc='best')
+        self.canvasProfRoute.draw()
+        bus_stop = self.routeData[['BUS STOP']]
+        label = self.routeData[['LABEL']]
+
+        # Marcar Paradas
+        countStops = 0;
+        for n in range(0, len(bus_stop)):
+            if bus_stop.iloc[n].values[0] == 1:
+                countStops += 1    
+                if (countStops == 1):
+                    self.axMapRoute.plot(long.iloc[n].values[0], lat.iloc[n].values[0], label='STOP', marker='^', color='red')
+                    self.axProfRoute.plot(dist.iloc[n].values[0], alt.iloc[n].values[0], label='STOP',marker='^', color='red')   
+                else:
+                    self.axMapRoute.plot(long.iloc[n].values[0], lat.iloc[n].values[0], marker='^', color='red')
+                    self.axProfRoute.plot(dist.iloc[n].values[0], alt.iloc[n].values[0], marker='^', color='red')                     
+                
+                self.axMapRoute.annotate(label.iloc[n].values[0], (long.iloc[n].values[0], lat.iloc[n].values[0]), fontsize=7)
+                self.axProfRoute.annotate(label.iloc[n].values[0], (dist.iloc[n].values[0], alt.iloc[n].values[0]), fontsize=7)
+
+        self.axMapRoute.legend(frameon=False, loc='best')
+        self.canvasMapRoute.draw()
+        self.axProfRoute.legend(frameon=False, loc='best')
+        self.canvasProfRoute.draw()       
 
 
 if __name__ == "__main__":
