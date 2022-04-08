@@ -757,7 +757,7 @@ Impact</string>
 gridline-color: rgb(0, 0, 0);</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="ParametersOportunityTab">
      <attribute name="title">
@@ -871,7 +871,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </row>
       <row>
        <property name="text">
-        <string>IT [s]: Connection time to recharge</string>
+        <string>IT [s]: Connection time to charging</string>
        </property>
        <property name="font">
         <font>
