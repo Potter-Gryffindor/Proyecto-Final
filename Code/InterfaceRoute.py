@@ -1,7 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from pandas import read_csv
-import csv 
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -394,7 +393,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         filename, extension = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv)")
         self.RouteFileLine.setText(filename)
 
-    #Leer y cargar el archivo .CSV
+    # Leer y cargar el archivo .CSV
     def pressedSimulateFileButton(self):
         csvFile = self.RouteFileLine.text()
         try:
@@ -423,7 +422,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.axMapRoute = self.figureMapRoute.add_subplot(111)  
         self.axProfRoute = self.figureProfRoute.add_subplot(111)     
 
-    #Plotear dos gráficas = Latitud vs Longitud / Altitud vs Distancia
+    # Plotear dos gráficas = Latitud vs Longitud / Altitud vs Distancia
     def plotRoute(self):
         # Map Figure
         long = self.routeData[['LONG']]
@@ -435,7 +434,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.axMapRoute.set_ylabel('Latitude', fontsize=10, fontweight="bold")
         self.axMapRoute.tick_params(labelsize=8)
         self.axMapRoute.grid()
-        #self.axMapRoute.legend(frameon=False, loc='best')
         self.canvasMapRoute.draw()
         
         # Profile Figure
@@ -448,7 +446,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.axProfRoute.set_ylabel('Altitude [m]', fontsize=10, fontweight="bold")
         self.axProfRoute.tick_params(labelsize=9)
         self.axProfRoute.grid()
-        #self.axProfRoute.legend(frameon=False, loc='best')
         self.canvasProfRoute.draw()
         bus_stop = self.routeData[['BUS STOP']]
         label = self.routeData[['LABEL']]
