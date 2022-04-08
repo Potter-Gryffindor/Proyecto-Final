@@ -757,7 +757,7 @@ Impact</string>
 gridline-color: rgb(0, 0, 0);</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="ParametersOportunityTab">
      <attribute name="title">
