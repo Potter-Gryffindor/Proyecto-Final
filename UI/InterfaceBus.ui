@@ -748,7 +748,7 @@ Impact</string>
 gridline-color: rgb(0, 0, 0);</string>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="BusGeneralDataTab">
      <property name="styleSheet">
@@ -1031,7 +1031,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </property>
       <row>
        <property name="text">
-        <string>Aceleration [m/s2]:</string>
+        <string>Acceleration [m/s2]:</string>
        </property>
        <property name="font">
         <font>
@@ -1363,7 +1363,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </property>
       <row>
        <property name="text">
-        <string>NBP: Total number of peak buses</string>
+        <string>NBP: Total number of buses during peak period</string>
        </property>
        <property name="font">
         <font>
@@ -1402,7 +1402,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </row>
       <row>
        <property name="text">
-        <string>FPP [s]: Peak Dispatch frequency</string>
+        <string>FPP [s]: Dispatch frequency during peak period</string>
        </property>
        <property name="font">
         <font>
@@ -1415,7 +1415,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </row>
       <row>
        <property name="text">
-        <string>ITS [s]: Downtime at each stop </string>
+        <string>ITS [s]: Idle time at each stop </string>
        </property>
        <property name="font">
         <font>
@@ -1454,7 +1454,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </row>
       <row>
        <property name="text">
-        <string>FPV [s]: Valley Dispatch Frequency</string>
+        <string>FPV [s]: Dispatch Frequency during valley period</string>
        </property>
        <property name="font">
         <font>
