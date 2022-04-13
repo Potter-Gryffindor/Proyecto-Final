@@ -1,7 +1,9 @@
+# Importar Ventanas
+import About 
+
+#Importar Paquetes
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 from pandas import read_csv
-
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
@@ -11,7 +13,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(964, 677)
-        MainWindow.setFixedSize(964, 677)
+        MainWindow.setFixedSize(964, 677) # Fijar Tamaño de la Ventana
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -375,6 +377,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         # Llamadas a funciones
+        self.actionAbout.triggered.connect(self.clickedAbout)
         self.SearchFileButton.clicked.connect(self.pressedSearchFileButton)
         self.SimulateFileButton.clicked.connect(self.pressedSimulateFileButton)
         self.setupRouteFigures()
@@ -407,6 +410,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.actionUser_manual.setStatusTip(_translate("MainWindow", "Go to the User Manual"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout.setStatusTip(_translate("MainWindow", "Show the About window"))
+
+    # Abrir Pestaña About
+    def clickedAbout(self):
+        self.AboutWindow = QtWidgets.QDialog()
+        self.AboutTab = About.Ui_AboutWindow()
+        self.AboutTab.setupUi(self.AboutWindow)
+        self.AboutWindow.show()        
 
     # Buscar y definir la extensión del archivo .CSV
     def pressedSearchFileButton(self):
@@ -499,4 +509,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
