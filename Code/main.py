@@ -1909,7 +1909,7 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
     # Calcular y graficar Curvas de Operación Distancia vs Tiempo / Velocidad vs Tiempo 
     def pressedGenOperationDiagramButton(self):
         
-        self.plotOPDiagram()
+        self.plotOpDiagram()
 
     # Definir Plots (VELOCIDAD Y DISTANCIA RECORRIDA)
     def setupBusDataFigures(self):
@@ -1968,7 +1968,7 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
         self.canvasDistanceBus.draw()
 
     # Plotear dos curvas de Operación = Distancia vs Tiempo / Velocidad vs Tiempo 
-    def plotOPDiagram(self):
+    def plotOpDiagram(self):
         
         pass
 
