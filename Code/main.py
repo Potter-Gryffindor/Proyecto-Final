@@ -2227,7 +2227,6 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
 
     # Plotear dos curvas de Operación = Distancia vs Tiempo / Velocidad vs Tiempo 
     def plotOpDiagram(self):
-        
         pass
 
 # Inicio Programa
