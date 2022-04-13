@@ -1,5 +1,6 @@
 # Importar Paquetes
 import numpy as np
+import datetime
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pandas import read_csv
 from matplotlib.figure import Figure
@@ -1908,7 +1909,264 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
 
     # Calcular y graficar Curvas de Operación Distancia vs Tiempo / Velocidad vs Tiempo 
     def pressedGenOperationDiagramButton(self):
-        
+        def state0func(inputTup):
+            # State 0: Buses are not in operation
+            timeVector, distVector, speedVector, deltaT, labelVector, stopVector = inputTup
+            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
+            distVector = np.append(distVector, distVector[-1])
+            speedVector = np.append(speedVector, 0)
+            labelVector.append('')
+            stopVector.append(0)
+            outTup = (timeVector, distVector, speedVector, labelVector, stopVector)
+            return (outTup)
+
+        def state1func(inputTup):
+            # State1: Buses are stopped
+            timeVector, distVector, speedVector, deltaT, labelVector, stopVector, labelStop = inputTup
+            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
+            distVector = np.append(distVector, distVector[-1])
+            speedVector = np.append(speedVector, 0)
+            labelVector.append(labelStop)
+            stopVector.append(1)
+            outTup = (timeVector, distVector, speedVector, labelVector, stopVector)
+            if tIniPico1 < timeVector[-1] <= tEndPico1 or tIniPico2 < timeVector[-1] < tEndPico2:
+                if distVector[-1] == 0:
+                    stopDelay=100
+
+            return (outTup)
+
+        def state2func(inputTup):
+            # State 2: buses are accelerating
+            timeVector, distVector, speedVector, deltaT, accelBus, indexAccel, labelVector, stopVector = inputTup
+            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
+            speedVector = np.append(speedVector, accelBus[indexAccel])
+            distVector = np.append(distVector, distVector[-1] + (speedVector[-1] + speedVector[-2]) * 0.5 * deltaT)
+            labelVector.append('')
+            stopVector.append(0)
+            indexAccel += 1
+            outTup = (timeVector, distVector, speedVector, indexAccel, labelVector, stopVector)
+
+            return (outTup)
+
+        def state3func(inputTup):  # Constant speed
+            timeVector, distVector, speedVector, deltaT, maxSpeedBus, labelVector, stopVector = inputTup
+            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
+            speedVector = np.append(speedVector, maxSpeedBus)
+            distVector = np.append(distVector, distVector[-1] + (speedVector[-1] + speedVector[-2]) * 0.5 * deltaT)
+            labelVector.append('')
+            stopVector.append(0)
+            outTup = (timeVector, distVector, speedVector, labelVector, stopVector)
+            
+            return (outTup)
+
+        def state4func(inputTup):  # Decelerating
+            timeVector, distVector, speedVector, deltaT, decelBus, indexDecel, labelVector, stopVector = inputTup
+            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
+            speedVector = np.append(speedVector, decelBus[indexDecel])
+            distVector = np.append(distVector, distVector[-1] + (speedVector[-1] + speedVector[-2]) * 0.5 * deltaT)
+            labelVector.append('')
+            stopVector.append(0)
+            indexDecel += 1
+            outTup = (timeVector, distVector, speedVector, indexDecel, labelVector, stopVector)
+
+            return (outTup)
+
+        def findNextStop(indexStop, busStopRoute):
+            busStop1 = indexStop
+            while True:
+                indexStop = indexStop + 1
+                if indexStop > len(busStopRoute):
+                    busStop2 = []
+                    break
+                if busStopRoute.iloc[indexStop].values[0] == 1:
+                    busStop2 = indexStop
+                    break
+            outTup = (busStop1, busStop2)
+
+            return (outTup)
+
+        def calculateBrakingDistance(decelBus, deltaT):
+            distBrake = 0
+            n = 1
+            for n in range(0, len(decelBus)):
+                #distBrake=distBrake+(decelBus[n]+decelBus[n-1])*0.5*deltaT
+                distBrake = distBrake + (decelBus[n]) * deltaT
+
+            return (distBrake)
+
+        def StopPositionLabels(distRoute, busStopRoute, labelRoute):
+            stopTicks = []
+            stopLabels = []
+            for n in range(0, len(busStopRoute)):
+                if busStopRoute.iloc[n].values[0] == 1:
+                    stopTicks.append(distRoute.iloc[n].values[0])
+                    stopLabels.append(labelRoute.iloc[n].values[0] + '=' + '%0.2f' % stopTicks[-1] + ' km')
+                else:
+                    pass
+            outTup = (stopTicks, stopLabels)
+
+            return (outTup)
+
+        # Route parameters
+        distRoute = RouteWindow.routeData[['DIST']]
+        busStopRoute = RouteWindow.routeData[['BUS STOP']]
+        labelRoute = RouteWindow.routeData[['LABEL']]
+        """
+        Seguir a partir de aquí
+        """
+        # Fleet parameters
+        table3 = self.main_win.tableWidgetFleetPar
+        stopDelay = float(table3.item(6, 0).text())
+        TimeInTerminal = float(table3.item(7, 0).text())
+        tIniFleetQt = self.main_win.timeEditStart.time()
+        tIniFleet = tIniFleetQt.hour() * 3600 + tIniFleetQt.minute() * 60 + tIniFleetQt.second()
+        tEndFleetQt = self.main_win.timeEditEnd.time()
+        tEndFleet = tEndFleetQt.hour() * 3600 + tEndFleetQt.minute() * 60 + tEndFleetQt.second()
+        tIniPico1Qt = self.main_win.timeEdit.time()
+        tIniPico1 = tIniPico1Qt.hour() * 3600 + tIniPico1Qt.minute() * 60 + tIniPico1Qt.second()
+        tEndPico1Qt = self.main_win.timeEdit_7.time()
+        tEndPico1 = tEndPico1Qt.hour() * 3600 + tEndPico1Qt.minute() * 60 + tEndPico1Qt.second()
+
+        tIniPico2Qt = self.main_win.timeEdit_10.time()
+        tIniPico2 = tIniPico2Qt.hour() * 3600 + tIniPico2Qt.minute() * 60 + tIniPico2Qt.second()
+        tEndPico2Qt = self.main_win.timeEdit_22.time()
+        tEndPico2 = tEndPico2Qt.hour() * 3600 + tEndPico2Qt.minute() * 60 + tEndPico1Qt.second()
+        numero_buses = int(self.main_win.tableWidgetFleetPar.item(0, 0).text())
+        frecuencia_despacho = int(self.main_win.tableWidgetFleetPar.item(5, 0).text())
+        numero_buses_pico = int(self.main_win.tableWidgetFleetPar.item(8, 0).text())
+        frecuencia_despacho_pico = int(self.main_win.tableWidgetFleetPar.item(9, 0).text())
+
+        # Simulation parameters
+        deltaT = 0.2
+        maxTime = tEndFleet - (numero_buses - 1) * frecuencia_despacho
+        #maxTime2 = t2EndFleet - (numero_buses_pico - 1) * frecuencia_despacho_pico
+
+        ## Bus parameters
+        accelBus = self.accel_curve
+        decelBus = self.decel_curve
+        distBrake = calculateBrakingDistance(decelBus, deltaT)
+        maxSpeedBus = accelBus[-1]
+
+        # Initial conditions
+        state = 0
+        indexStop = 0
+
+        timeVector = np.array([tIniFleet])
+        distVector = np.array([0])
+        labelVector = ['']
+        stopVector = [0]
+        speedVector = np.array([0])
+        stateVector = []
+        timeState0 = 0
+
+        while 1:
+
+            stateVector.append(state)
+            if state == 0:
+
+                inputTup = (timeVector, distVector, speedVector, deltaT, labelVector, stopVector)
+                timeVector, distVector, speedVector, labelVector, stopVector = state0func(inputTup)
+
+                if timeVector[-1] >= tIniFleet:
+                    if timeVector[-1] <= tEndFleet:
+                        state = 1
+                        timeState1 = timeVector[-1]
+
+            elif state == 1:
+                labelStop = labelRoute.iloc[indexStop].values[0]
+                inputTup = (timeVector, distVector, speedVector, deltaT, labelVector, stopVector, labelStop)
+                timeVector, distVector, speedVector, labelVector, stopVector = state1func(inputTup)
+
+                # Cambio de Velocidad de la Flota en tiempo pico
+                if (tIniPico1 < timeVector[-1] <= tEndPico1 and distVector[-1] == 0) or (tIniPico2 < timeVector[-1] < tEndPico2 and distVector[-1] == 0):
+                    stopDelay=frecuencia_despacho_pico
+                    state = 1
+                elif (tIniPico1 < timeVector[-1] <= tEndPico1 ) or (tIniPico2 < timeVector[-1] < tEndPico2):
+                    stopDelay=float(table3.item(6, 0).text()) + 33
+                    state=1
+                elif distVector[-1] == 0:
+                    stopDelay = TimeInTerminal
+                    state = 1
+                else:
+                    stopDelay=float(table3.item(6, 0).text())
+                    state = 1
+
+                if timeVector[-1] >= timeState1 + stopDelay:
+                    state = 2
+                    timeState2 = timeVector[-1]
+                    distState2 = distVector[-1]
+                    indexAccel = 1
+                    busStop1, busStop2 = findNextStop(indexStop, busStopRoute)
+                    distStops = 1000 * (distRoute.iloc[busStop2].values[0] - distRoute.iloc[busStop1].values[0])
+                    distStopsAccum = distStops
+                    indexStop = busStop2
+
+            elif state == 2:
+
+                inputTup = (timeVector, distVector, speedVector, deltaT, accelBus, indexAccel, labelVector, stopVector)
+                timeVector, distVector, speedVector, indexAccel, labelVector, stopVector = state2func(inputTup)
+
+                if speedVector[-1] == maxSpeedBus:
+                    state = 3
+                    timeState3 = timeVector[-1]
+
+
+            elif state == 3:
+                inputTup = (timeVector, distVector, speedVector, deltaT, maxSpeedBus, labelVector, stopVector)
+                timeVector, distVector, speedVector, labelVector, stopVector = state3func(inputTup)
+
+                if distVector[-1] - distState2 >= distStops - distBrake:
+                    state = 4
+                    timeState4 = timeVector[-1]
+                    indexDecel = 1
+
+            elif state == 4:
+                inputTup = (timeVector, distVector, speedVector, deltaT, decelBus, indexDecel, labelVector, stopVector)
+                timeVector, distVector, speedVector, indexDecel, labelVector, stopVector = state4func(inputTup)
+
+                if speedVector[-1] == 0:
+                    state = 1
+                    timeState1 = timeVector[-1]
+
+                    if busStop2 == len(busStopRoute) - 1:
+                        indexStop = 0
+                        distVector[-1] = 0
+                        distStopsAccum = 0
+
+            else:
+                pass
+            self.main_win.progressBarRoute.setValue(int(100 * timeVector[-1] / maxTime))
+
+            if timeVector[-1] > maxTime:
+                break
+
+        timeVectorDT = []
+        timeZoneColombia = 3600 * 5
+
+        for n in range(0, len(timeVector)):
+            timeVectorDT.append(datetime.datetime.fromtimestamp(timeVector[n] + timeZoneColombia))
+
+        self.array_tiempos = []
+
+        for y in range(numero_buses):
+            time_arr = []
+            time_ = []
+            print("Numero de bus:"+str(y))
+            for idx, x in enumerate(timeVector):
+                #print("distVector: " + str(distVector[idx]),("speedVector: " + str(speedVector[idx])))
+                if tIniPico1 < x <= tEndPico1 or tIniPico2 < x < tEndPico2:
+                    if distVector[idx]==0 and stateVector[idx]==2:
+                        frec=frecuencia_despacho
+                else:
+                    if distVector[idx] == 0:
+                        frec = frecuencia_despacho
+
+                time_arr.append(
+                    datetime.datetime.fromtimestamp(x + timeZoneColombia ) + datetime.timedelta(seconds=frec*y))
+                time_.append(time_arr[idx].strftime("%I:%M:%S %p"))
+                #print(time_[idx])
+            self.array_tiempos.append(time_arr)
+            print(np.shape(self.array_tiempos))
         self.plotOpDiagram()
 
     # Definir Plots (VELOCIDAD Y DISTANCIA RECORRIDA)
