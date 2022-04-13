@@ -767,7 +767,7 @@ gridline-color: rgb(0, 0, 0);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true"/>
+       <string notr="true">background-color: rgb(255, 255, 255)</string>
       </property>
       <row>
        <property name="text">
@@ -1029,6 +1029,9 @@ gridline-color: rgb(0, 0, 0);</string>
         <height>131</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255)</string>
+      </property>
       <row>
        <property name="text">
         <string>Acceleration [m/s2]:</string>
@@ -1199,7 +1202,7 @@ gridline-color: rgb(0, 0, 0);</string>
         <x>430</x>
         <y>60</y>
         <width>491</width>
-        <height>411</height>
+        <height>421</height>
        </rect>
       </property>
       <property name="palette">
@@ -1305,20 +1308,20 @@ gridline-color: rgb(0, 0, 0);</string>
       <widget class="QWidget" name="SpeedCurveWidget" native="true">
        <property name="geometry">
         <rect>
-         <x>19</x>
-         <y>19</y>
-         <width>451</width>
-         <height>171</height>
+         <x>9</x>
+         <y>10</y>
+         <width>471</width>
+         <height>201</height>
         </rect>
        </property>
       </widget>
       <widget class="QWidget" name="DistanceCurveWidget" native="true">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>220</y>
-         <width>451</width>
-         <height>171</height>
+         <x>10</x>
+         <y>210</y>
+         <width>471</width>
+         <height>201</height>
         </rect>
        </property>
       </widget>
@@ -1359,7 +1362,7 @@ gridline-color: rgb(0, 0, 0);</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true"/>
+       <string notr="true">background-color: rgb(255, 255, 255)</string>
       </property>
       <row>
        <property name="text">

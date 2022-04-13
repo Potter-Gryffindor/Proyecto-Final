@@ -381,6 +381,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.SearchFileButton.clicked.connect(self.pressedSearchFileButton)
         self.SimulateFileButton.clicked.connect(self.pressedSimulateFileButton)
         self.setupRouteFigures()
+        self.BusButton.clicked.connect(self.pressedBusButton)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -418,6 +419,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.AboutTab.setupUi(self.AboutWindow)
         self.AboutWindow.show()        
 
+    # Cambiar a Bus Window 
+    def pressedBusButton(self):
+    #    widget.setCurrentIndex(1)
+        pass
+
     # Buscar y definir la extensión del archivo .CSV
     def pressedSearchFileButton(self):
         filename, extension = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv)")
@@ -432,7 +438,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             print('Not a valid data vector')
             return
 
-        print(self.routeData)
+        #print(self.routeData)
         self.plotRoute()
 
     # Definir Plots (MAPA Y PERFIL)
@@ -500,7 +506,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.axProfRoute.legend(frameon=False, loc='best')
         self.canvasProfRoute.draw()       
 
-
+    
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
