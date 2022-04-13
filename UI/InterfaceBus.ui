@@ -748,7 +748,7 @@ Impact</string>
 gridline-color: rgb(0, 0, 0);</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="BusGeneralDataTab">
      <property name="styleSheet">
@@ -2197,6 +2197,14 @@ gridline-color: rgb(0, 0, 0);</string>
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionUser_Manual"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="font">
@@ -2211,6 +2219,22 @@ gridline-color: rgb(0, 0, 0);</string>
     <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
   </widget>
+  <action name="actionUser_Manual">
+   <property name="text">
+    <string>User Manual</string>
+   </property>
+   <property name="statusTip">
+    <string>Go to the User Manual</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the About window</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

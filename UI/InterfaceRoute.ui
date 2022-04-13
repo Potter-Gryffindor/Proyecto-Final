@@ -1015,6 +1015,29 @@ border-color: rgb(0, 0, 0);
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuHelp">
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
+    </property>
+    <property name="statusTip">
+     <string/>
+    </property>
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <property name="separatorsCollapsible">
+     <bool>false</bool>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>false</bool>
+    </property>
+    <addaction name="actionUser_manual"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="font">
@@ -1032,6 +1055,25 @@ border-color: rgb(0, 0, 0);
     <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
   </widget>
+  <action name="actionUser_manual">
+   <property name="text">
+    <string>User Manual</string>
+   </property>
+   <property name="statusTip">
+    <string>Go to the User Manual</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the About window</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
