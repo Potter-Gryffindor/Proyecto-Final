@@ -346,6 +346,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 964, 26))
         self.menubar.setObjectName("menubar")
+        self.menuHelp = QtWidgets.QMenu(self.menubar)
+        self.menuHelp.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.menuHelp.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.menuHelp.setStatusTip("")
+        self.menuHelp.setSeparatorsCollapsible(False)
+        self.menuHelp.setToolTipsVisible(False)
+        self.menuHelp.setObjectName("menuHelp")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         font = QtGui.QFont()
@@ -358,6 +365,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.statusbar.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.actionUser_manual = QtWidgets.QAction(MainWindow)
+        self.actionUser_manual.setObjectName("actionUser_manual")
+        self.actionAbout = QtWidgets.QAction(MainWindow)
+        self.actionAbout.setMenuRole(QtWidgets.QAction.TextHeuristicRole)
+        self.actionAbout.setObjectName("actionAbout")
+        self.menuHelp.addAction(self.actionUser_manual)
+        self.menuHelp.addAction(self.actionAbout)
+        self.menubar.addAction(self.menuHelp.menuAction())
 
         # Llamadas a funciones
         self.SearchFileButton.clicked.connect(self.pressedSearchFileButton)
@@ -387,6 +402,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.SimulateFileButton.setText(_translate("MainWindow", "Simulate"))
         self.ProfileMapFrame.setAccessibleName(_translate("MainWindow", ".csv"))
         self.RouteFileLineFrame.setAccessibleName(_translate("MainWindow", ".csv"))
+        self.menuHelp.setTitle(_translate("MainWindow", "Help"))
+        self.actionUser_manual.setText(_translate("MainWindow", "User Manual"))
+        self.actionUser_manual.setStatusTip(_translate("MainWindow", "Go to the User Manual"))
+        self.actionAbout.setText(_translate("MainWindow", "About"))
+        self.actionAbout.setStatusTip(_translate("MainWindow", "Show the About window"))
 
     # Buscar y definir la extensión del archivo .CSV
     def pressedSearchFileButton(self):
