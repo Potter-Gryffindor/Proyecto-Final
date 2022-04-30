@@ -1,11 +1,14 @@
 # Importar Paquetes
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+from pandas import read_csv
 import numpy as np
 import datetime
-from PyQt5 import QtCore, QtGui, QtWidgets
-from pandas import read_csv
+
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+import matplotlib.ticker as ticker
 
 
 # Clases
@@ -1931,7 +1934,7 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
             outTup = (timeVector, distVector, speedVector, labelVector, stopVector)
             if tIniPico1 < timeVector[-1] <= tEndPico1 or tIniPico2 < timeVector[-1] < tEndPico2:
                 if distVector[-1] == 0:
-                    stopDelay=100
+                    stopDelay = 100
 
             return (outTup)
 
@@ -1948,7 +1951,8 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
 
             return (outTup)
 
-        def state3func(inputTup):  # Constant speed
+        def state3func(inputTup):  
+            # State 3: Constant speed
             timeVector, distVector, speedVector, deltaT, maxSpeedBus, labelVector, stopVector = inputTup
             timeVector = np.append(timeVector, timeVector[-1] + deltaT)
             speedVector = np.append(speedVector, maxSpeedBus)
@@ -1959,7 +1963,8 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
             
             return (outTup)
 
-        def state4func(inputTup):  # Decelerating
+        def state4func(inputTup):  
+            # State 4: Decelerating
             timeVector, distVector, speedVector, deltaT, decelBus, indexDecel, labelVector, stopVector = inputTup
             timeVector = np.append(timeVector, timeVector[-1] + deltaT)
             speedVector = np.append(speedVector, decelBus[indexDecel])
@@ -1973,7 +1978,7 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
 
         def findNextStop(indexStop, busStopRoute):
             busStop1 = indexStop
-            while True:
+            while 1:
                 indexStop = indexStop + 1
                 if indexStop > len(busStopRoute):
                     busStop2 = []
@@ -2008,42 +2013,40 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
             return (outTup)
 
         # Route parameters
-        distRoute = RouteWindow.routeData[['DIST']]
-        busStopRoute = RouteWindow.routeData[['BUS STOP']]
-        labelRoute = RouteWindow.routeData[['LABEL']]
-        """
-        Seguir a partir de aquí
-        """
+        distRoute = RouteTab.routeData[['DIST']]
+        busStopRoute = RouteTab.routeData[['BUS STOP']]
+        labelRoute = RouteTab.routeData[['LABEL']]
+        
         # Fleet parameters
-        table3 = self.main_win.tableWidgetFleetPar
-        stopDelay = float(table3.item(6, 0).text())
-        TimeInTerminal = float(table3.item(7, 0).text())
-        tIniFleetQt = self.main_win.timeEditStart.time()
+        fleetTable = self.FleetParametersTable
+        stopDelay = float(fleetTable.item(4, 0).text())
+        TimeInTerminal = float(fleetTable.item(5, 0).text())
+        tIniFleetQt = self.STFtimeEdit.time()
         tIniFleet = tIniFleetQt.hour() * 3600 + tIniFleetQt.minute() * 60 + tIniFleetQt.second()
-        tEndFleetQt = self.main_win.timeEditEnd.time()
+        tEndFleetQt = self.ETFtimeEdit.time()
         tEndFleet = tEndFleetQt.hour() * 3600 + tEndFleetQt.minute() * 60 + tEndFleetQt.second()
-        tIniPico1Qt = self.main_win.timeEdit.time()
+        tIniPico1Qt = self.STPtimeEdit.time()
         tIniPico1 = tIniPico1Qt.hour() * 3600 + tIniPico1Qt.minute() * 60 + tIniPico1Qt.second()
-        tEndPico1Qt = self.main_win.timeEdit_7.time()
+        tEndPico1Qt = self.ETPtimeEdit.time()
         tEndPico1 = tEndPico1Qt.hour() * 3600 + tEndPico1Qt.minute() * 60 + tEndPico1Qt.second()
 
-        tIniPico2Qt = self.main_win.timeEdit_10.time()
+        tIniPico2Qt = self.STMPtimeEdit.time()
         tIniPico2 = tIniPico2Qt.hour() * 3600 + tIniPico2Qt.minute() * 60 + tIniPico2Qt.second()
-        tEndPico2Qt = self.main_win.timeEdit_22.time()
+        tEndPico2Qt = self.EMPtimeEdit.time()
         tEndPico2 = tEndPico2Qt.hour() * 3600 + tEndPico2Qt.minute() * 60 + tEndPico1Qt.second()
-        numero_buses = int(self.main_win.tableWidgetFleetPar.item(0, 0).text())
-        frecuencia_despacho = int(self.main_win.tableWidgetFleetPar.item(5, 0).text())
-        numero_buses_pico = int(self.main_win.tableWidgetFleetPar.item(8, 0).text())
-        frecuencia_despacho_pico = int(self.main_win.tableWidgetFleetPar.item(9, 0).text())
+        numBuses = int(fleetTable.item(0, 0).text())
+        dispatchFrequency = int(fleetTable.item(7, 0).text())
+        numBusesPeak = int(fleetTable.item(0, 0).text())
+        dispatchFrequencyPeak = int(fleetTable.item(3, 0).text())
 
         # Simulation parameters
         deltaT = 0.2
-        maxTime = tEndFleet - (numero_buses - 1) * frecuencia_despacho
-        #maxTime2 = t2EndFleet - (numero_buses_pico - 1) * frecuencia_despacho_pico
+        maxTime = tEndFleet - (numBuses - 1) * dispatchFrequency
+        #maxTime2 = t2EndFleet - (numBusesPeak - 1) * dispatchFrequencyPeak
 
         ## Bus parameters
-        accelBus = self.accel_curve
-        decelBus = self.decel_curve
+        accelBus = self.speedCurve
+        decelBus = self.decelCurve
         distBrake = calculateBrakingDistance(decelBus, deltaT)
         maxSpeedBus = accelBus[-1]
 
@@ -2079,16 +2082,16 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
 
                 # Cambio de Velocidad de la Flota en tiempo pico
                 if (tIniPico1 < timeVector[-1] <= tEndPico1 and distVector[-1] == 0) or (tIniPico2 < timeVector[-1] < tEndPico2 and distVector[-1] == 0):
-                    stopDelay=frecuencia_despacho_pico
+                    stopDelay = dispatchFrequencyPeak
                     state = 1
                 elif (tIniPico1 < timeVector[-1] <= tEndPico1 ) or (tIniPico2 < timeVector[-1] < tEndPico2):
-                    stopDelay=float(table3.item(6, 0).text()) + 33
+                    stopDelay = float(fleetTable.item(4, 0).text()) + 33
                     state=1
                 elif distVector[-1] == 0:
                     stopDelay = TimeInTerminal
                     state = 1
                 else:
-                    stopDelay=float(table3.item(6, 0).text())
+                    stopDelay=float(fleetTable.item(4, 0).text())
                     state = 1
 
                 if timeVector[-1] >= timeState1 + stopDelay:
@@ -2135,7 +2138,7 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
 
             else:
                 pass
-            self.main_win.progressBarRoute.setValue(int(100 * timeVector[-1] / maxTime))
+            self.BusprogressBar.setValue(int(100 * timeVector[-1] / maxTime))
 
             if timeVector[-1] > maxTime:
                 break
@@ -2146,27 +2149,38 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
         for n in range(0, len(timeVector)):
             timeVectorDT.append(datetime.datetime.fromtimestamp(timeVector[n] + timeZoneColombia))
 
-        self.array_tiempos = []
+        self.arrayTime = []
 
-        for y in range(numero_buses):
+        for y in range(numBuses):
             time_arr = []
             time_ = []
-            print("Numero de bus:"+str(y))
+            #print("Numero de bus:"+str(y))
             for idx, x in enumerate(timeVector):
                 #print("distVector: " + str(distVector[idx]),("speedVector: " + str(speedVector[idx])))
                 if tIniPico1 < x <= tEndPico1 or tIniPico2 < x < tEndPico2:
                     if distVector[idx]==0 and stateVector[idx]==2:
-                        frec=frecuencia_despacho
+                        frec=dispatchFrequency
                 else:
                     if distVector[idx] == 0:
-                        frec = frecuencia_despacho
+                        frec = dispatchFrequency
 
                 time_arr.append(
                     datetime.datetime.fromtimestamp(x + timeZoneColombia ) + datetime.timedelta(seconds=frec*y))
                 time_.append(time_arr[idx].strftime("%I:%M:%S %p"))
                 #print(time_[idx])
-            self.array_tiempos.append(time_arr)
-            print(np.shape(self.array_tiempos))
+            self.arrayTime.append(time_arr)
+            #print(np.shape(self.arrayTime))
+        
+        self.timeVector = timeVector
+        self.speedVector = speedVector
+        self.distVector = distVector
+        self.stateVector = stateVector
+        self.timeVectorDT = timeVectorDT
+        self.labelVector = labelVector
+        self.stopVector = stopVector
+
+        self.stopTicks, self.stopLabels = StopPositionLabels(distRoute, busStopRoute, labelRoute)
+        
         self.plotOpDiagram()
 
     # Definir Plots (VELOCIDAD Y DISTANCIA RECORRIDA)
@@ -2227,7 +2241,35 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
 
     # Plotear dos curvas de Operación = Distancia vs Tiempo / Velocidad vs Tiempo 
     def plotOpDiagram(self):
-        pass
+        self.axOPSpeed.cla()
+        self.axOPPosition.cla()
+        for x in self.arrayTime:
+            self.axOPSpeed.plot(x, 3.6 * self.speedVector)
+            self.axOPPosition.plot(x, 0.001 * self.distVector)
+        
+
+        self.axOPSpeed.set_title('Curva de operación (Velocidad)', fontsize=12, fontweight="bold")
+        self.axOPSpeed.set_ylabel('Speed [km/h]', fontsize=10, fontweight="bold")
+        self.axOPSpeed.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        self.axOPSpeed.tick_params(labelsize=8)
+        self.axOPSpeed.grid()
+        self.figureOPSpeed.autofmt_xdate()
+        self.canvasOPSpeed.draw()  
+            
+        self.axOPPosition.set_title('Curva de operación (Distancia)', fontsize=12, fontweight="bold")
+        self.axOPPosition.set_ylabel('Distance [km]', fontsize=10, fontweight="bold")
+        self.axOPPosition.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        self.axOPPosition.tick_params(labelsize=8)
+        self.axOPPosition.grid(which='minor')
+        self.figureOPPosition.autofmt_xdate()
+        self.axOPPosition.yaxis.set_major_locator(ticker.FixedLocator([]))
+        self.axOPPosition.yaxis.set_minor_locator(ticker.FixedLocator(self.stopTicks))
+        self.axOPPosition.yaxis.set_minor_formatter(ticker.FixedFormatter(self.stopLabels))
+
+        for tick in self.axOPPosition.get_minor_ticks():
+            tick.label.set_fontsize(7)
+
+        self.canvasOPPosition.draw()
 
 # Inicio Programa
 if __name__ == "__main__":

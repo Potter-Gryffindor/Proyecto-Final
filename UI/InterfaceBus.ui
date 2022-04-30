@@ -748,7 +748,7 @@ Impact</string>
 gridline-color: rgb(0, 0, 0);</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="BusGeneralDataTab">
      <property name="styleSheet">
@@ -1780,8 +1780,8 @@ gridline-color: rgb(0, 0, 0);</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>100</width>
-          <height>30</height>
+          <width>191</width>
+          <height>71</height>
          </rect>
         </property>
         <attribute name="label">
@@ -1857,7 +1857,7 @@ gridline-color: rgb(0, 0, 0);</string>
          </property>
          <property name="dateTime">
           <datetime>
-           <hour>8</hour>
+           <hour>17</hour>
            <minute>0</minute>
            <second>0</second>
            <year>2022</year>
@@ -1867,7 +1867,7 @@ gridline-color: rgb(0, 0, 0);</string>
          </property>
          <property name="time">
           <time>
-           <hour>8</hour>
+           <hour>17</hour>
            <minute>0</minute>
            <second>0</second>
           </time>
@@ -2004,7 +2004,7 @@ gridline-color: rgb(0, 0, 0);</string>
          </property>
          <property name="dateTime">
           <datetime>
-           <hour>21</hour>
+           <hour>9</hour>
            <minute>30</minute>
            <second>0</second>
            <year>2022</year>
@@ -2014,7 +2014,7 @@ gridline-color: rgb(0, 0, 0);</string>
          </property>
          <property name="time">
           <time>
-           <hour>21</hour>
+           <hour>9</hour>
            <minute>30</minute>
            <second>0</second>
           </time>
@@ -2155,7 +2155,7 @@ gridline-color: rgb(0, 0, 0);</string>
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="PositionTab">
        <attribute name="title">
