@@ -265,7 +265,7 @@ class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
 
             if t_ini_pico1 < time_vector[-1] <= t_end_pico1 or t_ini_pico2 < time_vector[-1] < t_end_pico2:
                 if dist_vector[-1] == 0:
-                    stop_delay = 100
+                    stop_delay_f = 100
 
             return out_tup
 
@@ -701,15 +701,18 @@ class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
         print(self.distVector)
         print('speedVector')
         print(self.speedVector)
+        i = 0
         for x in self.arrayTime:
-            self.axOPSpeed.plot(x, 3.6 * self.speedVector)
-            self.axOPPosition.plot(x, 0.001 * self.distVector)
+            i += 1
+            self.axOPSpeed.plot(x, 3.6 * self.speedVector, label=f'Bus {i}')
+            self.axOPPosition.plot(x, 0.001 * self.distVector, label=f'Bus {i}')
 
         self.axOPSpeed.set_title('Operating curve (Speed)', fontsize=12, fontweight="bold")
         self.axOPSpeed.set_ylabel('Speed [km/h]', fontsize=10, fontweight="bold")
         self.axOPSpeed.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
         self.axOPSpeed.tick_params(labelsize=8)
         self.axOPSpeed.grid()
+        self.axOPSpeed.legend(frameon=False, loc='best')
         self.figureOPSpeed.autofmt_xdate()
         self.canvasOPSpeed.draw()
 
@@ -718,6 +721,7 @@ class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
         self.axOPPosition.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
         self.axOPPosition.tick_params(labelsize=8)
         self.axOPPosition.grid(which='minor')
+        self.axOPPosition.legend(frameon=False, loc='best')
         self.figureOPPosition.autofmt_xdate()
 
         self.axOPPosition.yaxis.set_major_locator(ticker.FixedLocator([]))
