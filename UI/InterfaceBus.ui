@@ -664,7 +664,7 @@ Parameters</string>
 Charging</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="OportunityButton">
+    <widget class="QPushButton" name="OpportunityButton">
      <property name="geometry">
       <rect>
        <x>410</x>
@@ -682,13 +682,13 @@ Charging</string>
       </font>
      </property>
      <property name="statusTip">
-      <string>Push to go to the Oportunity Charging tab</string>
+      <string>Push to go to the Opportunity Charging tab</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(159, 159, 159);</string>
      </property>
      <property name="text">
-      <string>Oportunity
+      <string>Opportunity
 Charging</string>
      </property>
     </widget>
@@ -1780,8 +1780,8 @@ gridline-color: rgb(0, 0, 0);</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>191</width>
-          <height>71</height>
+          <width>100</width>
+          <height>30</height>
          </rect>
         </property>
         <attribute name="label">

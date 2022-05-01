@@ -1,8 +1,8 @@
 # Importar Paquetes
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
-from pandas import read_csv, read_feather
-from pyarrow import feather
+from pandas import read_csv
+import pyarrow.feather as feather
 import numpy as np
 import datetime
 import time
@@ -14,10 +14,10 @@ import matplotlib.ticker as ticker
 
 
 # Clases
-class UiAboutwindow(QtWidgets.QDialog):
+class UiAboutWindow(QtWidgets.QDialog):
     # Constructor
     def __init__(self):
-        super(UiAboutwindow, self).__init__()
+        super(UiAboutWindow, self).__init__()
         self.__AboutWindow = uic.loadUi('../UI/About.ui', self)
         self.__AboutWindow.setFixedSize(400, 449)
         self.__AboutWindow.setWindowFlags(
@@ -29,18 +29,19 @@ class UiAboutwindow(QtWidgets.QDialog):
         )
 
 
-class UiRoutewindow(QtWidgets.QMainWindow):
+class UiRouteWindow(QtWidgets.QMainWindow):
     # Constructor
     def __init__(self):
-        super(UiRoutewindow, self).__init__()
+        super(UiRouteWindow, self).__init__()
         self.__RouteWindow = uic.loadUi('../UI/InterfaceRoute.ui', self)
-        self.AboutTab = UiAboutwindow()
-        self.routeData = read_csv('../Route/ROUTE-Template.csv')
+        self.AboutTab = UiAboutWindow()
+        self.routeData = feather.read_feather('../Route/Template/ROUTE-Template.feather')
 
         # Llamadas a Métodos
         # Botones de Route Window
         self.__RouteWindow.actionAbout.triggered.connect(self.clicked_about)
         self.__RouteWindow.BusButton.clicked.connect(self.pressed_bus_button)
+        self.__RouteWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__RouteWindow.SearchFileButton.clicked.connect(self.__pressed_search_file_button)
         self.__RouteWindow.SimulateFileButton.clicked.connect(self.__pressed_simulate_file_button)
         # Setups Gráficas de Route Window
@@ -56,25 +57,43 @@ class UiRoutewindow(QtWidgets.QMainWindow):
         widget.setCurrentIndex(1)
         self.AboutTab.close()
 
-    # Buscar y definir la extensión del archivo .CSV
+    # Cambiar a Route Window
+    def pressed_route_button(self):
+        widget.setCurrentIndex(0)
+        self.AboutTab.close()
+
+    # Cambiar a Opportunity Window
+    def pressed_opportunity_button(self):
+        widget.setCurrentIndex(2)
+        self.AboutTab.close()
+
+    # Buscar y definir la extensión del archivo .feather or .csv
     def __pressed_search_file_button(self):
+        file_filter = "feather file (*.feather);;csv file (*.csv)"
         (filename, extension) = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', '../Route/',
-                                                                      filter=self.tr("csv file (*.csv)"))
+                                                                      filter=self.tr(file_filter))
+        self.file_type = filename.split('.')[1]
+        print("File extension:", self.file_type)
         self.__RouteWindow.RouteFileLine.setText(filename)
 
     # Leer y cargar el archivo .CSV
     def __pressed_simulate_file_button(self):
-        csv_file = self.__RouteWindow.RouteFileLine.text()
-        print(csv_file)
+        file = self.__RouteWindow.RouteFileLine.text()
+        print("File:", file)
         try:
-            self.routeData = read_csv(csv_file)
-            self.routeData.to_feather('routeData.feather')
-            self.routeData = read_feather('routeData.feather')
+            if self.file_type == 'feather':
+                self.routeData = feather.read_feather(file)
+            elif self.file_type == 'csv':
+                self.routeData = read_csv(file)
+            else:
+                raise Exception('File extension not supported')
         except Exception as ex:
             print(ex)
             print('Not a valid data vector')
             self.routeData = None
-        # print(self.routeData)
+
+        print("Route data:")
+        print(self.routeData)
         self.__plot_route()
 
     # Definir Plots (MAPA Y PERFIL)
@@ -147,10 +166,10 @@ class UiRoutewindow(QtWidgets.QMainWindow):
         self.canvasProfRoute.draw()
 
 
-class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
+class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
     # Constructor
     def __init__(self):
-        super(UiBuswindow, self).__init__()
+        super(UiBusWindow, self).__init__()
         self.__BusWindow = uic.loadUi('../UI/InterfaceBus.ui', self)
         self.__BusWindow.BusParametersTab.setCurrentIndex(0)
         self.__BusWindow.PeakTimesToolBox.setCurrentIndex(0)
@@ -161,6 +180,7 @@ class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
         # Botones de Bus Window
         self.__BusWindow.actionAbout.triggered.connect(self.clicked_about)
         self.__BusWindow.RouteButton.clicked.connect(self.pressed_route_button)
+        self.__BusWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.PlotBusGenDataButton.clicked.connect(self.__pressed_plot_bus_gen_data_button)
         self.__BusWindow.GenOperationDiagramButton.clicked.connect(self.__pressed_gen_operation_diagram_button)
         # Setups Gráficas de Bus Window
@@ -168,11 +188,6 @@ class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
         self.__setup_op_diagram_figures()
 
     # Métodos
-    # Cambiar a Route Window
-    def pressed_route_button(self):
-        widget.setCurrentIndex(0)
-        self.AboutTab.close()
-
     # Calcular y graficar Velocidad vs Tiempo / Distancia vs Tiempo
     def __pressed_plot_bus_gen_data_button(self):
         speed_table = self.SpeedCurveTable
@@ -432,9 +447,11 @@ class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
 
         # Bus parameters
         accel_bus = self.accelCurve
-        print("Acceleration: ", accel_bus)
+        print("Acceleration curve: ")
+        print(accel_bus)
         decel_bus = self.decelCurve
-        print("Deceleration: ", decel_bus)
+        print("Deceleration curve: ")
+        print(decel_bus)
         dist_brake = calculate_braking_distance(decel_bus, delta_t)
         print("Distance to brake: ", dist_brake)
         max_speed_bus = accel_bus[-1]
@@ -697,9 +714,9 @@ class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
     def __plot_op_diagram(self):
         self.axOPSpeed.cla()
         self.axOPPosition.cla()
-        print("distVector")
+        print("Distance vector:")
         print(self.distVector)
-        print('speedVector')
+        print('Speed vector:')
         print(self.speedVector)
         i = 0
         for x in self.arrayTime:
@@ -734,6 +751,243 @@ class UiBuswindow(UiRoutewindow, QtWidgets.QMainWindow):
         self.canvasOPPosition.draw()
 
 
+class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
+    # Constructor
+    def __init__(self):
+        super(UiOpportunityWindow, self).__init__()
+        self.__OpportunityWindow = uic.loadUi('../UI/InterfaceOpportunity.ui', self)
+        self.__OpportunityWindow.SimulationOpportunityTab.setCurrentIndex(0)
+        self.__OpportunityWindow.ElementscomboBox.setCurrentIndex(0)
+        self.__OpportunityWindow.VariablescomboBox.setCurrentIndex(0)
+
+        # Llamadas a Métodos
+        # Botones de Opportunity Window
+        self.__OpportunityWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__OpportunityWindow.RouteButton.clicked.connect(self.pressed_route_button)
+        self.__OpportunityWindow.BusButton.clicked.connect(self.pressed_bus_button)
+        self.__OpportunityWindow.OpportunityLoadSimButton.clicked.connect(self.__pressed_load_sim_opportunity_button)
+        self.__OpportunityWindow.OpportunityGraphButton.clicked.connect(self.__pressed_graph_opportunity_button)
+        # Setups Gráficas de Opportunity Window
+        self.__setup_opportunity_diagram_figures()
+
+    # Métodos
+    # Definir Plots (Opportunity Window)
+    def __setup_opportunity_diagram_figures(self):
+        self.figureOppCharging = Figure(tight_layout=True)
+        self.canvasOppCharging = FigureCanvas(self.figureOppCharging)
+        self.toolbarOppCharging = NavigationToolbar(self.canvasOppCharging, self)
+        self.layoutOppCharging = QtWidgets.QVBoxLayout(self.__OpportunityWindow.OpportunityCurveWidget)
+        self.layoutOppCharging.addWidget(self.toolbarOppCharging)
+        self.layoutOppCharging.addWidget(self.canvasOppCharging)  #
+        self.axOppCharging = self.figureOppCharging.add_subplot(111)
+
+    # Cargar simulación de Oportunidad
+    def __pressed_load_sim_opportunity_button(self):
+        def calculate_angle(dist_vector_f, dist_route_f, alt_route_f):
+            sin_theta_vector_route = []
+            for N in range(0, len(dist_route_f) - 1):
+                # point route : N
+                sin_theta_part1 = alt_route_f.iloc[N + 1].values[0] - alt_route_f.iloc[N].values[0]
+                sin_theta_part2 = (1000 * dist_route_f.iloc[N + 1].values[0] - 1000 * dist_route_f.iloc[N].values[0])
+                sin_theta = sin_theta_part1 / sin_theta_part2
+                print("sin_theta:", sin_theta)
+                sin_theta_vector_route.append(sin_theta)
+
+            sin_theta_vector_route.append(sin_theta_vector_route[-1])
+            time.sleep(5)
+            sin_theta_vector_f = []
+            arr = []
+            for N in range(0, len(dist_route_f)):
+                arr.append(1000 * dist_route_f.iloc[N].values[0])
+            dist_route_np = np.array(arr)
+            print('dist_route_np: ')
+            print(dist_route_np)
+
+            for N in range(0, len(dist_vector_f) - 1):
+                # point1=dist_vector[n]
+                point2 = dist_vector_f[N + 1]
+                index = np.where(point2 >= dist_route_np)
+                k = index[0][-1]
+                sin_theta_tot = sin_theta_vector_route[k]
+                sin_theta_vector_f.append(sin_theta_tot)
+
+            sin_theta_vector_f.append(sin_theta_vector_f[-1])
+
+            print('len sin_theta_vector:')
+            print(len(sin_theta_vector_route))
+            return sin_theta_vector_f
+
+        # Parameters
+        # Simulation parameters
+        delta_t = 0.2
+
+        # Bus parameters
+        bus_table = BusWindow.BusParametersTable
+        fric = float(bus_table.item(0, 0).text())
+        mass = float(bus_table.item(1, 0).text())
+        grav = float(bus_table.item(2, 0).text())
+        rho = float(bus_table.item(3, 0).text())
+        alpha = float(bus_table.item(4, 0).text())
+        area = float(bus_table.item(5, 0).text())
+        p_aux = 1000 * float(bus_table.item(6, 0).text())
+        n_out = 0.01 * float(bus_table.item(7, 0).text())
+        n_in = 0.01 * float(bus_table.item(8, 0).text())
+
+        # Opportunity charge parameters
+        charging_table = self.__OpportunityWindow.OppChargingParametersTable
+        bc = float(charging_table.item(0, 0).text())
+        so_ci = 0.01 * float(charging_table.item(1, 0).text())
+        text_stops = charging_table.item(2, 0).text()
+        cl = text_stops.split(',')
+        cp = float(charging_table.item(3, 0).text())
+        n_c = 0.01 * float(charging_table.item(4, 0).text())
+        it = float(charging_table.item(5, 0).text())
+        dt = float(charging_table.item(6, 0).text())
+        print('Stops Vector:')
+        print(cl)
+
+        # Fleet operation time for extra loads
+        fleet_table = BusWindow.FleetParametersTable
+        stop_delay = float(fleet_table.item(4, 0).text())
+        time_in_terminal = float(fleet_table.item(5, 0).text())
+        t_ini_fleet_qt = BusWindow.STFtimeEdit.time()
+        t_ini_fleet = t_ini_fleet_qt.hour() * 3600 + t_ini_fleet_qt.minute() * 60 + t_ini_fleet_qt.second()
+        t_end_fleet_qt = BusWindow.ETFtimeEdit.time()
+        t_end_fleet = t_end_fleet_qt.hour() * 3600 + t_end_fleet_qt.minute() * 60 + t_end_fleet_qt.second()
+
+        t_ini_pico1_qt = BusWindow.STPtimeEdit.time()
+        t_ini_pico1 = t_ini_pico1_qt.hour() * 3600 + t_ini_pico1_qt.minute() * 60 + t_ini_pico1_qt.second()
+        t_end_pico1_qt = BusWindow.ETPtimeEdit.time()
+        t_end_pico1 = t_end_pico1_qt.hour() * 3600 + t_end_pico1_qt.minute() * 60 + t_end_pico1_qt.second()
+
+        t_ini_pico2_qt = BusWindow.STMPtimeEdit.time()
+        t_ini_pico2 = t_ini_pico2_qt.hour() * 3600 + t_ini_pico2_qt.minute() * 60 + t_ini_pico2_qt.second()
+        t_end_pico2_qt = BusWindow.EMPtimeEdit.time()
+        t_end_pico2 = t_end_pico2_qt.hour() * 3600 + t_end_pico2_qt.minute() * 60 + t_end_pico1_qt.second()
+
+        # Fleet operation results
+        time_vector = BusWindow.timeVector
+        time_vector_dt = BusWindow.timeVectorDT
+        speed_vector = BusWindow.speedVector
+        dist_vector = BusWindow.distVector
+        state_vector = BusWindow.stateVector
+        stop_vector = BusWindow.stopVector
+        label_vector = BusWindow.labelVector
+
+        # Route Data
+        dist_route = RouteWindow.routeData[['DIST']]
+        alt_route = RouteWindow.routeData[['ALT']]
+
+        # Angle vector
+        sin_theta_vector = calculate_angle(dist_vector, dist_route, alt_route)
+        energy_vector = []
+        so_c_vector = [so_ci]
+        charger_vector = []
+
+        for n in range(0, len(time_vector) - 1):
+
+            if time_vector[n] > t_ini_fleet:
+                aux_onoff = 1
+            else:
+                aux_onoff = 0
+
+            energy_part1 = fric * (mass+bc*11.1) * grav + 0.5 * rho * alpha * area * speed_vector[n] * speed_vector[n]
+            energy_part2 = speed_vector[n] * delta_t + n_in * mass * grav * sin_theta_vector[n] * speed_vector[n]
+            energy_part3 = speed_vector[n + 1] - speed_vector[n]
+            energy_part4 = speed_vector[n] * delta_t + aux_onoff * p_aux * delta_t
+            energy = (n_out * energy_part1 * energy_part2 * delta_t + mass * n_in * energy_part3 * energy_part4) / 36e5
+            if n == 0:
+                energy_vector.append(energy)
+            else:
+                energy_vector.append(energy_vector[-1] + energy)
+            if stop_vector[n] == 1:
+                if label_vector[n] in cl:
+                    ch_onoff = 1
+                else:
+                    ch_onoff = 0
+            else:
+                ch_onoff = 0
+
+            charger_vector.append(ch_onoff * cp)
+
+            so_c_vector.append((so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc)
+
+            self.__OpportunityWindow.OpportunityprogressBar.setValue(int(100*n/(len(time_vector)-2)))
+
+        energy_vector.append(energy_vector[-1])
+        charger_vector.append(charger_vector[-1])
+        power_vector = [0]
+
+        for n in range(1, len(time_vector) - 1):
+            power_vector.append(-(energy_vector[n - 1] - energy_vector[n]) / (delta_t / 3600))
+        power_vector.append(power_vector[-1])
+
+        self.energyVector = energy_vector
+        self.powerVector = power_vector
+        self.sinThetaVector = sin_theta_vector
+        self.SoCVector = so_c_vector
+        self.chargerVector = charger_vector
+
+    # Graficar simulación de Oportunidad (Dropdown options)
+    def __pressed_graph_opportunity_button(self):
+        plot_type = self.__OpportunityWindow.VariablescomboBox.currentIndex()
+        self.axOppCharging.cla()
+        if plot_type == 0:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, self.energyVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Energy Curve', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('Energy (kWh)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+        elif plot_type == 1:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, self.powerVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Power Curve', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('Power (kW)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+        elif plot_type == 2:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, self.sinThetaVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Slope', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('Sin(Theta)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+        elif plot_type == 3:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, 100 * np.array(self.SoCVector), label=f'Bus {i}')
+            self.axOppCharging.set_title('State of Charge', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('%', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time (h)', fontsize=10,fontweight="bold" )
+        elif plot_type == 4:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, BusWindow.stopVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Stop Vector', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+        elif plot_type == 5:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, self.chargerVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Charger Vector', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('kW', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+
+        self.axOppCharging.tick_params(labelsize=10)
+        self.axOppCharging.grid()
+        self.axOppCharging.legend(frameon=False, loc='best')
+        self.figureOppCharging.autofmt_xdate()
+        self.canvasOppCharging.draw()
+
+
 # Inicio Programa
 if __name__ == "__main__":
     import sys
@@ -742,12 +996,14 @@ if __name__ == "__main__":
     widget = QtWidgets.QStackedWidget()
 
     # Definir Ventanas
-    RouteWindow = UiRoutewindow()
-    BusWindow = UiBuswindow()
+    RouteWindow = UiRouteWindow()
+    BusWindow = UiBusWindow()
+    OpportunityWindow = UiOpportunityWindow()
 
     # Añadir Ventanas
     widget.addWidget(RouteWindow)
     widget.addWidget(BusWindow)
+    widget.addWidget(OpportunityWindow)
 
     # Setup de widgets
     widget.setFixedSize(964, 677)
