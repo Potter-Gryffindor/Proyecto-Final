@@ -790,7 +790,6 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 sin_theta_part1 = alt_route_f.iloc[N + 1].values[0] - alt_route_f.iloc[N].values[0]
                 sin_theta_part2 = (1000 * dist_route_f.iloc[N + 1].values[0] - 1000 * dist_route_f.iloc[N].values[0])
                 sin_theta = sin_theta_part1 / sin_theta_part2
-                print("sin_theta:", sin_theta)
                 sin_theta_vector_route.append(sin_theta)
 
             sin_theta_vector_route.append(sin_theta_vector_route[-1])
@@ -824,14 +823,23 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         # Bus parameters
         bus_table = BusWindow.BusParametersTable
         fric = float(bus_table.item(0, 0).text())
+        print('fric: ', fric)
         mass = float(bus_table.item(1, 0).text())
+        print('mass: ', mass)
         grav = float(bus_table.item(2, 0).text())
+        print('grav: ', grav)
         rho = float(bus_table.item(3, 0).text())
+        print('rho: ', rho)
         alpha = float(bus_table.item(4, 0).text())
+        print('alpha: ', alpha)
         area = float(bus_table.item(5, 0).text())
+        print('area: ', area)
         p_aux = 1000 * float(bus_table.item(6, 0).text())
+        print('p_aux: ', p_aux)
         n_out = 0.01 * float(bus_table.item(7, 0).text())
+        print('n_out: ', n_out)
         n_in = 0.01 * float(bus_table.item(8, 0).text())
+        print('n_in: ', n_in)
 
         # Opportunity charge parameters
         charging_table = self.__OpportunityWindow.OppChargingParametersTable
@@ -867,6 +875,9 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
 
         # Fleet operation results
         time_vector = BusWindow.timeVector
+        print('time vector:')
+        print(time_vector)
+        print('t_ini_fleet:', t_ini_fleet)
         time_vector_dt = BusWindow.timeVectorDT
         speed_vector = BusWindow.speedVector
         dist_vector = BusWindow.distVector
@@ -891,11 +902,10 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
             else:
                 aux_onoff = 0
 
-            energy_part1 = fric * (mass+bc*11.1) * grav + 0.5 * rho * alpha * area * speed_vector[n] * speed_vector[n]
-            energy_part2 = speed_vector[n] * delta_t + n_in * mass * grav * sin_theta_vector[n] * speed_vector[n]
-            energy_part3 = speed_vector[n + 1] - speed_vector[n]
-            energy_part4 = speed_vector[n] * delta_t + aux_onoff * p_aux * delta_t
-            energy = (n_out * energy_part1 * energy_part2 * delta_t + mass * n_in * energy_part3 * energy_part4) / 36e5
+            energy = (n_out * (fric * (mass+bc*11.1) * grav + 0.5 * rho * alpha * area * speed_vector[n] *
+                      speed_vector[n]) * speed_vector[n] * delta_t + n_in * mass * grav * sin_theta_vector[n] *
+                      speed_vector[n] * delta_t + mass * n_in * (speed_vector[n + 1] - speed_vector[n]) *
+                      speed_vector[n] * delta_t + aux_onoff * p_aux * delta_t) / 36e5
             if n == 0:
                 energy_vector.append(energy)
             else:
@@ -946,16 +956,16 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 i += 1
                 self.axOppCharging.plot(x, self.powerVector, label=f'Bus {i}')
             self.axOppCharging.set_title('Power Curve', fontsize=12, fontweight="bold")
-            self.axOppCharging.set_ylabel('Power (kW)', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_ylabel('Power [kW]', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
         elif plot_type == 2:
             i = 0
             for x in BusWindow.arrayTime:
                 i += 1
                 self.axOppCharging.plot(x, self.sinThetaVector, label=f'Bus {i}')
             self.axOppCharging.set_title('Slope', fontsize=12, fontweight="bold")
-            self.axOppCharging.set_ylabel('Sin(Theta)', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_ylabel('sin(theta)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
         elif plot_type == 3:
             i = 0
             for x in BusWindow.arrayTime:
@@ -963,7 +973,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 self.axOppCharging.plot(x, 100 * np.array(self.SoCVector), label=f'Bus {i}')
             self.axOppCharging.set_title('State of Charge', fontsize=12, fontweight="bold")
             self.axOppCharging.set_ylabel('%', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time (h)', fontsize=10,fontweight="bold" )
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
         elif plot_type == 4:
             i = 0
             for x in BusWindow.arrayTime:
@@ -971,7 +981,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 self.axOppCharging.plot(x, BusWindow.stopVector, label=f'Bus {i}')
             self.axOppCharging.set_title('Stop Vector', fontsize=12, fontweight="bold")
             self.axOppCharging.set_ylabel('', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
         elif plot_type == 5:
             i = 0
             for x in BusWindow.arrayTime:
@@ -979,7 +989,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 self.axOppCharging.plot(x, self.chargerVector, label=f'Bus {i}')
             self.axOppCharging.set_title('Charger Vector', fontsize=12, fontweight="bold")
             self.axOppCharging.set_ylabel('kW', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
 
         self.axOppCharging.tick_params(labelsize=10)
         self.axOppCharging.grid()
