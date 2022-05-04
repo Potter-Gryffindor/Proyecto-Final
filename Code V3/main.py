@@ -42,6 +42,7 @@ class UiRouteWindow(QtWidgets.QMainWindow):
         self.__RouteWindow.actionAbout.triggered.connect(self.clicked_about)
         self.__RouteWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__RouteWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+        self.__RouteWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
         self.__RouteWindow.SearchFileButton.clicked.connect(self.__pressed_search_file_button)
         self.__RouteWindow.SimulateFileButton.clicked.connect(self.__pressed_simulate_file_button)
         # Setups Gráficas de Route Window
@@ -65,6 +66,11 @@ class UiRouteWindow(QtWidgets.QMainWindow):
     # Cambiar a Opportunity Window
     def pressed_opportunity_button(self):
         widget.setCurrentIndex(2)
+        self.AboutTab.close()
+
+    # Cambiar a Dynamic Window
+    def pressed_dynamic_button(self):
+        widget.setCurrentIndex(3)
         self.AboutTab.close()
 
     # Buscar y definir la extensión del archivo .feather or .csv
@@ -181,6 +187,7 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
         self.__BusWindow.actionAbout.triggered.connect(self.clicked_about)
         self.__BusWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__BusWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+        self.__BusWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
         self.PlotBusGenDataButton.clicked.connect(self.__pressed_plot_bus_gen_data_button)
         self.__BusWindow.GenOperationDiagramButton.clicked.connect(self.__pressed_gen_operation_diagram_button)
         # Setups Gráficas de Bus Window
@@ -765,6 +772,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         self.__OpportunityWindow.actionAbout.triggered.connect(self.clicked_about)
         self.__OpportunityWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__OpportunityWindow.BusButton.clicked.connect(self.pressed_bus_button)
+        self.__OpportunityWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
         self.__OpportunityWindow.OpportunityLoadSimButton.clicked.connect(self.__pressed_load_sim_opportunity_button)
         self.__OpportunityWindow.OpportunityGraphButton.clicked.connect(self.__pressed_graph_opportunity_button)
         # Setups Gráficas de Opportunity Window
@@ -998,6 +1006,25 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         self.canvasOppCharging.draw()
 
 
+class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
+    # Constructor
+    def __init__(self):
+        super(UiDynamicWindow, self).__init__()
+        self.__DynamicWindow = uic.loadUi('../UI/InterfaceDynamic.ui', self)
+        self.__DynamicWindow.SimulationDynamicTab.setCurrentIndex(0)
+        self.__DynamicWindow.ElementscomboBox.setCurrentIndex(0)
+        self.__DynamicWindow.VariablescomboBox.setCurrentIndex(0)
+
+        # Llamadas a Métodos
+        # Botones de Opportunity Window
+        self.__DynamicWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__DynamicWindow.RouteButton.clicked.connect(self.pressed_route_button)
+        self.__DynamicWindow.BusButton.clicked.connect(self.pressed_bus_button)
+        self.__DynamicWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+
+        # Setups Gráficas de Opportunity Window
+
+
 # Inicio Programa
 if __name__ == "__main__":
     import sys
@@ -1009,11 +1036,13 @@ if __name__ == "__main__":
     RouteWindow = UiRouteWindow()
     BusWindow = UiBusWindow()
     OpportunityWindow = UiOpportunityWindow()
+    DynamicWindow = UiDynamicWindow()
 
     # Añadir Ventanas
     widget.addWidget(RouteWindow)
     widget.addWidget(BusWindow)
     widget.addWidget(OpportunityWindow)
+    widget.addWidget(DynamicWindow)
 
     # Setup de widgets
     widget.setFixedSize(964, 677)

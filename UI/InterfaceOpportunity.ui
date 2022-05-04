@@ -691,7 +691,7 @@ Charging</string>
       </font>
      </property>
      <property name="statusTip">
-      <string>Push to go to the Oportunity Charging tab</string>
+      <string>Push to go to the Opportunity Charging tab</string>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(159, 159, 159);</string>
