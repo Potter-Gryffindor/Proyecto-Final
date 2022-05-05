@@ -1,9 +1,11 @@
 # Importar Paquetes
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 from pandas import read_csv
+import pyarrow.feather as feather
 import numpy as np
 import datetime
+import time
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -12,728 +14,130 @@ import matplotlib.ticker as ticker
 
 
 # Clases
-class Ui_AboutWindow(QtWidgets.QDialog):
-    def setupUi(self, AboutWindow):
-        AboutWindow.setObjectName("AboutWindow")
-        AboutWindow.setWindowModality(QtCore.Qt.WindowModal)
-        AboutWindow.setEnabled(True)
-        AboutWindow.resize(400, 449)
-        AboutWindow.setFixedSize(400, 449) # Fijar Tamaño de la Ventana
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(AboutWindow.sizePolicy().hasHeightForWidth())
-        AboutWindow.setSizePolicy(sizePolicy)
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ToolTipText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ToolTipText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
-        AboutWindow.setPalette(palette)
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        AboutWindow.setFont(font)
-        AboutWindow.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        AboutWindow.setAcceptDrops(False)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../Imgs/iconBus.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        AboutWindow.setWindowIcon(icon)
-        AboutWindow.setStatusTip("")
-        AboutWindow.setWhatsThis("")
-        AboutWindow.setLayoutDirection(QtCore.Qt.LeftToRight)
-        AboutWindow.setAutoFillBackground(False)
-        AboutWindow.setStyleSheet("")
-        AboutWindow.setSizeGripEnabled(False)
-        AboutWindow.setModal(False)
-        self.AppIcon = QtWidgets.QLabel(AboutWindow)
-        self.AppIcon.setGeometry(QtCore.QRect(10, 10, 81, 61))
-        self.AppIcon.setText("")
-        self.AppIcon.setPixmap(QtGui.QPixmap("../Imgs/iconBus.png"))
-        self.AppIcon.setScaledContents(True)
-        self.AppIcon.setObjectName("AppIcon")
-        self.AboutInfo1 = QtWidgets.QLabel(AboutWindow)
-        self.AboutInfo1.setGeometry(QtCore.QRect(100, 10, 231, 131))
-        font = QtGui.QFont()
-        font.setPointSize(7)
-        font.setBold(True)
-        font.setWeight(75)
-        self.AboutInfo1.setFont(font)
-        self.AboutInfo1.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.AboutInfo1.setAutoFillBackground(True)
-        self.AboutInfo1.setTextFormat(QtCore.Qt.AutoText)
-        self.AboutInfo1.setScaledContents(False)
-        self.AboutInfo1.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.AboutInfo1.setObjectName("AboutInfo1")
-        self.line = QtWidgets.QFrame(AboutWindow)
-        self.line.setGeometry(QtCore.QRect(100, 110, 231, 16))
-        self.line.setAutoFillBackground(True)
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.AboutInfo1_2 = QtWidgets.QLabel(AboutWindow)
-        self.AboutInfo1_2.setGeometry(QtCore.QRect(100, 150, 231, 281))
-        font = QtGui.QFont()
-        font.setPointSize(7)
-        font.setBold(True)
-        font.setWeight(75)
-        self.AboutInfo1_2.setFont(font)
-        self.AboutInfo1_2.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.AboutInfo1_2.setAutoFillBackground(True)
-        self.AboutInfo1_2.setTextFormat(QtCore.Qt.AutoText)
-        self.AboutInfo1_2.setScaledContents(False)
-        self.AboutInfo1_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.AboutInfo1_2.setObjectName("AboutInfo1_2")
-        self.AboutInfo1_3 = QtWidgets.QLabel(AboutWindow)
-        self.AboutInfo1_3.setGeometry(QtCore.QRect(100, 130, 231, 21))
-        font = QtGui.QFont()
-        font.setPointSize(7)
-        font.setBold(True)
-        font.setWeight(75)
-        self.AboutInfo1_3.setFont(font)
-        self.AboutInfo1_3.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.AboutInfo1_3.setAutoFillBackground(True)
-        self.AboutInfo1_3.setTextFormat(QtCore.Qt.AutoText)
-        self.AboutInfo1_3.setScaledContents(False)
-        self.AboutInfo1_3.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
-        self.AboutInfo1_3.setObjectName("AboutInfo1_3")
-        # Definir los Flags
-        AboutWindow.setWindowFlags(
-        QtCore.Qt.Window |
-        QtCore.Qt.CustomizeWindowHint |
-        QtCore.Qt.WindowTitleHint |
-        QtCore.Qt.WindowCloseButtonHint |
-        QtCore.Qt.WindowStaysOnTopHint
+class UiAboutWindow(QtWidgets.QDialog):
+    # Constructor
+    def __init__(self):
+        super(UiAboutWindow, self).__init__()
+        self.__AboutWindow = uic.loadUi('../UI/About.ui', self)
+        self.__AboutWindow.setFixedSize(400, 449)
+        self.__AboutWindow.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowCloseButtonHint |
+            QtCore.Qt.WindowStaysOnTopHint
         )
 
-        self.retranslateUi(AboutWindow)
-        QtCore.QMetaObject.connectSlotsByName(AboutWindow)
 
-    def retranslateUi(self, AboutWindow):
-        _translate = QtCore.QCoreApplication.translate
-        AboutWindow.setWindowTitle(_translate("AboutWindow", "About Electric Bus Charging Analyzer"))
-        self.AboutInfo1.setText(_translate("AboutWindow", "Electric Bus Charging Analyzer\n"
-        "Version 2\n"
-        "\n"
-        "DIEE, Universidad del Norte\n"
-        "May, 2022\n"
-        "Barranquilla, Colombia"))
-        self.AboutInfo1_2.setText(_translate("AboutWindow", "Title:\n"
-        "Herramienta para analizar los\n"
-        "efectos de la recarga de buses\n"
-        "eléctricos sobre redes de\n"
-        "distribución\n"
-        "\n"
-        "Authors v. 1:\n"
-        "Andrés De la Hoz\n"
-        "Andrea De la Hoz\n"
-        "\n"
-        "Authors v. 2:\n"
-        "Javier Bayter\n"
-        "Erick Narváez\n"
-        "\n"
-        "Advisers:\n"
-        "Adriana Arango\n"
-        "Mauricio Restrepo"))
-        self.AboutInfo1_3.setText(_translate("AboutWindow", "Project Info"))
-class Ui_RouteWindow(QtWidgets.QMainWindow):
-    # Definición de características de la Interfaz
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(964, 677)
-        MainWindow.setFixedSize(964, 677) # Fijar Tamaño de la Ventana
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ToolTipText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ToolTipText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
-        MainWindow.setPalette(palette)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../Imgs/iconBus.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        MainWindow.setWindowIcon(icon)
-        MainWindow.setWindowOpacity(1.0)
-        MainWindow.setAutoFillBackground(False)
-        MainWindow.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
-        MainWindow.setDocumentMode(False)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.ButtonsFrame = QtWidgets.QFrame(self.centralwidget)
-        self.ButtonsFrame.setGeometry(QtCore.QRect(20, 540, 921, 80))
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.NoRole, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.HighlightedText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.NoRole, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.HighlightedText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.NoRole, brush)
-        self.ButtonsFrame.setPalette(palette)
-        self.ButtonsFrame.setAutoFillBackground(False)
-        self.ButtonsFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.ButtonsFrame.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.ButtonsFrame.setLineWidth(2)
-        self.ButtonsFrame.setObjectName("ButtonsFrame")
-        self.RouteButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.RouteButton.setEnabled(False)
-        self.RouteButton.setGeometry(QtCore.QRect(30, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.RouteButton.setFont(font)
-        self.RouteButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.RouteButton.setObjectName("RouteButton")
-        self.BusButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.BusButton.setGeometry(QtCore.QRect(220, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.BusButton.setFont(font)
-        self.BusButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.BusButton.setObjectName("BusButton")
-        self.DynamicButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.DynamicButton.setGeometry(QtCore.QRect(600, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.DynamicButton.setFont(font)
-        self.DynamicButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.DynamicButton.setObjectName("DynamicButton")
-        self.OportunityButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.OportunityButton.setGeometry(QtCore.QRect(410, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.OportunityButton.setFont(font)
-        self.OportunityButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.OportunityButton.setObjectName("OportunityButton")
-        self.GridButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.GridButton.setGeometry(QtCore.QRect(790, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.GridButton.setFont(font)
-        self.GridButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.GridButton.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
-        self.GridButton.setObjectName("GridButton")
-        self.RouteMapFrame = QtWidgets.QFrame(self.centralwidget)
-        self.RouteMapFrame.setGeometry(QtCore.QRect(30, 120, 441, 401))
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        self.RouteMapFrame.setPalette(palette)
-        self.RouteMapFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.RouteMapFrame.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.RouteMapFrame.setObjectName("RouteMapFrame")
-        self.RouteMapWidget = QtWidgets.QWidget(self.RouteMapFrame)
-        self.RouteMapWidget.setGeometry(QtCore.QRect(9, 9, 421, 381))
-        self.RouteMapWidget.setObjectName("RouteMapWidget")
-        self.SearchFileButton = QtWidgets.QPushButton(self.centralwidget)
-        self.SearchFileButton.setEnabled(True)
-        self.SearchFileButton.setGeometry(QtCore.QRect(390, 20, 81, 41))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        self.SearchFileButton.setFont(font)
-        self.SearchFileButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.SearchFileButton.setObjectName("SearchFileButton")
-        self.SimulateFileButton = QtWidgets.QPushButton(self.centralwidget)
-        self.SimulateFileButton.setEnabled(True)
-        self.SimulateFileButton.setGeometry(QtCore.QRect(490, 20, 81, 41))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        self.SimulateFileButton.setFont(font)
-        self.SimulateFileButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.SimulateFileButton.setObjectName("SimulateFileButton")
-        self.ProfileMapFrame = QtWidgets.QFrame(self.centralwidget)
-        self.ProfileMapFrame.setGeometry(QtCore.QRect(490, 120, 441, 401))
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        self.ProfileMapFrame.setPalette(palette)
-        self.ProfileMapFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.ProfileMapFrame.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.ProfileMapFrame.setObjectName("ProfileMapFrame")
-        self.ProfileMapWidget = QtWidgets.QWidget(self.ProfileMapFrame)
-        self.ProfileMapWidget.setGeometry(QtCore.QRect(10, 10, 421, 381))
-        self.ProfileMapWidget.setObjectName("ProfileMapWidget")
-        self.RouteFileLineFrame = QtWidgets.QFrame(self.centralwidget)
-        self.RouteFileLineFrame.setEnabled(False)
-        self.RouteFileLineFrame.setGeometry(QtCore.QRect(360, 70, 241, 31))
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        self.RouteFileLineFrame.setPalette(palette)
-        self.RouteFileLineFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.RouteFileLineFrame.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.RouteFileLineFrame.setObjectName("RouteFileLineFrame")
-        self.RouteFileLine = QtWidgets.QLineEdit(self.RouteFileLineFrame)
-        self.RouteFileLine.setGeometry(QtCore.QRect(10, 0, 221, 31))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.RouteFileLine.setFont(font)
-        self.RouteFileLine.setStyleSheet("background-color: rgb(234, 234, 234);\n""border-color: rgb(0, 0, 0);\n""")
-        self.RouteFileLine.setObjectName("RouteFileLine")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 964, 26))
-        self.menubar.setObjectName("menubar")
-        self.menuHelp = QtWidgets.QMenu(self.menubar)
-        self.menuHelp.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.menuHelp.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.menuHelp.setStatusTip("")
-        self.menuHelp.setSeparatorsCollapsible(False)
-        self.menuHelp.setToolTipsVisible(False)
-        self.menuHelp.setObjectName("menuHelp")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.statusbar.setFont(font)
-        self.statusbar.setAutoFillBackground(False)
-        self.statusbar.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.actionUser_manual = QtWidgets.QAction(MainWindow)
-        self.actionUser_manual.setObjectName("actionUser_manual")
-        self.actionAbout = QtWidgets.QAction(MainWindow)
-        self.actionAbout.setMenuRole(QtWidgets.QAction.TextHeuristicRole)
-        self.actionAbout.setObjectName("actionAbout")
-        self.menuHelp.addAction(self.actionUser_manual)
-        self.menuHelp.addAction(self.actionAbout)
-        self.menubar.addAction(self.menuHelp.menuAction())
+class UiRouteWindow(QtWidgets.QMainWindow):
+    # Constructor
+    def __init__(self):
+        super(UiRouteWindow, self).__init__()
+        self.__RouteWindow = uic.loadUi('../UI/InterfaceRoute.ui', self)
+        self.AboutTab = UiAboutWindow()
+        self.routeData = feather.read_feather('../Route/Template/ROUTE-Template.feather')
 
-        # Llamadas a funciones
-        self.actionAbout.triggered.connect(self.clickedAbout)
-        self.SearchFileButton.clicked.connect(self.pressedSearchFileButton)
-        self.SimulateFileButton.clicked.connect(self.pressedSimulateFileButton)
-        self.setupRouteFigures()
-        self.BusButton.clicked.connect(self.pressedBusButton)
+        # Llamadas a Métodos
+        # Botones de Route Window
+        self.__RouteWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__RouteWindow.BusButton.clicked.connect(self.pressed_bus_button)
+        self.__RouteWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+        self.__RouteWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.__RouteWindow.SearchFileButton.clicked.connect(self.__pressed_search_file_button)
+        self.__RouteWindow.SimulateFileButton.clicked.connect(self.__pressed_simulate_file_button)
+        # Setups Gráficas de Route Window
+        self.__setup_route_figures()
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Electric Bus Charging Analyzer - Route"))
-        self.RouteButton.setStatusTip(_translate("MainWindow", "Push to go to the Route tab"))
-        self.RouteButton.setText(_translate("MainWindow", "Route"))
-        self.BusButton.setStatusTip(_translate("MainWindow", "Push to go to the Bus Parameters tab"))
-        self.BusButton.setText(_translate("MainWindow", "Bus\n""Parameters"))
-        self.DynamicButton.setStatusTip(_translate("MainWindow", "Push to go to the In Motion Charging tab"))
-        self.DynamicButton.setText(_translate("MainWindow", "In Motion\n""Charging"))
-        self.OportunityButton.setStatusTip(_translate("MainWindow", "Push to go to the Oportunity Charging tab"))
-        self.OportunityButton.setText(_translate("MainWindow", "Oportunity\n""Charging"))
-        self.GridButton.setStatusTip(_translate("MainWindow", "Push to go to the Grid tab"))
-        self.GridButton.setText(_translate("MainWindow", "Grid\n""Impact"))
-        self.RouteMapFrame.setAccessibleName(_translate("MainWindow", ".csv"))
-        self.SearchFileButton.setStatusTip(_translate("MainWindow", "Push to Search .csv File "))
-        self.SearchFileButton.setText(_translate("MainWindow", "Search\n""File"))
-        self.SimulateFileButton.setStatusTip(_translate("MainWindow", "Push to Simulate Route"))
-        self.SimulateFileButton.setText(_translate("MainWindow", "Simulate"))
-        self.ProfileMapFrame.setAccessibleName(_translate("MainWindow", ".csv"))
-        self.RouteFileLineFrame.setAccessibleName(_translate("MainWindow", ".csv"))
-        self.menuHelp.setTitle(_translate("MainWindow", "Help"))
-        self.actionUser_manual.setText(_translate("MainWindow", "User Manual"))
-        self.actionUser_manual.setStatusTip(_translate("MainWindow", "Go to the User Manual"))
-        self.actionAbout.setText(_translate("MainWindow", "About"))
-        self.actionAbout.setStatusTip(_translate("MainWindow", "Show the About window"))
-
+    # Métodos
     # Abrir Pestaña About
-    def clickedAbout(self):
-        self.AboutWindow = QtWidgets.QDialog()
-        self.AboutTab = Ui_AboutWindow()
-        self.AboutTab.setupUi(self.AboutWindow)
-        self.AboutWindow.show()        
+    def clicked_about(self):
+        self.AboutTab.show()
 
-    # Buscar y definir la extensión del archivo .CSV
-    def pressedSearchFileButton(self):
-        filename, extension = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "CSV Files (*.csv)")
-        self.RouteFileLine.setText(filename)
+    # Cambiar a Bus Window
+    def pressed_bus_button(self):
+        widget.setCurrentIndex(1)
+        self.AboutTab.close()
+
+    # Cambiar a Route Window
+    def pressed_route_button(self):
+        widget.setCurrentIndex(0)
+        self.AboutTab.close()
+
+    # Cambiar a Opportunity Window
+    def pressed_opportunity_button(self):
+        widget.setCurrentIndex(2)
+        self.AboutTab.close()
+
+    # Cambiar a Dynamic Window
+    def pressed_dynamic_button(self):
+        widget.setCurrentIndex(3)
+        self.AboutTab.close()
+
+    # Buscar y definir la extensión del archivo .feather or .csv
+    def __pressed_search_file_button(self):
+        file_filter = "feather file (*.feather);;csv file (*.csv)"
+        (filename, extension) = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', '../Route/',
+                                                                      filter=self.tr(file_filter))
+        self.file_type = filename.split('.')[1]
+        print("File extension:", self.file_type)
+        self.__RouteWindow.RouteFileLine.setText(filename)
 
     # Leer y cargar el archivo .CSV
-    def pressedSimulateFileButton(self):
-        csvFile = self.RouteFileLine.text()
+    def __pressed_simulate_file_button(self):
+        file = self.__RouteWindow.RouteFileLine.text()
+        print("File:", file)
         try:
-            self.routeData = read_csv(csvFile)
-        except:
+            if self.file_type == 'feather':
+                self.routeData = feather.read_feather(file)
+            elif self.file_type == 'csv':
+                self.routeData = read_csv(file)
+            else:
+                raise Exception('File extension not supported')
+        except Exception as ex:
+            print(ex)
             print('Not a valid data vector')
-            return
+            self.routeData = None
 
-        #print(self.routeData)
-        self.plotRoute()
-
-    # Cambiar a Bus Window 
-    def pressedBusButton(self):
-        widget.setCurrentIndex(1)
+        print("Route data:")
+        print(self.routeData)
+        self.__plot_route()
 
     # Definir Plots (MAPA Y PERFIL)
-    def setupRouteFigures(self):
-        self.figureMapRoute = Figure(tight_layout=True)  
-        self.figureProfRoute = Figure(tight_layout=True)  
-        self.canvasMapRoute = FigureCanvas(self.figureMapRoute)  
+    def __setup_route_figures(self):
+        self.figureMapRoute = Figure(tight_layout=True)
+        self.figureProfRoute = Figure(tight_layout=True)
+        self.canvasMapRoute = FigureCanvas(self.figureMapRoute)
         self.canvasProfRoute = FigureCanvas(self.figureProfRoute)
-        self.toolbarMaproute = NavigationToolbar(self.canvasMapRoute, self)
+        self.toolbarMapRoute = NavigationToolbar(self.canvasMapRoute, self)
         self.toolbarProfRoute = NavigationToolbar(self.canvasProfRoute, self)
-        self.layoutMapRoute = QtWidgets.QVBoxLayout(self.RouteMapWidget)  
-        self.layoutProfRoute = QtWidgets.QVBoxLayout(self.ProfileMapWidget)  
-        self.layoutMapRoute.addWidget(self.toolbarMaproute)  
-        self.layoutMapRoute.addWidget(self.canvasMapRoute)  
-        self.layoutProfRoute.addWidget(self.toolbarProfRoute)  
-        self.layoutProfRoute.addWidget(self.canvasProfRoute)  
-        self.axMapRoute = self.figureMapRoute.add_subplot(111)  
-        self.axProfRoute = self.figureProfRoute.add_subplot(111)     
+        self.layoutMapRoute = QtWidgets.QVBoxLayout(self.__RouteWindow.RouteMapWidget)
+        self.layoutProfRoute = QtWidgets.QVBoxLayout(self.__RouteWindow.ProfileMapWidget)
+        self.layoutMapRoute.addWidget(self.toolbarMapRoute)
+        self.layoutMapRoute.addWidget(self.canvasMapRoute)
+        self.layoutProfRoute.addWidget(self.toolbarProfRoute)
+        self.layoutProfRoute.addWidget(self.canvasProfRoute)
+        self.axMapRoute = self.figureMapRoute.add_subplot(111)
+        self.axProfRoute = self.figureProfRoute.add_subplot(111)
 
     # Plotear dos gráficas = Latitud vs Longitud / Altitud vs Distancia
-    def plotRoute(self):
+    def __plot_route(self):
         # Map Figure
         long = self.routeData[['LONG']]
         lat = self.routeData[['LAT']]
         self.axMapRoute.cla()
-        self.axMapRoute.plot(long, lat, label='LONG-LAT')
-        self.axMapRoute.set_title('Route Map',  fontsize=12, fontweight="bold")
+        self.axMapRoute.plot(long.iloc[:, -1].values, lat.iloc[:, -1].values, label='LONG-LAT')
+        self.axMapRoute.set_title('Route Map', fontsize=12, fontweight="bold")
         self.axMapRoute.set_xlabel('Longitude', fontsize=10, fontweight="bold")
         self.axMapRoute.set_ylabel('Latitude', fontsize=10, fontweight="bold")
         self.axMapRoute.tick_params(labelsize=8)
         self.axMapRoute.grid()
         self.canvasMapRoute.draw()
-        
+
         # Profile Figure
         dist = self.routeData[['DIST']]
         alt = self.routeData[['ALT']]
         self.axProfRoute.cla()
-        self.axProfRoute.plot(dist, alt, label='ALT')
+        self.axProfRoute.plot(dist.iloc[:, -1].values, alt.iloc[:, -1].values, label='ALT')
         self.axProfRoute.set_title('Route Profile', fontsize=12, fontweight="bold")
         self.axProfRoute.set_xlabel('Distance [km]', fontsize=10, fontweight="bold")
         self.axProfRoute.set_ylabel('Altitude [m]', fontsize=10, fontweight="bold")
@@ -744,1162 +148,86 @@ class Ui_RouteWindow(QtWidgets.QMainWindow):
         label = self.routeData[['LABEL']]
 
         # Marcar Paradas
-        countStops = 0;
+        count_stops = 0
         for n in range(0, len(bus_stop)):
             if bus_stop.iloc[n].values[0] == 1:
-                countStops += 1    
-                if (countStops == 1):
-                    self.axMapRoute.plot(long.iloc[n].values[0], lat.iloc[n].values[0], label='STOP', marker='^', color='red')
-                    self.axProfRoute.plot(dist.iloc[n].values[0], alt.iloc[n].values[0], label='STOP',marker='^', color='red')   
+                count_stops += 1
+                if count_stops == 1:
+                    self.axMapRoute.plot(long.iloc[n].values[0], lat.iloc[n].values[0], label='STOP', marker='^',
+                                         color='red')
+                    self.axProfRoute.plot(dist.iloc[n].values[0], alt.iloc[n].values[0], label='STOP', marker='^',
+                                          color='red')
                 else:
                     self.axMapRoute.plot(long.iloc[n].values[0], lat.iloc[n].values[0], marker='^', color='red')
-                    self.axProfRoute.plot(dist.iloc[n].values[0], alt.iloc[n].values[0], marker='^', color='red')                     
-                
-                self.axMapRoute.annotate(label.iloc[n].values[0], (long.iloc[n].values[0], lat.iloc[n].values[0]), fontsize=7)
-                self.axProfRoute.annotate(label.iloc[n].values[0], (dist.iloc[n].values[0], alt.iloc[n].values[0]), fontsize=7)
+                    self.axProfRoute.plot(dist.iloc[n].values[0], alt.iloc[n].values[0], marker='^', color='red')
+
+                self.axMapRoute.annotate(label.iloc[n].values[0], (long.iloc[n].values[0], lat.iloc[n].values[0]),
+                                         fontsize=7)
+                self.axProfRoute.annotate(label.iloc[n].values[0], (dist.iloc[n].values[0], alt.iloc[n].values[0]),
+                                          fontsize=7)
 
         self.axMapRoute.legend(frameon=False, loc='best')
         self.canvasMapRoute.draw()
         self.axProfRoute.legend(frameon=False, loc='best')
-        self.canvasProfRoute.draw()       
-class Ui_BusWindow(QtWidgets.QMainWindow):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(964, 677)
-        MainWindow.setFixedSize(964, 677)
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ToolTipText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ToolTipText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(223, 223, 223))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Midlight, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Dark, brush)
-        brush = QtGui.QBrush(QtGui.QColor(127, 127, 127))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Mid, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.BrightText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(95, 95, 95))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ButtonText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Shadow, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.AlternateBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipBase, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
-        MainWindow.setPalette(palette)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../Imgs/iconBus.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        MainWindow.setWindowIcon(icon)
-        MainWindow.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
-        MainWindow.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.ButtonsFrame = QtWidgets.QFrame(self.centralwidget)
-        self.ButtonsFrame.setGeometry(QtCore.QRect(20, 540, 921, 80))
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.NoRole, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(143, 143, 143))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.HighlightedText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.NoRole, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Light, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.HighlightedText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.NoRole, brush)
-        self.ButtonsFrame.setPalette(palette)
-        self.ButtonsFrame.setAutoFillBackground(False)
-        self.ButtonsFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.ButtonsFrame.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.ButtonsFrame.setLineWidth(2)
-        self.ButtonsFrame.setObjectName("ButtonsFrame")
-        self.RouteButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.RouteButton.setGeometry(QtCore.QRect(30, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.RouteButton.setFont(font)
-        self.RouteButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.RouteButton.setObjectName("RouteButton")
-        self.BusButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.BusButton.setEnabled(False)
-        self.BusButton.setGeometry(QtCore.QRect(220, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.BusButton.setFont(font)
-        self.BusButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.BusButton.setObjectName("BusButton")
-        self.DynamicButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.DynamicButton.setGeometry(QtCore.QRect(600, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.DynamicButton.setFont(font)
-        self.DynamicButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.DynamicButton.setObjectName("DynamicButton")
-        self.OportunityButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.OportunityButton.setGeometry(QtCore.QRect(410, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.OportunityButton.setFont(font)
-        self.OportunityButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.OportunityButton.setObjectName("OportunityButton")
-        self.GridButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.GridButton.setGeometry(QtCore.QRect(790, 10, 101, 61))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.GridButton.setFont(font)
-        self.GridButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.GridButton.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
-        self.GridButton.setObjectName("GridButton")
-        self.BusParametersTab = QtWidgets.QTabWidget(self.centralwidget)
-        self.BusParametersTab.setGeometry(QtCore.QRect(10, 10, 941, 521))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setBold(True)
-        font.setWeight(75)
-        self.BusParametersTab.setFont(font)
-        self.BusParametersTab.setFocusPolicy(QtCore.Qt.TabFocus)
-        self.BusParametersTab.setStyleSheet("background-color: rgb(191, 191, 191);\n""gridline-color: rgb(0, 0, 0);")
-        self.BusParametersTab.setObjectName("BusParametersTab")
-        self.BusGeneralDataTab = QtWidgets.QWidget()
-        self.BusGeneralDataTab.setStyleSheet("")
-        self.BusGeneralDataTab.setObjectName("BusGeneralDataTab")
-        self.BusParametersTable = QtWidgets.QTableWidget(self.BusGeneralDataTab)
-        self.BusParametersTable.setGeometry(QtCore.QRect(40, 60, 361, 161))
-        self.BusParametersTable.setStyleSheet("background-color: rgb(255, 255, 255)")
-        self.BusParametersTable.setObjectName("BusParametersTable")
-        self.BusParametersTable.setColumnCount(1)
-        self.BusParametersTable.setRowCount(9)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(5, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(6, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(7, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setVerticalHeaderItem(8, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(0, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(1, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(2, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(3, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(4, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(5, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(6, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(7, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.BusParametersTable.setItem(8, 0, item)
-        self.SpeedCurveTable = QtWidgets.QTableWidget(self.BusGeneralDataTab)
-        self.SpeedCurveTable.setGeometry(QtCore.QRect(80, 300, 271, 131))
-        self.SpeedCurveTable.setStyleSheet("background-color: rgb(255, 255, 255)")
-        self.SpeedCurveTable.setObjectName("SpeedCurveTable")
-        self.SpeedCurveTable.setColumnCount(1)
-        self.SpeedCurveTable.setRowCount(3)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.SpeedCurveTable.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.SpeedCurveTable.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.SpeedCurveTable.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.SpeedCurveTable.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.SpeedCurveTable.setItem(0, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.SpeedCurveTable.setItem(1, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.SpeedCurveTable.setItem(2, 0, item)
-        self.BusParameterLabel = QtWidgets.QLabel(self.BusGeneralDataTab)
-        self.BusParameterLabel.setGeometry(QtCore.QRect(140, 20, 151, 16))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.BusParameterLabel.setFont(font)
-        self.BusParameterLabel.setObjectName("BusParameterLabel")
-        self.SpeedCurveLabel = QtWidgets.QLabel(self.BusGeneralDataTab)
-        self.SpeedCurveLabel.setGeometry(QtCore.QRect(160, 270, 131, 16))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.SpeedCurveLabel.setFont(font)
-        self.SpeedCurveLabel.setObjectName("SpeedCurveLabel")
-        self.PlotBusGenDataButton = QtWidgets.QPushButton(self.BusGeneralDataTab)
-        self.PlotBusGenDataButton.setGeometry(QtCore.QRect(610, 10, 101, 41))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.PlotBusGenDataButton.setFont(font)
-        self.PlotBusGenDataButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.PlotBusGenDataButton.setObjectName("PlotBusGenDataButton")
-        self.BusGenDataFrame = QtWidgets.QFrame(self.BusGeneralDataTab)
-        self.BusGenDataFrame.setGeometry(QtCore.QRect(430, 60, 491, 421))
-        palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Window, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Button, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-        brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
-        brush.setStyle(QtCore.Qt.SolidPattern)
-        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
-        self.BusGenDataFrame.setPalette(palette)
-        self.BusGenDataFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.BusGenDataFrame.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.BusGenDataFrame.setObjectName("BusGenDataFrame")
-        self.SpeedCurveWidget = QtWidgets.QWidget(self.BusGenDataFrame)
-        self.SpeedCurveWidget.setGeometry(QtCore.QRect(9, 10, 471, 201))
-        self.SpeedCurveWidget.setObjectName("SpeedCurveWidget")
-        self.DistanceCurveWidget = QtWidgets.QWidget(self.BusGenDataFrame)
-        self.DistanceCurveWidget.setGeometry(QtCore.QRect(10, 210, 471, 201))
-        self.DistanceCurveWidget.setObjectName("DistanceCurveWidget")
-        self.BusParametersTab.addTab(self.BusGeneralDataTab, "")
-        self.BusFleetDataTab = QtWidgets.QWidget()
-        self.BusFleetDataTab.setObjectName("BusFleetDataTab")
-        self.FleetParameterLabel = QtWidgets.QLabel(self.BusFleetDataTab)
-        self.FleetParameterLabel.setGeometry(QtCore.QRect(190, 70, 171, 21))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.FleetParameterLabel.setFont(font)
-        self.FleetParameterLabel.setObjectName("FleetParameterLabel")
-        self.FleetParametersTable = QtWidgets.QTableWidget(self.BusFleetDataTab)
-        self.FleetParametersTable.setGeometry(QtCore.QRect(70, 110, 421, 321))
-        self.FleetParametersTable.setStyleSheet("background-color: rgb(255, 255, 255)")
-        self.FleetParametersTable.setObjectName("FleetParametersTable")
-        self.FleetParametersTable.setColumnCount(1)
-        self.FleetParametersTable.setRowCount(8)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setVerticalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setVerticalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setVerticalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setVerticalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setVerticalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setVerticalHeaderItem(5, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setVerticalHeaderItem(6, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setVerticalHeaderItem(7, item)
-        item = QtWidgets.QTableWidgetItem()
-        item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setItem(0, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setItem(1, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setItem(2, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setItem(3, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setItem(4, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setItem(5, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setItem(6, 0, item)
-        item = QtWidgets.QTableWidgetItem()
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(8)
-        font.setBold(True)
-        font.setWeight(75)
-        item.setFont(font)
-        self.FleetParametersTable.setItem(7, 0, item)
-        self.TimeParametersgroupBox = QtWidgets.QGroupBox(self.BusFleetDataTab)
-        self.TimeParametersgroupBox.setGeometry(QtCore.QRect(590, 60, 291, 341))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.TimeParametersgroupBox.setFont(font)
-        self.TimeParametersgroupBox.setObjectName("TimeParametersgroupBox")
-        self.PeakTimesToolBox = QtWidgets.QToolBox(self.TimeParametersgroupBox)
-        self.PeakTimesToolBox.setGeometry(QtCore.QRect(50, 50, 191, 141))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.PeakTimesToolBox.setFont(font)
-        self.PeakTimesToolBox.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.PeakTimesToolBox.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.PeakTimesToolBox.setObjectName("PeakTimesToolBox")
-        self.PeakTimes1Page = QtWidgets.QWidget()
-        self.PeakTimes1Page.setGeometry(QtCore.QRect(0, 0, 191, 71))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.PeakTimes1Page.setFont(font)
-        self.PeakTimes1Page.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.PeakTimes1Page.setObjectName("PeakTimes1Page")
-        self.STPtimeEdit = QtWidgets.QTimeEdit(self.PeakTimes1Page)
-        self.STPtimeEdit.setGeometry(QtCore.QRect(10, 0, 118, 22))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        self.STPtimeEdit.setFont(font)
-        self.STPtimeEdit.setAutoFillBackground(False)
-        self.STPtimeEdit.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.STPtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(6, 0, 0)))
-        self.STPtimeEdit.setTime(QtCore.QTime(6, 0, 0))
-        self.STPtimeEdit.setObjectName("STPtimeEdit")
-        self.ETPtimeEdit = QtWidgets.QTimeEdit(self.PeakTimes1Page)
-        self.ETPtimeEdit.setGeometry(QtCore.QRect(10, 30, 118, 22))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        self.ETPtimeEdit.setFont(font)
-        self.ETPtimeEdit.setAutoFillBackground(False)
-        self.ETPtimeEdit.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.ETPtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(8, 0, 0)))
-        self.ETPtimeEdit.setTime(QtCore.QTime(8, 0, 0))
-        self.ETPtimeEdit.setObjectName("ETPtimeEdit")
-        self.STPlabel = QtWidgets.QLabel(self.PeakTimes1Page)
-        self.STPlabel.setGeometry(QtCore.QRect(140, 0, 31, 16))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setBold(True)
-        font.setWeight(75)
-        self.STPlabel.setFont(font)
-        self.STPlabel.setObjectName("STPlabel")
-        self.ETPlabel = QtWidgets.QLabel(self.PeakTimes1Page)
-        self.ETPlabel.setGeometry(QtCore.QRect(140, 30, 31, 16))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setBold(True)
-        font.setWeight(75)
-        self.ETPlabel.setFont(font)
-        self.ETPlabel.setObjectName("ETPlabel")
-        self.PeakTimesToolBox.addItem(self.PeakTimes1Page, "")
-        self.PeakTimes2Page = QtWidgets.QWidget()
-        self.PeakTimes2Page.setGeometry(QtCore.QRect(0, 0, 100, 30))
-        self.PeakTimes2Page.setObjectName("PeakTimes2Page")
-        self.STMPtimeEdit = QtWidgets.QTimeEdit(self.PeakTimes2Page)
-        self.STMPtimeEdit.setGeometry(QtCore.QRect(10, 0, 118, 22))
-        self.STMPtimeEdit.setAutoFillBackground(False)
-        self.STMPtimeEdit.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.STMPtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(15, 30, 0)))
-        self.STMPtimeEdit.setTime(QtCore.QTime(15, 30, 0))
-        self.STMPtimeEdit.setObjectName("STMPtimeEdit")
-        self.STMPlabel = QtWidgets.QLabel(self.PeakTimes2Page)
-        self.STMPlabel.setGeometry(QtCore.QRect(140, 0, 41, 20))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setBold(True)
-        font.setWeight(75)
-        self.STMPlabel.setFont(font)
-        self.STMPlabel.setObjectName("STMPlabel")
-        self.EMPtimeEdit = QtWidgets.QTimeEdit(self.PeakTimes2Page)
-        self.EMPtimeEdit.setGeometry(QtCore.QRect(10, 30, 118, 22))
-        self.EMPtimeEdit.setAutoFillBackground(False)
-        self.EMPtimeEdit.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.EMPtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(8, 0, 0)))
-        self.EMPtimeEdit.setTime(QtCore.QTime(8, 0, 0))
-        self.EMPtimeEdit.setObjectName("EMPtimeEdit")
-        self.EMPlabel = QtWidgets.QLabel(self.PeakTimes2Page)
-        self.EMPlabel.setGeometry(QtCore.QRect(140, 30, 31, 16))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setBold(True)
-        font.setWeight(75)
-        self.EMPlabel.setFont(font)
-        self.EMPlabel.setObjectName("EMPlabel")
-        self.PeakTimesToolBox.addItem(self.PeakTimes2Page, "")
-        self.StartEndTimesToolBox = QtWidgets.QToolBox(self.TimeParametersgroupBox)
-        self.StartEndTimesToolBox.setGeometry(QtCore.QRect(50, 200, 191, 101))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.StartEndTimesToolBox.setFont(font)
-        self.StartEndTimesToolBox.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.StartEndTimesToolBox.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.StartEndTimesToolBox.setObjectName("StartEndTimesToolBox")
-        self.StartEndTimesPage = QtWidgets.QWidget()
-        self.StartEndTimesPage.setGeometry(QtCore.QRect(0, 0, 191, 66))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.StartEndTimesPage.setFont(font)
-        self.StartEndTimesPage.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.StartEndTimesPage.setObjectName("StartEndTimesPage")
-        self.STFtimeEdit = QtWidgets.QTimeEdit(self.StartEndTimesPage)
-        self.STFtimeEdit.setGeometry(QtCore.QRect(10, 0, 118, 22))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        self.STFtimeEdit.setFont(font)
-        self.STFtimeEdit.setAutoFillBackground(False)
-        self.STFtimeEdit.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.STFtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(5, 0, 0)))
-        self.STFtimeEdit.setTime(QtCore.QTime(5, 0, 0))
-        self.STFtimeEdit.setObjectName("STFtimeEdit")
-        self.ETFtimeEdit = QtWidgets.QTimeEdit(self.StartEndTimesPage)
-        self.ETFtimeEdit.setGeometry(QtCore.QRect(10, 30, 118, 22))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        self.ETFtimeEdit.setFont(font)
-        self.ETFtimeEdit.setAutoFillBackground(False)
-        self.ETFtimeEdit.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.ETFtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(21, 30, 0)))
-        self.ETFtimeEdit.setTime(QtCore.QTime(21, 30, 0))
-        self.ETFtimeEdit.setObjectName("ETFtimeEdit")
-        self.STFlabel = QtWidgets.QLabel(self.StartEndTimesPage)
-        self.STFlabel.setGeometry(QtCore.QRect(140, 0, 31, 16))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setBold(True)
-        font.setWeight(75)
-        self.STFlabel.setFont(font)
-        self.STFlabel.setObjectName("STFlabel")
-        self.ETFlabel = QtWidgets.QLabel(self.StartEndTimesPage)
-        self.ETFlabel.setGeometry(QtCore.QRect(140, 30, 31, 16))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setBold(True)
-        font.setWeight(75)
-        self.ETFlabel.setFont(font)
-        self.ETFlabel.setObjectName("ETFlabel")
-        self.StartEndTimesToolBox.addItem(self.StartEndTimesPage, "")
-        self.BusParametersTab.addTab(self.BusFleetDataTab, "")
-        self.OperationDiagramTab = QtWidgets.QWidget()
-        self.OperationDiagramTab.setObjectName("OperationDiagramTab")
-        self.GenOperationDiagramButton = QtWidgets.QPushButton(self.OperationDiagramTab)
-        self.GenOperationDiagramButton.setGeometry(QtCore.QRect(340, 10, 261, 31))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.GenOperationDiagramButton.setFont(font)
-        self.GenOperationDiagramButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.GenOperationDiagramButton.setObjectName("GenOperationDiagramButton")
-        self.BusprogressBar = QtWidgets.QProgressBar(self.OperationDiagramTab)
-        self.BusprogressBar.setGeometry(QtCore.QRect(380, 50, 181, 23))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.BusprogressBar.setFont(font)
-        self.BusprogressBar.setAutoFillBackground(False)
-        self.BusprogressBar.setStyleSheet("")
-        self.BusprogressBar.setProperty("value", 0)
-        self.BusprogressBar.setTextVisible(True)
-        self.BusprogressBar.setOrientation(QtCore.Qt.Horizontal)
-        self.BusprogressBar.setInvertedAppearance(False)
-        self.BusprogressBar.setObjectName("BusprogressBar")
-        self.PositionSpeedtabWidget = QtWidgets.QTabWidget(self.OperationDiagramTab)
-        self.PositionSpeedtabWidget.setGeometry(QtCore.QRect(10, 80, 921, 401))
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.PositionSpeedtabWidget.setFont(font)
-        self.PositionSpeedtabWidget.setFocusPolicy(QtCore.Qt.TabFocus)
-        self.PositionSpeedtabWidget.setTabPosition(QtWidgets.QTabWidget.West)
-        self.PositionSpeedtabWidget.setObjectName("PositionSpeedtabWidget")
-        self.PositionTab = QtWidgets.QWidget()
-        self.PositionTab.setObjectName("PositionTab")
-        self.OPPositionCurveWidget = QtWidgets.QWidget(self.PositionTab)
-        self.OPPositionCurveWidget.setGeometry(QtCore.QRect(20, 20, 851, 361))
-        self.OPPositionCurveWidget.setObjectName("OPPositionCurveWidget")
-        self.PositionSpeedtabWidget.addTab(self.PositionTab, "")
-        self.SpeedTab = QtWidgets.QWidget()
-        self.SpeedTab.setObjectName("SpeedTab")
-        self.OPSpeedCurveWidget = QtWidgets.QWidget(self.SpeedTab)
-        self.OPSpeedCurveWidget.setGeometry(QtCore.QRect(20, 20, 851, 361))
-        self.OPSpeedCurveWidget.setObjectName("OPSpeedCurveWidget")
-        self.PositionSpeedtabWidget.addTab(self.SpeedTab, "")
-        self.BusParametersTab.addTab(self.OperationDiagramTab, "")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 964, 26))
-        self.menubar.setObjectName("menubar")
-        self.menuHelp = QtWidgets.QMenu(self.menubar)
-        self.menuHelp.setObjectName("menuHelp")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        font = QtGui.QFont()
-        font.setFamily("MS Sans Serif")
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.statusbar.setFont(font)
-        self.statusbar.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.actionUser_Manual = QtWidgets.QAction(MainWindow)
-        self.actionUser_Manual.setObjectName("actionUser_Manual")
-        self.actionAbout = QtWidgets.QAction(MainWindow)
-        self.actionAbout.setObjectName("actionAbout")
-        self.menuHelp.addAction(self.actionUser_Manual)
-        self.menuHelp.addAction(self.actionAbout)
-        self.menubar.addAction(self.menuHelp.menuAction())
+        self.canvasProfRoute.draw()
 
-        # Llamadas a funciones
-        self.actionAbout.triggered.connect(self.clickedAbout)
-        self.RouteButton.clicked.connect(self.pressedBusButton)
-        self.setupBusDataFigures()
-        self.PlotBusGenDataButton.clicked.connect(self.pressedPlotBusGenDataButton)
-        self.setupOpDiagramFigures()
-        self.GenOperationDiagramButton.clicked.connect(self.pressedGenOperationDiagramButton)
 
-        self.retranslateUi(MainWindow)
-        self.BusParametersTab.setCurrentIndex(0)
-        self.PeakTimesToolBox.setCurrentIndex(0)
-        self.StartEndTimesToolBox.setCurrentIndex(0)
-        self.PositionSpeedtabWidget.setCurrentIndex(1)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
+    # Constructor
+    def __init__(self):
+        super(UiBusWindow, self).__init__()
+        self.__BusWindow = uic.loadUi('../UI/InterfaceBus.ui', self)
+        self.__BusWindow.BusParametersTab.setCurrentIndex(0)
+        self.__BusWindow.PeakTimesToolBox.setCurrentIndex(0)
+        self.__BusWindow.StartEndTimesToolBox.setCurrentIndex(0)
+        self.__BusWindow.PositionSpeedtabWidget.setCurrentIndex(0)
 
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Electric Bus Recharging Analyzer - Bus Parameters"))
-        self.RouteButton.setStatusTip(_translate("MainWindow", "Push to go to the Route tab"))
-        self.RouteButton.setText(_translate("MainWindow", "Route"))
-        self.BusButton.setStatusTip(_translate("MainWindow", "Push to go to the Bus Parameters tab"))
-        self.BusButton.setText(_translate("MainWindow", "Bus\n""Parameters"))
-        self.DynamicButton.setStatusTip(_translate("MainWindow", "Push to go to the In Motion Charging tab"))
-        self.DynamicButton.setText(_translate("MainWindow", "In Motion\n""Charging"))
-        self.OportunityButton.setStatusTip(_translate("MainWindow", "Push to go to the Oportunity Charging tab"))
-        self.OportunityButton.setText(_translate("MainWindow", "Oportunity\n""Charging"))
-        self.GridButton.setStatusTip(_translate("MainWindow", "Push to go to the Grid tab"))
-        self.GridButton.setText(_translate("MainWindow", "Grid\n""Impact"))
-        item = self.BusParametersTable.verticalHeaderItem(0)
-        item.setText(_translate("MainWindow", "fr: Rolling friction coefficient"))
-        item = self.BusParametersTable.verticalHeaderItem(1)
-        item.setText(_translate("MainWindow", "m [kg]: Total vehicle mass"))
-        item = self.BusParametersTable.verticalHeaderItem(2)
-        item.setText(_translate("MainWindow", "g [m/s2]: Gravity acceleration"))
-        item = self.BusParametersTable.verticalHeaderItem(3)
-        item.setText(_translate("MainWindow", "rho [kg/m3]: Air density"))
-        item = self.BusParametersTable.verticalHeaderItem(4)
-        item.setText(_translate("MainWindow", "alpha: Air resistance coefficient"))
-        item = self.BusParametersTable.verticalHeaderItem(5)
-        item.setText(_translate("MainWindow", "A [m2]: Front area of the vehicle"))
-        item = self.BusParametersTable.verticalHeaderItem(6)
-        item.setText(_translate("MainWindow", "Paux [kW]: Auxiliary load consumption"))
-        item = self.BusParametersTable.verticalHeaderItem(7)
-        item.setText(_translate("MainWindow", "nout [%] : Consumption efficiency"))
-        item = self.BusParametersTable.verticalHeaderItem(8)
-        item.setText(_translate("MainWindow", "nin [%]: Regeneration efficiency"))
-        item = self.BusParametersTable.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Value"))
-        __sortingEnabled = self.BusParametersTable.isSortingEnabled()
-        self.BusParametersTable.setSortingEnabled(False)
-        item = self.BusParametersTable.item(0, 0)
-        item.setText(_translate("MainWindow", "0.02"))
-        item = self.BusParametersTable.item(1, 0)
-        item.setText(_translate("MainWindow", "15900"))
-        item = self.BusParametersTable.item(2, 0)
-        item.setText(_translate("MainWindow", "9.81"))
-        item = self.BusParametersTable.item(3, 0)
-        item.setText(_translate("MainWindow", "1.29"))
-        item = self.BusParametersTable.item(4, 0)
-        item.setText(_translate("MainWindow", "0.66"))
-        item = self.BusParametersTable.item(5, 0)
-        item.setText(_translate("MainWindow", "8.28"))
-        item = self.BusParametersTable.item(6, 0)
-        item.setText(_translate("MainWindow", "5.03"))
-        item = self.BusParametersTable.item(7, 0)
-        item.setText(_translate("MainWindow", "85"))
-        item = self.BusParametersTable.item(8, 0)
-        item.setText(_translate("MainWindow", "75"))
-        self.BusParametersTable.setSortingEnabled(__sortingEnabled)
-        item = self.SpeedCurveTable.verticalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Acceleration [m/s2]:"))
-        item = self.SpeedCurveTable.verticalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Braking [m/s2]"))
-        item = self.SpeedCurveTable.verticalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Maximum speed [km/h]: "))
-        item = self.SpeedCurveTable.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Value"))
-        __sortingEnabled = self.SpeedCurveTable.isSortingEnabled()
-        self.SpeedCurveTable.setSortingEnabled(False)
-        item = self.SpeedCurveTable.item(0, 0)
-        item.setText(_translate("MainWindow", "1"))
-        item = self.SpeedCurveTable.item(1, 0)
-        item.setText(_translate("MainWindow", "1.2"))
-        item = self.SpeedCurveTable.item(2, 0)
-        item.setText(_translate("MainWindow", "50"))
-        self.SpeedCurveTable.setSortingEnabled(__sortingEnabled)
-        self.BusParameterLabel.setText(_translate("MainWindow", "Bus Parameters"))
-        self.SpeedCurveLabel.setText(_translate("MainWindow", "Speed Curve"))
-        self.PlotBusGenDataButton.setStatusTip(_translate("MainWindow", "Push to plot the Speed and Distance Curve"))
-        self.PlotBusGenDataButton.setText(_translate("MainWindow", "Plot"))
-        self.BusGenDataFrame.setAccessibleName(_translate("MainWindow", ".csv"))
-        self.BusParametersTab.setTabText(self.BusParametersTab.indexOf(self.BusGeneralDataTab), _translate("MainWindow", "Bus General Data"))
-        self.FleetParameterLabel.setText(_translate("MainWindow", "Fleet Parameters"))
-        item = self.FleetParametersTable.verticalHeaderItem(0)
-        item.setText(_translate("MainWindow", "NBP: Total number of buses during peak period"))
-        item = self.FleetParametersTable.verticalHeaderItem(1)
-        item.setText(_translate("MainWindow", "NP: Number of peak periods"))
-        item = self.FleetParametersTable.verticalHeaderItem(2)
-        item.setText(_translate("MainWindow", "NMP: Number of average peak periods"))
-        item = self.FleetParametersTable.verticalHeaderItem(3)
-        item.setText(_translate("MainWindow", "FPP [s]: Dispatch frequency during peak period"))
-        item = self.FleetParametersTable.verticalHeaderItem(4)
-        item.setText(_translate("MainWindow", "ITS [s]: Idle time at each stop "))
-        item = self.FleetParametersTable.verticalHeaderItem(5)
-        item.setText(_translate("MainWindow", "ITT [s] : Idle time at terminal stop"))
-        item = self.FleetParametersTable.verticalHeaderItem(6)
-        item.setText(_translate("MainWindow", "NBV: Total number of valley buses"))
-        item = self.FleetParametersTable.verticalHeaderItem(7)
-        item.setText(_translate("MainWindow", "FPV [s]: Dispatch Frequency during valley period"))
-        item = self.FleetParametersTable.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "Value"))
-        __sortingEnabled = self.FleetParametersTable.isSortingEnabled()
-        self.FleetParametersTable.setSortingEnabled(False)
-        item = self.FleetParametersTable.item(0, 0)
-        item.setText(_translate("MainWindow", "7"))
-        item = self.FleetParametersTable.item(1, 0)
-        item.setText(_translate("MainWindow", "2"))
-        item = self.FleetParametersTable.item(2, 0)
-        item.setText(_translate("MainWindow", "1"))
-        item = self.FleetParametersTable.item(3, 0)
-        item.setText(_translate("MainWindow", "120"))
-        item = self.FleetParametersTable.item(4, 0)
-        item.setText(_translate("MainWindow", "20"))
-        item = self.FleetParametersTable.item(5, 0)
-        item.setText(_translate("MainWindow", "240"))
-        item = self.FleetParametersTable.item(6, 0)
-        item.setText(_translate("MainWindow", "6"))
-        item = self.FleetParametersTable.item(7, 0)
-        item.setText(_translate("MainWindow", "180"))
-        self.FleetParametersTable.setSortingEnabled(__sortingEnabled)
-        self.TimeParametersgroupBox.setTitle(_translate("MainWindow", "Time parameters"))
-        self.STPlabel.setText(_translate("MainWindow", "STP"))
-        self.ETPlabel.setText(_translate("MainWindow", "ETP"))
-        self.PeakTimesToolBox.setItemText(self.PeakTimesToolBox.indexOf(self.PeakTimes1Page), _translate("MainWindow", "Peak Period 1 "))
-        self.STMPlabel.setText(_translate("MainWindow", "STMP"))
-        self.EMPlabel.setText(_translate("MainWindow", "EMP"))
-        self.PeakTimesToolBox.setItemText(self.PeakTimesToolBox.indexOf(self.PeakTimes2Page), _translate("MainWindow", "Peak Period 2"))
-        self.STFlabel.setText(_translate("MainWindow", "STF"))
-        self.ETFlabel.setText(_translate("MainWindow", "ETF"))
-        self.StartEndTimesToolBox.setItemText(self.StartEndTimesToolBox.indexOf(self.StartEndTimesPage), _translate("MainWindow", "Start and End Times"))
-        self.BusParametersTab.setTabText(self.BusParametersTab.indexOf(self.BusFleetDataTab), _translate("MainWindow", "Bus Fleet Data"))
-        self.GenOperationDiagramButton.setStatusTip(_translate("MainWindow", "Push to generate the Operation diagram"))
-        self.GenOperationDiagramButton.setText(_translate("MainWindow", "Generate Operation Diagram"))
-        self.PositionSpeedtabWidget.setTabText(self.PositionSpeedtabWidget.indexOf(self.PositionTab), _translate("MainWindow", "Position"))
-        self.PositionSpeedtabWidget.setTabText(self.PositionSpeedtabWidget.indexOf(self.SpeedTab), _translate("MainWindow", "Speed"))
-        self.BusParametersTab.setTabText(self.BusParametersTab.indexOf(self.OperationDiagramTab), _translate("MainWindow", "Operation Diagram"))
-        self.menuHelp.setTitle(_translate("MainWindow", "Help"))
-        self.actionUser_Manual.setText(_translate("MainWindow", "User Manual"))
-        self.actionUser_Manual.setStatusTip(_translate("MainWindow", "Go to the User Manual"))
-        self.actionAbout.setText(_translate("MainWindow", "About"))
-        self.actionAbout.setStatusTip(_translate("MainWindow", "Show the About window"))
+        # Llamadas a Métodos
+        # Botones de Bus Window
+        self.__BusWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__BusWindow.RouteButton.clicked.connect(self.pressed_route_button)
+        self.__BusWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+        self.__BusWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.PlotBusGenDataButton.clicked.connect(self.__pressed_plot_bus_gen_data_button)
+        self.__BusWindow.GenOperationDiagramButton.clicked.connect(self.__pressed_gen_operation_diagram_button)
+        # Setups Gráficas de Bus Window
+        self.__setup_bus_data_figures()
+        self.__setup_op_diagram_figures()
 
-    # Abrir Pestaña About
-    def clickedAbout(self):
-        self.AboutWindow = QtWidgets.QDialog()
-        self.AboutTab = Ui_AboutWindow()
-        self.AboutTab.setupUi(self.AboutWindow)
-        self.AboutWindow.show()    
-
-    # Cambiar a Route Window 
-    def pressedBusButton(self):
-        widget.setCurrentIndex(0)
-
+    # Métodos
     # Calcular y graficar Velocidad vs Tiempo / Distancia vs Tiempo
-    def pressedPlotBusGenDataButton(self):
-        speedTable = self.SpeedCurveTable
-        acceleration = float(speedTable.item(0, 0).text())
-        braking = float(speedTable.item(1, 0).text())
-        maxSpeed = float(speedTable.item(2, 0).text())
-        #print(acceleration)
-        #print(braking)
-        #print(max_speed)
+    def __pressed_plot_bus_gen_data_button(self):
+        speed_table = self.SpeedCurveTable
+        acceleration = float(speed_table.item(0, 0).text())
+        braking = float(speed_table.item(1, 0).text())
+        max_speed = float(speed_table.item(2, 0).text())
+
         t = np.array([0])
         speed = np.array([0])
         accel = np.array([0])
         decel = np.array([0])
         dist = np.array([0])
-        deltaT = 0.5
+        delta_t = 0.5
 
-        for n in range(0, 600):
-            t = np.append(t, t[-1] + deltaT)
+        for _ in range(0, 600):
+            t = np.append(t, t[-1] + delta_t)
             if t[-1] < 150:
-                speed = np.append(speed, speed[-1] + acceleration * deltaT)
-                if speed[-1] > maxSpeed / 3.6:
-                    speed[-1] = maxSpeed / 3.6
+                speed = np.append(speed, speed[-1] + acceleration * delta_t)
+                if speed[-1] > max_speed / 3.6:
+                    speed[-1] = max_speed / 3.6
                 else:
                     accel = speed
                 decel[0] = float(speed[-1])
 
             else:
-                speed = np.append(speed, speed[-1] - braking * deltaT)
+                speed = np.append(speed, speed[-1] - braking * delta_t)
                 if speed[-1] < 0:
                     speed[-1] = 0
                 else:
                     decel = np.append(decel, speed[-1])
 
-            dist = np.append(dist, dist[-1] + (speed[-1] + speed[-2]) * deltaT / 2)
-        accel = np.append(accel, maxSpeed / 3.6)
+            dist = np.append(dist, dist[-1] + (speed[-1] + speed[-2]) * delta_t / 2)
+        accel = np.append(accel, max_speed / 3.6)
         decel = np.append(decel, speed[-1])
 
         self.speedCurve = speed
@@ -1908,317 +236,467 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
         self.timeCurve = t
         self.distanceCurve = dist
 
-        self.plotBusData()
+        self.__plot_bus_data()
 
-    # Calcular y graficar Curvas de Operación Distancia vs Tiempo / Velocidad vs Tiempo 
-    def pressedGenOperationDiagramButton(self):
-        def state0func(inputTup):
+    #    # Calcular y graficar Curvas de Operación Distancia vs Tiempo / Velocidad vs Tiempo
+    def __pressed_gen_operation_diagram_button(self):
+        def state0func(input_tup_f):
             # State 0: Buses are not in operation
-            timeVector, distVector, speedVector, deltaT, labelVector, stopVector = inputTup
-            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
-            distVector = np.append(distVector, distVector[-1])
-            speedVector = np.append(speedVector, 0)
-            labelVector.append('')
-            stopVector.append(0)
-            outTup = (timeVector, distVector, speedVector, labelVector, stopVector)
-            return (outTup)
+            (time_vector,
+             dist_vector,
+             speed_vector,
+             delta_t_f,
+             label_vector,
+             stop_vector) = input_tup_f
+            # Time Vector
+            time_vector = np.append(time_vector, time_vector[-1] + delta_t_f)
+            # Distance Vector
+            dist_vector = np.append(dist_vector, dist_vector[-1])
+            # Speed Vector
+            speed_vector = np.append(speed_vector, 0)
+            # Label Vector
+            label_vector.append('')
+            # Stop Vector
+            stop_vector.append(0)
+            # Out
+            out_tup = (time_vector, dist_vector, speed_vector, label_vector, stop_vector)
 
-        def state1func(inputTup):
-            # State1: Buses are stopped
-            timeVector, distVector, speedVector, deltaT, labelVector, stopVector, labelStop = inputTup
-            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
-            distVector = np.append(distVector, distVector[-1])
-            speedVector = np.append(speedVector, 0)
-            labelVector.append(labelStop)
-            stopVector.append(1)
-            outTup = (timeVector, distVector, speedVector, labelVector, stopVector)
-            if tIniPico1 < timeVector[-1] <= tEndPico1 or tIniPico2 < timeVector[-1] < tEndPico2:
-                if distVector[-1] == 0:
-                    stopDelay = 100
+            return out_tup
 
-            return (outTup)
+        def state1func(input_tup_f):
+            # State 1: Buses are stopped
+            (time_vector,
+             dist_vector,
+             speed_vector,
+             delta_t_f,
+             label_vector,
+             stop_vector,
+             label_stop_f) = input_tup_f
+            # Time Vector
+            time_vector = np.append(time_vector, time_vector[-1] + delta_t_f)
+            # Distance Vector
+            dist_vector = np.append(dist_vector, dist_vector[-1])
+            # Speed Vector
+            speed_vector = np.append(speed_vector, 0)
+            # Label Vector
+            label_vector.append(label_stop_f)
+            # Stop Vector
+            stop_vector.append(1)
+            # Out
+            out_tup = (time_vector, dist_vector, speed_vector, label_vector, stop_vector)
 
-        def state2func(inputTup):
+            if t_ini_pico1 < time_vector[-1] <= t_end_pico1 or t_ini_pico2 < time_vector[-1] < t_end_pico2:
+                if dist_vector[-1] == 0:
+                    stop_delay_f = 100
+
+            return out_tup
+
+        def state2func(input_tup_f):
             # State 2: buses are accelerating
-            timeVector, distVector, speedVector, deltaT, accelBus, indexAccel, labelVector, stopVector = inputTup
-            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
-            speedVector = np.append(speedVector, accelBus[indexAccel])
-            distVector = np.append(distVector, distVector[-1] + (speedVector[-1] + speedVector[-2]) * 0.5 * deltaT)
-            labelVector.append('')
-            stopVector.append(0)
-            indexAccel += 1
-            outTup = (timeVector, distVector, speedVector, indexAccel, labelVector, stopVector)
+            (time_vector,
+             dist_vector,
+             speed_vector,
+             delta_t_f,
+             accel_bus_f,
+             index_accel_f,
+             label_vector,
+             stop_vector) = input_tup_f
+            # Time Vector
+            time_vector = np.append(time_vector, time_vector[-1] + delta_t_f)
+            # Speed Vector
+            speed_vector = np.append(speed_vector, accel_bus_f[index_accel_f])
+            # Distance Vector
+            append_par = dist_vector[-1] + (speed_vector[-1] + speed_vector[-2]) * 0.5 * delta_t_f
+            dist_vector = np.append(dist_vector, append_par)
+            # Label Vector
+            label_vector.append('')
+            # Stop Vector
+            stop_vector.append(0)
+            # Acceleration Index
+            index_accel_f += 1
+            # Out
+            out_tup = (time_vector, dist_vector, speed_vector, index_accel_f, label_vector, stop_vector)
 
-            return (outTup)
+            return out_tup
 
-        def state3func(inputTup):  
+        def state3func(input_tup_f):
             # State 3: Constant speed
-            timeVector, distVector, speedVector, deltaT, maxSpeedBus, labelVector, stopVector = inputTup
-            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
-            speedVector = np.append(speedVector, maxSpeedBus)
-            distVector = np.append(distVector, distVector[-1] + (speedVector[-1] + speedVector[-2]) * 0.5 * deltaT)
-            labelVector.append('')
-            stopVector.append(0)
-            outTup = (timeVector, distVector, speedVector, labelVector, stopVector)
-            
-            return (outTup)
+            (time_vector,
+             dist_vector,
+             speed_vector,
+             delta_t_f,
+             max_speed_bus_f,
+             label_vector,
+             stop_vector) = input_tup_f
+            # Time Vector
+            time_vector = np.append(time_vector, time_vector[-1] + delta_t_f)
+            # Speed Vector
+            speed_vector = np.append(speed_vector, max_speed_bus_f)
+            # Distance Vector
+            append_par = dist_vector[-1] + (speed_vector[-1] + speed_vector[-2]) * 0.5 * delta_t_f
+            dist_vector = np.append(dist_vector, append_par)
+            # Label Vector
+            label_vector.append('')
+            # Stop Vector
+            stop_vector.append(0)
+            # Out
+            out_tup = (time_vector, dist_vector, speed_vector, label_vector, stop_vector)
 
-        def state4func(inputTup):  
+            return out_tup
+
+        def state4func(input_tup_f):
             # State 4: Decelerating
-            timeVector, distVector, speedVector, deltaT, decelBus, indexDecel, labelVector, stopVector = inputTup
-            timeVector = np.append(timeVector, timeVector[-1] + deltaT)
-            speedVector = np.append(speedVector, decelBus[indexDecel])
-            distVector = np.append(distVector, distVector[-1] + (speedVector[-1] + speedVector[-2]) * 0.5 * deltaT)
-            labelVector.append('')
-            stopVector.append(0)
-            indexDecel += 1
-            outTup = (timeVector, distVector, speedVector, indexDecel, labelVector, stopVector)
+            (time_vector,
+             dist_vector,
+             speed_vector,
+             delta_t_f,
+             decel_bus_f,
+             index_decel_f,
+             label_vector,
+             stop_vector) = input_tup_f
+            # Time Vector
+            time_vector = np.append(time_vector, time_vector[-1] + delta_t_f)
+            # Speed Vector
+            speed_vector = np.append(speed_vector, decel_bus_f[index_decel_f])
+            # Distance Vector
+            append_par = dist_vector[-1] + (speed_vector[-1] + speed_vector[-2]) * 0.5 * delta_t_f
+            dist_vector = np.append(dist_vector, append_par)
+            # Label Vector
+            label_vector.append('')
+            # Stop Vector
+            stop_vector.append(0)
+            # Deceleration Index
+            index_decel_f += 1
+            # Out
+            out_tup = (time_vector, dist_vector, speed_vector, index_decel_f, label_vector, stop_vector)
 
-            return (outTup)
+            return out_tup
 
-        def findNextStop(indexStop, busStopRoute):
-            busStop1 = indexStop
+        def find_next_stop(index_stop_f, bus_stop_routes):
+            bus_stop1_f = index_stop_f
             while 1:
-                indexStop = indexStop + 1
-                if indexStop > len(busStopRoute):
-                    busStop2 = []
+                index_stop_f = index_stop_f + 1
+                if index_stop_f > len(bus_stop_routes):
+                    bus_stop2_f = []
                     break
-                if busStopRoute.iloc[indexStop].values[0] == 1:
-                    busStop2 = indexStop
+                if bus_stop_routes.iloc[index_stop_f].values[0] == 1:
+                    bus_stop2_f = index_stop_f
                     break
-            outTup = (busStop1, busStop2)
+            out_tup = (bus_stop1_f, bus_stop2_f)
 
-            return (outTup)
+            return out_tup
 
-        def calculateBrakingDistance(decelBus, deltaT):
-            distBrake = 0
-            n = 1
-            for n in range(0, len(decelBus)):
-                #distBrake=distBrake+(decelBus[n]+decelBus[n-1])*0.5*deltaT
-                distBrake = distBrake + (decelBus[n]) * deltaT
+        def calculate_braking_distance(decel_bus_f, delta_t_f):
+            dist_brake_f = 0
 
-            return (distBrake)
+            for N in range(0, len(decel_bus_f)):
+                # dist_brake=dist_brake+(decel_bus[n]+decel_bus[n-1])*0.5*delta_t
+                dist_brake_f = dist_brake_f + (decel_bus_f[N]) * delta_t_f
 
-        def StopPositionLabels(distRoute, busStopRoute, labelRoute):
-            stopTicks = []
-            stopLabels = []
-            for n in range(0, len(busStopRoute)):
-                if busStopRoute.iloc[n].values[0] == 1:
-                    stopTicks.append(distRoute.iloc[n].values[0])
-                    stopLabels.append(labelRoute.iloc[n].values[0] + '=' + '%0.2f' % stopTicks[-1] + ' km')
+            return dist_brake_f
+
+        def stop_position_labels(dist_routes, bus_stop_routes, label_routes):
+            stop_ticks = []
+            stop_labels = []
+            for N in range(0, len(bus_stop_routes)):
+                if bus_stop_routes.iloc[N].values[0] == 1:
+                    stop_ticks.append(dist_routes.iloc[N].values[0])
+                    stop_labels.append(label_routes.iloc[N].values[0] + '=' + '%0.2f' % stop_ticks[-1] + ' km')
                 else:
                     pass
-            outTup = (stopTicks, stopLabels)
+            out_tup = (stop_ticks, stop_labels)
 
-            return (outTup)
+            return out_tup
 
         # Route parameters
-        distRoute = RouteTab.routeData[['DIST']]
-        busStopRoute = RouteTab.routeData[['BUS STOP']]
-        labelRoute = RouteTab.routeData[['LABEL']]
-        
-        # Fleet parameters
-        fleetTable = self.FleetParametersTable
-        stopDelay = float(fleetTable.item(4, 0).text())
-        TimeInTerminal = float(fleetTable.item(5, 0).text())
-        tIniFleetQt = self.STFtimeEdit.time()
-        tIniFleet = tIniFleetQt.hour() * 3600 + tIniFleetQt.minute() * 60 + tIniFleetQt.second()
-        tEndFleetQt = self.ETFtimeEdit.time()
-        tEndFleet = tEndFleetQt.hour() * 3600 + tEndFleetQt.minute() * 60 + tEndFleetQt.second()
-        tIniPico1Qt = self.STPtimeEdit.time()
-        tIniPico1 = tIniPico1Qt.hour() * 3600 + tIniPico1Qt.minute() * 60 + tIniPico1Qt.second()
-        tEndPico1Qt = self.ETPtimeEdit.time()
-        tEndPico1 = tEndPico1Qt.hour() * 3600 + tEndPico1Qt.minute() * 60 + tEndPico1Qt.second()
+        dist_route = RouteWindow.routeData[['DIST']]
+        bus_stop_route = RouteWindow.routeData[['BUS STOP']]
+        label_route = RouteWindow.routeData[['LABEL']]
 
-        tIniPico2Qt = self.STMPtimeEdit.time()
-        tIniPico2 = tIniPico2Qt.hour() * 3600 + tIniPico2Qt.minute() * 60 + tIniPico2Qt.second()
-        tEndPico2Qt = self.EMPtimeEdit.time()
-        tEndPico2 = tEndPico2Qt.hour() * 3600 + tEndPico2Qt.minute() * 60 + tEndPico1Qt.second()
-        numBuses = int(fleetTable.item(0, 0).text())
-        dispatchFrequency = int(fleetTable.item(7, 0).text())
-        numBusesPeak = int(fleetTable.item(0, 0).text())
-        dispatchFrequencyPeak = int(fleetTable.item(3, 0).text())
+        # Fleet parameters
+        fleet_table = self.__BusWindow.FleetParametersTable
+        stop_delay = float(fleet_table.item(4, 0).text())
+        print("Stop Delay: ", stop_delay)
+        time_in_terminal = float(fleet_table.item(5, 0).text())
+        print("Time in Terminal: ", time_in_terminal)
+        t_ini_fleet_qt = self.__BusWindow.STFtimeEdit.time()
+        t_ini_fleet = t_ini_fleet_qt.hour() * 3600 + t_ini_fleet_qt.minute() * 60 + t_ini_fleet_qt.second()
+        print("Time ini fleet: ", t_ini_fleet)
+        t_end_fleet_qt = self.__BusWindow.ETFtimeEdit.time()
+        t_end_fleet = t_end_fleet_qt.hour() * 3600 + t_end_fleet_qt.minute() * 60 + t_end_fleet_qt.second()
+        print("Time end fleet: ", t_end_fleet)
+        t_ini_pico1_qt = self.__BusWindow.STPtimeEdit.time()
+        t_ini_pico1 = t_ini_pico1_qt.hour() * 3600 + t_ini_pico1_qt.minute() * 60 + t_ini_pico1_qt.second()
+        print("Time ini pico 1: ", t_ini_pico1)
+        t_end_pico1_qt = self.__BusWindow.ETPtimeEdit.time()
+        t_end_pico1 = t_end_pico1_qt.hour() * 3600 + t_end_pico1_qt.minute() * 60 + t_end_pico1_qt.second()
+        print("Time end pico 1: ", t_end_pico1)
+
+        t_ini_pico2_qt = self.__BusWindow.STMPtimeEdit.time()
+        t_ini_pico2 = t_ini_pico2_qt.hour() * 3600 + t_ini_pico2_qt.minute() * 60 + t_ini_pico2_qt.second()
+        print("Time ini pico 2: ", t_ini_pico2)
+        t_end_pico2_qt = self.__BusWindow.EMPtimeEdit.time()
+        t_end_pico2 = t_end_pico2_qt.hour() * 3600 + t_end_pico2_qt.minute() * 60 + t_end_pico1_qt.second()
+        print("Time end pico 2: ", t_end_pico2)
+        num_buses = int(fleet_table.item(6, 0).text())
+        print("Number of buses: ", num_buses)
+        dispatch_frequency = int(fleet_table.item(7, 0).text())
+        print("Dispatch frequency: ", dispatch_frequency)
+        num_buses_peak = int(fleet_table.item(0, 0).text())
+        print("Number of buses peak: ", num_buses_peak)
+        dispatch_frequency_peak = int(fleet_table.item(3, 0).text())
+        print("Dispatch frequency peak: ", dispatch_frequency_peak)
 
         # Simulation parameters
-        deltaT = 0.2
-        maxTime = tEndFleet - (numBuses - 1) * dispatchFrequency
-        #maxTime2 = t2EndFleet - (numBusesPeak - 1) * dispatchFrequencyPeak
+        delta_t = 0.2
+        max_time = t_end_fleet - (num_buses - 1) * dispatch_frequency
+        # maxTime2 = t2EndFleet - (num_buses_peak - 1) * dispatch_frequency_peak
 
-        ## Bus parameters
-        accelBus = self.speedCurve
-        decelBus = self.decelCurve
-        distBrake = calculateBrakingDistance(decelBus, deltaT)
-        maxSpeedBus = accelBus[-1]
+        # Bus parameters
+        accel_bus = self.accelCurve
+        print("Acceleration curve: ")
+        print(accel_bus)
+        decel_bus = self.decelCurve
+        print("Deceleration curve: ")
+        print(decel_bus)
+        dist_brake = calculate_braking_distance(decel_bus, delta_t)
+        print("Distance to brake: ", dist_brake)
+        max_speed_bus = accel_bus[-1]
+        print("Max speed: ", max_speed_bus)
 
         # Initial conditions
         state = 0
-        indexStop = 0
+        index_stop = 0
 
-        timeVector = np.array([tIniFleet])
-        distVector = np.array([0])
-        labelVector = ['']
-        stopVector = [0]
-        speedVector = np.array([0])
-        stateVector = []
-        timeState0 = 0
+        self.timeVector = np.array([t_ini_fleet])
+        self.distVector = np.array([0])
+        self.labelVector = ['']
+        self.stopVector = [0]
+        self.speedVector = np.array([0])
+        self.stateVector = []
+
+        # Inicializaciones
+        time_state0 = 0
+        time_state1 = 0
+        index_accel = 0
+        dist_state2 = 0
+        dist_stops = 0
+        index_decel = 0
+        bus_stop2 = 0
 
         while 1:
 
-            stateVector.append(state)
+            self.stateVector.append(state)
             if state == 0:
 
-                inputTup = (timeVector, distVector, speedVector, deltaT, labelVector, stopVector)
-                timeVector, distVector, speedVector, labelVector, stopVector = state0func(inputTup)
+                input_tup = (self.timeVector,
+                             self.distVector,
+                             self.speedVector,
+                             delta_t,
+                             self.labelVector,
+                             self.stopVector)
 
-                if timeVector[-1] >= tIniFleet:
-                    if timeVector[-1] <= tEndFleet:
+                (self.timeVector,
+                 self.distVector,
+                 self.speedVector,
+                 self.labelVector,
+                 self.stopVector) = state0func(input_tup)
+
+                if self.timeVector[-1] >= t_ini_fleet:
+                    if self.timeVector[-1] <= t_end_fleet:
                         state = 1
-                        timeState1 = timeVector[-1]
+                        time_state1 = self.timeVector[-1]
 
             elif state == 1:
-                labelStop = labelRoute.iloc[indexStop].values[0]
-                inputTup = (timeVector, distVector, speedVector, deltaT, labelVector, stopVector, labelStop)
-                timeVector, distVector, speedVector, labelVector, stopVector = state1func(inputTup)
+                label_stop = label_route.iloc[index_stop].values[0]
+                input_tup = (self.timeVector,
+                             self.distVector,
+                             self.speedVector,
+                             delta_t,
+                             self.labelVector,
+                             self.stopVector,
+                             label_stop)
 
-                # Cambio de Velocidad de la Flota en tiempo pico
-                if (tIniPico1 < timeVector[-1] <= tEndPico1 and distVector[-1] == 0) or (tIniPico2 < timeVector[-1] < tEndPico2 and distVector[-1] == 0):
-                    stopDelay = dispatchFrequencyPeak
+                (self.timeVector,
+                 self.distVector,
+                 self.speedVector,
+                 self.labelVector,
+                 self.stopVector) = state1func(input_tup)
+
+                # Cambio de Velocidad de la flota en tiempo pico
+                # Primer if
+                condition1 = t_ini_pico1 < self.timeVector[-1] <= t_end_pico1 and self.distVector[-1] == 0
+                condition2 = t_ini_pico2 < self.timeVector[-1] < t_end_pico2 and self.distVector[-1] == 0
+                # Primer elif
+                condition3 = t_ini_pico1 < self.timeVector[-1] <= t_end_pico1
+                condition4 = t_ini_pico2 < self.timeVector[-1] < t_end_pico2
+                # Segundo elif
+                condition5 = self.distVector[-1] == 0
+                if condition1 or condition2:
+                    stop_delay = dispatch_frequency_peak
                     state = 1
-                elif (tIniPico1 < timeVector[-1] <= tEndPico1 ) or (tIniPico2 < timeVector[-1] < tEndPico2):
-                    stopDelay = float(fleetTable.item(4, 0).text()) + 33
-                    state=1
-                elif distVector[-1] == 0:
-                    stopDelay = TimeInTerminal
+                elif condition3 or condition4:
+                    stop_delay = float(fleet_table.item(4, 0).text()) + 33
+                    state = 1
+                elif condition5:
+                    stop_delay = time_in_terminal
                     state = 1
                 else:
-                    stopDelay=float(fleetTable.item(4, 0).text())
+                    stop_delay = float(fleet_table.item(4, 0).text())
                     state = 1
 
-                if timeVector[-1] >= timeState1 + stopDelay:
+                if self.timeVector[-1] >= time_state1 + stop_delay:
                     state = 2
-                    timeState2 = timeVector[-1]
-                    distState2 = distVector[-1]
-                    indexAccel = 1
-                    busStop1, busStop2 = findNextStop(indexStop, busStopRoute)
-                    distStops = 1000 * (distRoute.iloc[busStop2].values[0] - distRoute.iloc[busStop1].values[0])
-                    distStopsAccum = distStops
-                    indexStop = busStop2
+                    time_state2 = self.timeVector[-1]
+                    dist_state2 = self.distVector[-1]
+                    index_accel = 1
+                    bus_stop1, bus_stop2 = find_next_stop(index_stop, bus_stop_route)
+                    dist_stops = 1000 * (dist_route.iloc[bus_stop2].values[0] - dist_route.iloc[bus_stop1].values[0])
+                    dist_stops_accum = dist_stops
+                    index_stop = bus_stop2
 
             elif state == 2:
+                input_tup = (self.timeVector,
+                             self.distVector,
+                             self.speedVector,
+                             delta_t, accel_bus,
+                             index_accel,
+                             self.labelVector,
+                             self.stopVector)
 
-                inputTup = (timeVector, distVector, speedVector, deltaT, accelBus, indexAccel, labelVector, stopVector)
-                timeVector, distVector, speedVector, indexAccel, labelVector, stopVector = state2func(inputTup)
+                (self.timeVector,
+                 self.distVector,
+                 self.speedVector,
+                 index_accel,
+                 self.labelVector,
+                 self.stopVector) = state2func(input_tup)
 
-                if speedVector[-1] == maxSpeedBus:
+                if self.speedVector[-1] == max_speed_bus:
                     state = 3
-                    timeState3 = timeVector[-1]
-
+                    time_state3 = self.timeVector[-1]
 
             elif state == 3:
-                inputTup = (timeVector, distVector, speedVector, deltaT, maxSpeedBus, labelVector, stopVector)
-                timeVector, distVector, speedVector, labelVector, stopVector = state3func(inputTup)
+                input_tup = (self.timeVector,
+                             self.distVector,
+                             self.speedVector,
+                             delta_t,
+                             max_speed_bus,
+                             self.labelVector,
+                             self.stopVector)
 
-                if distVector[-1] - distState2 >= distStops - distBrake:
+                (self.timeVector,
+                 self.distVector,
+                 self.speedVector,
+                 self.labelVector,
+                 self.stopVector) = state3func(input_tup)
+
+                if self.distVector[-1] - dist_state2 >= dist_stops - dist_brake:
                     state = 4
-                    timeState4 = timeVector[-1]
-                    indexDecel = 1
+                    time_state4 = self.timeVector[-1]
+                    index_decel = 1
 
             elif state == 4:
-                inputTup = (timeVector, distVector, speedVector, deltaT, decelBus, indexDecel, labelVector, stopVector)
-                timeVector, distVector, speedVector, indexDecel, labelVector, stopVector = state4func(inputTup)
+                input_tup = (self.timeVector,
+                             self.distVector,
+                             self.speedVector,
+                             delta_t,
+                             decel_bus,
+                             index_decel,
+                             self.labelVector,
+                             self.stopVector)
 
-                if speedVector[-1] == 0:
+                (self.timeVector,
+                 self.distVector,
+                 self.speedVector,
+                 index_decel,
+                 self.labelVector,
+                 self.stopVector) = state4func(input_tup)
+
+                if self.speedVector[-1] == 0:
                     state = 1
-                    timeState1 = timeVector[-1]
+                    time_state1 = self.timeVector[-1]
 
-                    if busStop2 == len(busStopRoute) - 1:
-                        indexStop = 0
-                        distVector[-1] = 0
-                        distStopsAccum = 0
+                    if bus_stop2 == len(bus_stop_route) - 1:
+                        index_stop = 0
+                        self.distVector[-1] = 0
+                        dist_stops_accum = 0
 
             else:
                 pass
-            self.BusprogressBar.setValue(int(100 * timeVector[-1] / maxTime))
+            self.__BusWindow.BusprogressBar.setValue(int(100 * self.timeVector[-1] / max_time))
 
-            if timeVector[-1] > maxTime:
+            if self.timeVector[-1] > max_time:
                 break
 
-        timeVectorDT = []
-        timeZoneColombia = 3600 * 5
+        self.timeVectorDT = []
+        time_zone_colombia = 3600 * 5
 
-        for n in range(0, len(timeVector)):
-            timeVectorDT.append(datetime.datetime.fromtimestamp(timeVector[n] + timeZoneColombia))
+        for n in range(0, len(self.timeVector)):
+            self.timeVectorDT.append(datetime.datetime.fromtimestamp(self.timeVector[n] + time_zone_colombia))
 
         self.arrayTime = []
 
-        for y in range(numBuses):
+        for y in range(num_buses):
             time_arr = []
             time_ = []
-            #print("Numero de bus:"+str(y))
-            for idx, x in enumerate(timeVector):
-                #print("distVector: " + str(distVector[idx]),("speedVector: " + str(speedVector[idx])))
-                if tIniPico1 < x <= tEndPico1 or tIniPico2 < x < tEndPico2:
-                    if distVector[idx]==0 and stateVector[idx]==2:
-                        frec=dispatchFrequency
+            frec = 0
+            print("Número de bus:"+str(y))
+            for idx, x in enumerate(self.timeVector):
+                # print("self.distVector: "+str(self.distVector[idx]),("self.speedVector: "+str(self.speedVector[idx])))
+                if t_ini_pico1 < x <= t_end_pico1 or t_ini_pico2 < x < t_end_pico2:
+                    if self.distVector[idx] == 0 and self.stateVector[idx] == 2:
+                        frec = dispatch_frequency
                 else:
-                    if distVector[idx] == 0:
-                        frec = dispatchFrequency
-
-                time_arr.append(
-                    datetime.datetime.fromtimestamp(x + timeZoneColombia ) + datetime.timedelta(seconds=frec*y))
+                    if self.distVector[idx] == 0:
+                        frec = dispatch_frequency
+                time_ap = datetime.datetime.fromtimestamp(x + time_zone_colombia) + datetime.timedelta(seconds=frec * y)
+                time_arr.append(time_ap)
                 time_.append(time_arr[idx].strftime("%I:%M:%S %p"))
-                #print(time_[idx])
+                # print(time_[idx])
             self.arrayTime.append(time_arr)
-            #print(np.shape(self.arrayTime))
-        
-        self.timeVector = timeVector
-        self.speedVector = speedVector
-        self.distVector = distVector
-        self.stateVector = stateVector
-        self.timeVectorDT = timeVectorDT
-        self.labelVector = labelVector
-        self.stopVector = stopVector
+            print(np.shape(self.arrayTime))
 
-        self.stopTicks, self.stopLabels = StopPositionLabels(distRoute, busStopRoute, labelRoute)
-        
-        self.plotOpDiagram()
+        self.stopTicks, self.stopLabels = stop_position_labels(dist_route, bus_stop_route, label_route)
+
+        self.__plot_op_diagram()
 
     # Definir Plots (VELOCIDAD Y DISTANCIA RECORRIDA)
-    def setupBusDataFigures(self):
-        self.figureSpeedBus = Figure(tight_layout=True)  
-        self.figureDistanceBus = Figure(tight_layout=True)  
-        self.canvasSpeedBus = FigureCanvas(self.figureSpeedBus)  
+    def __setup_bus_data_figures(self):
+        self.figureSpeedBus = Figure(tight_layout=True)
+        self.figureDistanceBus = Figure(tight_layout=True)
+        self.canvasSpeedBus = FigureCanvas(self.figureSpeedBus)
         self.canvasDistanceBus = FigureCanvas(self.figureDistanceBus)
         self.toolbarSpeedBus = NavigationToolbar(self.canvasSpeedBus, self)
         self.toolbarDistanceBus = NavigationToolbar(self.canvasDistanceBus, self)
-        self.layoutSpeedBus = QtWidgets.QVBoxLayout(self.SpeedCurveWidget)  
-        self.layoutDistanceBus = QtWidgets.QVBoxLayout(self.DistanceCurveWidget)  
-        self.layoutSpeedBus.addWidget(self.toolbarSpeedBus)  
-        self.layoutSpeedBus.addWidget(self.canvasSpeedBus)  
-        self.layoutDistanceBus.addWidget(self.toolbarDistanceBus)  
-        self.layoutDistanceBus.addWidget(self.canvasDistanceBus)  
-        self.axSpeedBus = self.figureSpeedBus.add_subplot(111)  
+        self.layoutSpeedBus = QtWidgets.QVBoxLayout(self.__BusWindow.SpeedCurveWidget)
+        self.layoutDistanceBus = QtWidgets.QVBoxLayout(self.__BusWindow.DistanceCurveWidget)
+        self.layoutSpeedBus.addWidget(self.toolbarSpeedBus)
+        self.layoutSpeedBus.addWidget(self.canvasSpeedBus)
+        self.layoutDistanceBus.addWidget(self.toolbarDistanceBus)
+        self.layoutDistanceBus.addWidget(self.canvasDistanceBus)
+        self.axSpeedBus = self.figureSpeedBus.add_subplot(111)
         self.axDistanceBus = self.figureDistanceBus.add_subplot(111)
 
     # Definir Plots (VELOCIDAD Y POSICIÓN)
-    def setupOpDiagramFigures(self):
-        self.figureOPPosition = Figure(tight_layout=True)  
-        self.figureOPSpeed = Figure(tight_layout=True)  
-        self.canvasOPPosition = FigureCanvas(self.figureOPPosition)  
-        self.canvasOPSpeed = FigureCanvas(self.figureOPSpeed)
+    def __setup_op_diagram_figures(self):
+        self.figureOPPosition = Figure(tight_layout=True)
+        self.canvasOPPosition = FigureCanvas(self.figureOPPosition)
         self.toolbarOPPosition = NavigationToolbar(self.canvasOPPosition, self)
+        self.layoutOPPosition = QtWidgets.QVBoxLayout(self.__BusWindow.OPPositionCurveWidget)
+        self.layoutOPPosition.addWidget(self.toolbarOPPosition)
+        self.layoutOPPosition.addWidget(self.canvasOPPosition)
+        self.axOPPosition = self.figureOPPosition.add_subplot(111)
+
+        self.figureOPSpeed = Figure(tight_layout=True)
+        self.canvasOPSpeed = FigureCanvas(self.figureOPSpeed)
         self.toolbarOPSpeed = NavigationToolbar(self.canvasOPSpeed, self)
-        self.layoutOPPosition = QtWidgets.QVBoxLayout(self.OPPositionCurveWidget)  
-        self.layoutOPSpeed = QtWidgets.QVBoxLayout(self.OPSpeedCurveWidget)  
-        self.layoutOPPosition.addWidget(self.toolbarOPPosition)  
-        self.layoutOPPosition.addWidget(self.canvasOPPosition)  
-        self.layoutOPSpeed.addWidget(self.toolbarOPSpeed)  
-        self.layoutOPSpeed.addWidget(self.canvasOPSpeed)  
-        self.axOPPosition = self.figureOPPosition.add_subplot(111)  
+        self.layoutOPSpeed = QtWidgets.QVBoxLayout(self.__BusWindow.OPSpeedCurveWidget)
+        self.layoutOPSpeed.addWidget(self.toolbarOPSpeed)
+        self.layoutOPSpeed.addWidget(self.canvasOPSpeed)
         self.axOPSpeed = self.figureOPSpeed.add_subplot(111)
 
     # Plotear dos gráficas = Velocidad vs Tiempo / Distancia vs Tiempo
-    def plotBusData(self):
+    def __plot_bus_data(self):
         # Speed Figure
         self.axSpeedBus.cla()
         self.axSpeedBus.plot(self.timeCurve, 3.6 * self.speedCurve)
@@ -2236,62 +714,334 @@ class Ui_BusWindow(QtWidgets.QMainWindow):
         self.axDistanceBus.set_ylabel('Distance [km]', fontsize=10, fontweight="bold")
         self.axDistanceBus.set_xlabel('Time [s]', fontsize=10, fontweight="bold")
         self.axDistanceBus.tick_params(labelsize=8)
-        self.axDistanceBus.grid()          
+        self.axDistanceBus.grid()
         self.canvasDistanceBus.draw()
 
-    # Plotear dos curvas de Operación = Distancia vs Tiempo / Velocidad vs Tiempo 
-    def plotOpDiagram(self):
+    # Plotear dos curvas de Operación = Distancia vs Tiempo / Velocidad vs Tiempo
+    def __plot_op_diagram(self):
         self.axOPSpeed.cla()
         self.axOPPosition.cla()
+        print("Distance vector:")
+        print(self.distVector)
+        print('Speed vector:')
+        print(self.speedVector)
+        i = 0
         for x in self.arrayTime:
-            self.axOPSpeed.plot(x, 3.6 * self.speedVector)
-            self.axOPPosition.plot(x, 0.001 * self.distVector)
-        
+            i += 1
+            self.axOPSpeed.plot(x, 3.6 * self.speedVector, label=f'Bus {i}')
+            self.axOPPosition.plot(x, 0.001 * self.distVector, label=f'Bus {i}')
 
-        self.axOPSpeed.set_title('Curva de operación (Velocidad)', fontsize=12, fontweight="bold")
+        self.axOPSpeed.set_title('Operating curve (Speed)', fontsize=12, fontweight="bold")
         self.axOPSpeed.set_ylabel('Speed [km/h]', fontsize=10, fontweight="bold")
         self.axOPSpeed.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
         self.axOPSpeed.tick_params(labelsize=8)
         self.axOPSpeed.grid()
+        self.axOPSpeed.legend(frameon=False, loc='best')
         self.figureOPSpeed.autofmt_xdate()
-        self.canvasOPSpeed.draw()  
-            
-        self.axOPPosition.set_title('Curva de operación (Distancia)', fontsize=12, fontweight="bold")
+        self.canvasOPSpeed.draw()
+
+        self.axOPPosition.set_title('Operating curve (Distance)', fontsize=12, fontweight="bold")
         self.axOPPosition.set_ylabel('Distance [km]', fontsize=10, fontweight="bold")
         self.axOPPosition.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
         self.axOPPosition.tick_params(labelsize=8)
         self.axOPPosition.grid(which='minor')
+        self.axOPPosition.legend(frameon=False, loc='best')
         self.figureOPPosition.autofmt_xdate()
+
         self.axOPPosition.yaxis.set_major_locator(ticker.FixedLocator([]))
         self.axOPPosition.yaxis.set_minor_locator(ticker.FixedLocator(self.stopTicks))
         self.axOPPosition.yaxis.set_minor_formatter(ticker.FixedFormatter(self.stopLabels))
 
-        for tick in self.axOPPosition.get_minor_ticks():
+        for tick in self.axOPPosition.yaxis.get_minor_ticks():
             tick.label.set_fontsize(7)
 
         self.canvasOPPosition.draw()
 
+
+class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
+    # Constructor
+    def __init__(self):
+        super(UiOpportunityWindow, self).__init__()
+        self.__OpportunityWindow = uic.loadUi('../UI/InterfaceOpportunity.ui', self)
+        self.__OpportunityWindow.SimulationOpportunityTab.setCurrentIndex(0)
+        self.__OpportunityWindow.ElementscomboBox.setCurrentIndex(0)
+        self.__OpportunityWindow.VariablescomboBox.setCurrentIndex(0)
+
+        # Llamadas a Métodos
+        # Botones de Opportunity Window
+        self.__OpportunityWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__OpportunityWindow.RouteButton.clicked.connect(self.pressed_route_button)
+        self.__OpportunityWindow.BusButton.clicked.connect(self.pressed_bus_button)
+        self.__OpportunityWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.__OpportunityWindow.OpportunityLoadSimButton.clicked.connect(self.__pressed_load_sim_opportunity_button)
+        self.__OpportunityWindow.OpportunityGraphButton.clicked.connect(self.__pressed_graph_opportunity_button)
+        # Setups Gráficas de Opportunity Window
+        self.__setup_opportunity_diagram_figures()
+
+    # Métodos
+    # Definir Plots (Opportunity Window)
+    def __setup_opportunity_diagram_figures(self):
+        self.figureOppCharging = Figure(tight_layout=True)
+        self.canvasOppCharging = FigureCanvas(self.figureOppCharging)
+        self.toolbarOppCharging = NavigationToolbar(self.canvasOppCharging, self)
+        self.layoutOppCharging = QtWidgets.QVBoxLayout(self.__OpportunityWindow.OpportunityCurveWidget)
+        self.layoutOppCharging.addWidget(self.toolbarOppCharging)
+        self.layoutOppCharging.addWidget(self.canvasOppCharging)  #
+        self.axOppCharging = self.figureOppCharging.add_subplot(111)
+
+    # Cargar simulación de Oportunidad
+    def __pressed_load_sim_opportunity_button(self):
+        def calculate_angle(dist_vector_f, dist_route_f, alt_route_f):
+            sin_theta_vector_route = []
+            for N in range(0, len(dist_route_f) - 1):
+                # point route : N
+                sin_theta_part1 = alt_route_f.iloc[N + 1].values[0] - alt_route_f.iloc[N].values[0]
+                sin_theta_part2 = (1000 * dist_route_f.iloc[N + 1].values[0] - 1000 * dist_route_f.iloc[N].values[0])
+                sin_theta = sin_theta_part1 / sin_theta_part2
+                sin_theta_vector_route.append(sin_theta)
+
+            sin_theta_vector_route.append(sin_theta_vector_route[-1])
+            time.sleep(5)
+            sin_theta_vector_f = []
+            arr = []
+            for N in range(0, len(dist_route_f)):
+                arr.append(1000 * dist_route_f.iloc[N].values[0])
+            dist_route_np = np.array(arr)
+            print('dist_route_np: ')
+            print(dist_route_np)
+
+            for N in range(0, len(dist_vector_f) - 1):
+                # point1=dist_vector[n]
+                point2 = dist_vector_f[N + 1]
+                index = np.where(point2 >= dist_route_np)
+                k = index[0][-1]
+                sin_theta_tot = sin_theta_vector_route[k]
+                sin_theta_vector_f.append(sin_theta_tot)
+
+            sin_theta_vector_f.append(sin_theta_vector_f[-1])
+
+            print('len sin_theta_vector:')
+            print(len(sin_theta_vector_route))
+            return sin_theta_vector_f
+
+        # Parameters
+        # Simulation parameters
+        delta_t = 0.2
+
+        # Bus parameters
+        bus_table = BusWindow.BusParametersTable
+        fric = float(bus_table.item(0, 0).text())
+        print('fric: ', fric)
+        mass = float(bus_table.item(1, 0).text())
+        print('mass: ', mass)
+        grav = float(bus_table.item(2, 0).text())
+        print('grav: ', grav)
+        rho = float(bus_table.item(3, 0).text())
+        print('rho: ', rho)
+        alpha = float(bus_table.item(4, 0).text())
+        print('alpha: ', alpha)
+        area = float(bus_table.item(5, 0).text())
+        print('area: ', area)
+        p_aux = 1000 * float(bus_table.item(6, 0).text())
+        print('p_aux: ', p_aux)
+        n_out = 0.01 * float(bus_table.item(7, 0).text())
+        print('n_out: ', n_out)
+        n_in = 0.01 * float(bus_table.item(8, 0).text())
+        print('n_in: ', n_in)
+
+        # Opportunity charge parameters
+        charging_table = self.__OpportunityWindow.OppChargingParametersTable
+        bc = float(charging_table.item(0, 0).text())
+        so_ci = 0.01 * float(charging_table.item(1, 0).text())
+        text_stops = charging_table.item(2, 0).text()
+        cl = text_stops.split(',')
+        cp = float(charging_table.item(3, 0).text())
+        n_c = 0.01 * float(charging_table.item(4, 0).text())
+        it = float(charging_table.item(5, 0).text())
+        dt = float(charging_table.item(6, 0).text())
+        print('Stops Vector:')
+        print(cl)
+
+        # Fleet operation time for extra loads
+        fleet_table = BusWindow.FleetParametersTable
+        stop_delay = float(fleet_table.item(4, 0).text())
+        time_in_terminal = float(fleet_table.item(5, 0).text())
+        t_ini_fleet_qt = BusWindow.STFtimeEdit.time()
+        t_ini_fleet = t_ini_fleet_qt.hour() * 3600 + t_ini_fleet_qt.minute() * 60 + t_ini_fleet_qt.second()
+        t_end_fleet_qt = BusWindow.ETFtimeEdit.time()
+        t_end_fleet = t_end_fleet_qt.hour() * 3600 + t_end_fleet_qt.minute() * 60 + t_end_fleet_qt.second()
+
+        t_ini_pico1_qt = BusWindow.STPtimeEdit.time()
+        t_ini_pico1 = t_ini_pico1_qt.hour() * 3600 + t_ini_pico1_qt.minute() * 60 + t_ini_pico1_qt.second()
+        t_end_pico1_qt = BusWindow.ETPtimeEdit.time()
+        t_end_pico1 = t_end_pico1_qt.hour() * 3600 + t_end_pico1_qt.minute() * 60 + t_end_pico1_qt.second()
+
+        t_ini_pico2_qt = BusWindow.STMPtimeEdit.time()
+        t_ini_pico2 = t_ini_pico2_qt.hour() * 3600 + t_ini_pico2_qt.minute() * 60 + t_ini_pico2_qt.second()
+        t_end_pico2_qt = BusWindow.EMPtimeEdit.time()
+        t_end_pico2 = t_end_pico2_qt.hour() * 3600 + t_end_pico2_qt.minute() * 60 + t_end_pico1_qt.second()
+
+        # Fleet operation results
+        time_vector = BusWindow.timeVector
+        print('time vector:')
+        print(time_vector)
+        print('t_ini_fleet:', t_ini_fleet)
+        time_vector_dt = BusWindow.timeVectorDT
+        speed_vector = BusWindow.speedVector
+        dist_vector = BusWindow.distVector
+        state_vector = BusWindow.stateVector
+        stop_vector = BusWindow.stopVector
+        label_vector = BusWindow.labelVector
+
+        # Route Data
+        dist_route = RouteWindow.routeData[['DIST']]
+        alt_route = RouteWindow.routeData[['ALT']]
+
+        # Angle vector
+        sin_theta_vector = calculate_angle(dist_vector, dist_route, alt_route)
+        energy_vector = []
+        so_c_vector = [so_ci]
+        charger_vector = []
+
+        for n in range(0, len(time_vector) - 1):
+
+            if time_vector[n] > t_ini_fleet:
+                aux_onoff = 1
+            else:
+                aux_onoff = 0
+
+            energy = (n_out * (fric * (mass+bc*11.1) * grav + 0.5 * rho * alpha * area * speed_vector[n] *
+                      speed_vector[n]) * speed_vector[n] * delta_t + n_in * mass * grav * sin_theta_vector[n] *
+                      speed_vector[n] * delta_t + mass * n_in * (speed_vector[n + 1] - speed_vector[n]) *
+                      speed_vector[n] * delta_t + aux_onoff * p_aux * delta_t) / 36e5
+            if n == 0:
+                energy_vector.append(energy)
+            else:
+                energy_vector.append(energy_vector[-1] + energy)
+            if stop_vector[n] == 1:
+                if label_vector[n] in cl:
+                    ch_onoff = 1
+                else:
+                    ch_onoff = 0
+            else:
+                ch_onoff = 0
+
+            charger_vector.append(ch_onoff * cp)
+
+            so_c_vector.append((so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc)
+
+            self.__OpportunityWindow.OpportunityprogressBar.setValue(int(100*n/(len(time_vector)-2)))
+
+        energy_vector.append(energy_vector[-1])
+        charger_vector.append(charger_vector[-1])
+        power_vector = [0]
+
+        for n in range(1, len(time_vector) - 1):
+            power_vector.append(-(energy_vector[n - 1] - energy_vector[n]) / (delta_t / 3600))
+        power_vector.append(power_vector[-1])
+
+        self.energyVector = energy_vector
+        self.powerVector = power_vector
+        self.sinThetaVector = sin_theta_vector
+        self.SoCVector = so_c_vector
+        self.chargerVector = charger_vector
+
+    # Graficar simulación de Oportunidad (Dropdown options)
+    def __pressed_graph_opportunity_button(self):
+        plot_type = self.__OpportunityWindow.VariablescomboBox.currentIndex()
+        self.axOppCharging.cla()
+        if plot_type == 0:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, self.energyVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Energy Curve', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('Energy (kWh)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+        elif plot_type == 1:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, self.powerVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Power Curve', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('Power [kW]', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        elif plot_type == 2:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, self.sinThetaVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Slope', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('sin(theta)', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        elif plot_type == 3:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, 100 * np.array(self.SoCVector), label=f'Bus {i}')
+            self.axOppCharging.set_title('State of Charge', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('%', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        elif plot_type == 4:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, BusWindow.stopVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Stop Vector', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        elif plot_type == 5:
+            i = 0
+            for x in BusWindow.arrayTime:
+                i += 1
+                self.axOppCharging.plot(x, self.chargerVector, label=f'Bus {i}')
+            self.axOppCharging.set_title('Charger Vector', fontsize=12, fontweight="bold")
+            self.axOppCharging.set_ylabel('kW', fontsize=10, fontweight="bold")
+            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+
+        self.axOppCharging.tick_params(labelsize=10)
+        self.axOppCharging.grid()
+        self.axOppCharging.legend(frameon=False, loc='best')
+        self.figureOppCharging.autofmt_xdate()
+        self.canvasOppCharging.draw()
+
+
+class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
+    # Constructor
+    def __init__(self):
+        super(UiDynamicWindow, self).__init__()
+        self.__DynamicWindow = uic.loadUi('../UI/InterfaceDynamic.ui', self)
+        self.__DynamicWindow.SimulationDynamicTab.setCurrentIndex(0)
+        self.__DynamicWindow.ElementscomboBox.setCurrentIndex(0)
+        self.__DynamicWindow.VariablescomboBox.setCurrentIndex(0)
+
+        # Llamadas a Métodos
+        # Botones de Opportunity Window
+        self.__DynamicWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__DynamicWindow.RouteButton.clicked.connect(self.pressed_route_button)
+        self.__DynamicWindow.BusButton.clicked.connect(self.pressed_bus_button)
+        self.__DynamicWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+        # Setups Gráficas de Opportunity Window
+
+
 # Inicio Programa
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
-    RouteWindow = QtWidgets.QMainWindow()
-    BusWindow = QtWidgets.QMainWindow()
     widget = QtWidgets.QStackedWidget()
-    
 
     # Definir Ventanas
-    RouteTab = Ui_RouteWindow()
-    RouteTab.setupUi(RouteWindow) 
-
-    BusTab = Ui_BusWindow()
-    BusTab.setupUi(BusWindow)     
-    
+    RouteWindow = UiRouteWindow()
+    BusWindow = UiBusWindow()
+    OpportunityWindow = UiOpportunityWindow()
+    DynamicWindow = UiDynamicWindow()
 
     # Añadir Ventanas
     widget.addWidget(RouteWindow)
     widget.addWidget(BusWindow)
-
+    widget.addWidget(OpportunityWindow)
+    widget.addWidget(DynamicWindow)
 
     # Setup de widgets
     widget.setFixedSize(964, 677)
@@ -2302,7 +1052,8 @@ if __name__ == "__main__":
     widget.setWindowTitle(_translate("MainWindow", "Electric Bus Charging Analyzer"))
     widget.setStyleSheet("background-color: #bfbfbf;")
 
-
     # Mostrar Aplicación
     widget.show()
     sys.exit(app.exec_())
+
+#%%

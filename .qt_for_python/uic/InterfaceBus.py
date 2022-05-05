@@ -1,14 +1,17 @@
-# Importar Ventanas
-import About
+# -*- coding: utf-8 -*-
 
-#Importar Paquetes
+# Form implementation generated from reading ui file 'c:\Users\jabac\OneDrive - Universidad del Norte\Documentos\Tareas\Proyecto final\Scripts\Repositorio\Proyecto-Final\UI\InterfaceBus.ui'
+#
+# Created by: PyQt5 UI code generator 5.9.2
+#
+# WARNING! All changes made in this file will be lost!
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_MainWindow(QtWidgets.QMainWindow):
+class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(964, 677)
-        MainWindow.setFixedSize(964, 677)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -229,16 +232,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.DynamicButton.setFont(font)
         self.DynamicButton.setStyleSheet("background-color: rgb(159, 159, 159);")
         self.DynamicButton.setObjectName("DynamicButton")
-        self.OportunityButton = QtWidgets.QPushButton(self.ButtonsFrame)
-        self.OportunityButton.setGeometry(QtCore.QRect(410, 10, 101, 61))
+        self.OpportunityButton = QtWidgets.QPushButton(self.ButtonsFrame)
+        self.OpportunityButton.setGeometry(QtCore.QRect(410, 10, 101, 61))
         font = QtGui.QFont()
         font.setFamily("MS Sans Serif")
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
-        self.OportunityButton.setFont(font)
-        self.OportunityButton.setStyleSheet("background-color: rgb(159, 159, 159);")
-        self.OportunityButton.setObjectName("OportunityButton")
+        self.OpportunityButton.setFont(font)
+        self.OpportunityButton.setStyleSheet("background-color: rgb(159, 159, 159);")
+        self.OpportunityButton.setObjectName("OpportunityButton")
         self.GridButton = QtWidgets.QPushButton(self.ButtonsFrame)
         self.GridButton.setGeometry(QtCore.QRect(790, 10, 101, 61))
         font = QtGui.QFont()
@@ -258,7 +261,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         font.setWeight(75)
         self.BusParametersTab.setFont(font)
         self.BusParametersTab.setFocusPolicy(QtCore.Qt.TabFocus)
-        self.BusParametersTab.setStyleSheet("background-color: rgb(191, 191, 191);\n""gridline-color: rgb(0, 0, 0);")
+        self.BusParametersTab.setStyleSheet("background-color: rgb(191, 191, 191);\n"
+"gridline-color: rgb(0, 0, 0);")
         self.BusParametersTab.setObjectName("BusParametersTab")
         self.BusGeneralDataTab = QtWidgets.QWidget()
         self.BusGeneralDataTab.setStyleSheet("")
@@ -514,7 +518,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.PlotBusGenDataButton.setStyleSheet("background-color: rgb(159, 159, 159);")
         self.PlotBusGenDataButton.setObjectName("PlotBusGenDataButton")
         self.BusGenDataFrame = QtWidgets.QFrame(self.BusGeneralDataTab)
-        self.BusGenDataFrame.setGeometry(QtCore.QRect(430, 60, 491, 411))
+        self.BusGenDataFrame.setGeometry(QtCore.QRect(430, 60, 491, 421))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(191, 191, 191))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -548,10 +552,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.BusGenDataFrame.setFrameShadow(QtWidgets.QFrame.Plain)
         self.BusGenDataFrame.setObjectName("BusGenDataFrame")
         self.SpeedCurveWidget = QtWidgets.QWidget(self.BusGenDataFrame)
-        self.SpeedCurveWidget.setGeometry(QtCore.QRect(19, 19, 451, 171))
+        self.SpeedCurveWidget.setGeometry(QtCore.QRect(9, 10, 471, 201))
         self.SpeedCurveWidget.setObjectName("SpeedCurveWidget")
         self.DistanceCurveWidget = QtWidgets.QWidget(self.BusGenDataFrame)
-        self.DistanceCurveWidget.setGeometry(QtCore.QRect(20, 220, 451, 171))
+        self.DistanceCurveWidget.setGeometry(QtCore.QRect(10, 210, 471, 201))
         self.DistanceCurveWidget.setObjectName("DistanceCurveWidget")
         self.BusParametersTab.addTab(self.BusGeneralDataTab, "")
         self.BusFleetDataTab = QtWidgets.QWidget()
@@ -797,8 +801,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.EMPtimeEdit.setGeometry(QtCore.QRect(10, 30, 118, 22))
         self.EMPtimeEdit.setAutoFillBackground(False)
         self.EMPtimeEdit.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.EMPtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(8, 0, 0)))
-        self.EMPtimeEdit.setTime(QtCore.QTime(8, 0, 0))
+        self.EMPtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(17, 0, 0)))
+        self.EMPtimeEdit.setTime(QtCore.QTime(17, 0, 0))
         self.EMPtimeEdit.setObjectName("EMPtimeEdit")
         self.EMPlabel = QtWidgets.QLabel(self.PeakTimes2Page)
         self.EMPlabel.setGeometry(QtCore.QRect(140, 30, 31, 16))
@@ -847,8 +851,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ETFtimeEdit.setFont(font)
         self.ETFtimeEdit.setAutoFillBackground(False)
         self.ETFtimeEdit.setStyleSheet("background-color: rgb(235, 235, 235);")
-        self.ETFtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(21, 30, 0)))
-        self.ETFtimeEdit.setTime(QtCore.QTime(21, 30, 0))
+        self.ETFtimeEdit.setDateTime(QtCore.QDateTime(QtCore.QDate(2022, 3, 15), QtCore.QTime(9, 30, 0)))
+        self.ETFtimeEdit.setTime(QtCore.QTime(9, 30, 0))
         self.ETFtimeEdit.setObjectName("ETFtimeEdit")
         self.STFlabel = QtWidgets.QLabel(self.StartEndTimesPage)
         self.STFlabel.setGeometry(QtCore.QRect(140, 0, 31, 16))
@@ -944,15 +948,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuHelp.menuAction())
 
-        # Llamadas a funciones
-        self.actionAbout.triggered.connect(self.clickedAbout)
-        self.RouteButton.clicked.connect(self.pressedBusButton)
-
         self.retranslateUi(MainWindow)
         self.BusParametersTab.setCurrentIndex(0)
         self.PeakTimesToolBox.setCurrentIndex(0)
         self.StartEndTimesToolBox.setCurrentIndex(0)
-        self.PositionSpeedtabWidget.setCurrentIndex(1)
+        self.PositionSpeedtabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -961,13 +961,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.RouteButton.setStatusTip(_translate("MainWindow", "Push to go to the Route tab"))
         self.RouteButton.setText(_translate("MainWindow", "Route"))
         self.BusButton.setStatusTip(_translate("MainWindow", "Push to go to the Bus Parameters tab"))
-        self.BusButton.setText(_translate("MainWindow", "Bus\n""Parameters"))
+        self.BusButton.setText(_translate("MainWindow", "Bus\n"
+"Parameters"))
         self.DynamicButton.setStatusTip(_translate("MainWindow", "Push to go to the In Motion Charging tab"))
-        self.DynamicButton.setText(_translate("MainWindow", "In Motion\n""Charging"))
-        self.OportunityButton.setStatusTip(_translate("MainWindow", "Push to go to the Oportunity Charging tab"))
-        self.OportunityButton.setText(_translate("MainWindow", "Oportunity\n""Charging"))
+        self.DynamicButton.setText(_translate("MainWindow", "In Motion\n"
+"Charging"))
+        self.OpportunityButton.setStatusTip(_translate("MainWindow", "Push to go to the Opportunity Charging tab"))
+        self.OpportunityButton.setText(_translate("MainWindow", "Opportunity\n"
+"Charging"))
         self.GridButton.setStatusTip(_translate("MainWindow", "Push to go to the Grid tab"))
-        self.GridButton.setText(_translate("MainWindow", "Grid\n""Impact"))
+        self.GridButton.setText(_translate("MainWindow", "Grid\n"
+"Impact"))
         item = self.BusParametersTable.verticalHeaderItem(0)
         item.setText(_translate("MainWindow", "fr: Rolling friction coefficient"))
         item = self.BusParametersTable.verticalHeaderItem(1)
@@ -1091,25 +1095,4 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.actionUser_Manual.setStatusTip(_translate("MainWindow", "Go to the User Manual"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout.setStatusTip(_translate("MainWindow", "Show the About window"))
-
-    # Abrir Pestaña About
-    def clickedAbout(self):
-        self.AboutWindow = QtWidgets.QDialog()
-        self.AboutTab = About.Ui_AboutWindow()
-        self.AboutTab.setupUi(self.AboutWindow)
-        self.AboutWindow.show()    
-
-    # Cambiar a Route Window 
-    def pressedBusButton(self):
-        #widget.setCurrentIndex(0)
-        pass
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
 

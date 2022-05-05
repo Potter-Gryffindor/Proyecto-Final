@@ -1099,6 +1099,9 @@ gridline-color: rgb(0, 0, 0);</string>
       <property name="statusTip">
        <string>Choose the element that prefer analyze</string>
       </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255);</string>
+      </property>
       <item>
        <property name="text">
         <string>Bus</string>
@@ -1127,6 +1130,9 @@ gridline-color: rgb(0, 0, 0);</string>
       </property>
       <property name="statusTip">
        <string>Choose the variable prefer to graph</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <item>
        <property name="text">
@@ -1250,6 +1256,14 @@ gridline-color: rgb(0, 0, 0);</string>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
+   <property name="font">
+    <font>
+     <family>MS Sans Serif</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
