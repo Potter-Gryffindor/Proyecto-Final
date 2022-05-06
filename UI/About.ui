@@ -479,9 +479,9 @@
   <widget class="QLabel" name="AppIcon">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>30</x>
      <y>10</y>
-     <width>71</width>
+     <width>51</width>
      <height>51</height>
     </rect>
    </property>

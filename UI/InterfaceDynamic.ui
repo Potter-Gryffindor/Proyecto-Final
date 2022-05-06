@@ -1126,7 +1126,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </column>
       <item row="0" column="0">
        <property name="text">
-        <string>250</string>
+        <string>100</string>
        </property>
        <property name="font">
         <font>
@@ -1165,7 +1165,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </item>
       <item row="3" column="0">
        <property name="text">
-        <string>250</string>
+        <string>50</string>
        </property>
        <property name="font">
         <font>
