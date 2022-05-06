@@ -1015,13 +1015,70 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.__DynamicWindow.ElementscomboBox.setCurrentIndex(0)
         self.__DynamicWindow.VariablescomboBox.setCurrentIndex(0)
 
+        """
+        formLayout = QtWidgets.QFormLayout()
+        groupBox = QtWidgets.QGroupBox("This is a Group Box")
+
+        labelList = []
+        buttonList = []
+
+        for i in range(20):
+            labelList.append(QtWidgets.QLabel(f'Label {i}'))
+            buttonList.append(QtWidgets.QPushButton(f'Button {i}'))
+            formLayout.addRow(labelList[i], buttonList[i])
+
+        groupBox.setLayout(formLayout)
+        scroll = QtWidgets.QScrollArea()
+        scroll.setWidget(groupBox)
+        scroll.setWidgetResizable(True)
+        scroll.setFixedHeight(400)
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(scroll)
+
+        self.setLayout(layout)
+        """
+
         # Llamadas a Métodos
         # Botones de Opportunity Window
         self.__DynamicWindow.actionAbout.triggered.connect(self.clicked_about)
         self.__DynamicWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__DynamicWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__DynamicWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+        self.__DynamicWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
         # Setups Gráficas de Opportunity Window
+
+    # Métodos
+    # Actualizar secciones electrificadas
+    def __pressed_refresh_sections_button(self):
+        # Limpiar contenido de Layout
+        for i in reversed(range(self.__DynamicWindow.StopslLayout.count())):
+            self.__DynamicWindow.StopslLayout.itemAt(i).widget().setParent(None)
+        # Definir Widgets
+        group_box = QtWidgets.QGroupBox("Charge Sections")
+        group_box.setFont(QtGui.QFont("MS Sans Serif", 10, QtGui.QFont.Bold))
+        group_box.setStyleSheet("background-color:white;")
+        # Layout Interno del Group Box
+        layout = QtWidgets.QVBoxLayout()
+        # Route Data
+        bus_stop = RouteWindow.routeData[['BUS STOP']]
+        label = RouteWindow.routeData[['LABEL']].iloc[:, -1].values
+        # Charger Sections
+        stop_list = [label[i] for i in range(len(label)) if label[i] is not None]
+        self.charger_sections = [f"{stop_list[i]}-{stop_list[i+1]}" for i in range(len(stop_list)-1)]
+        # Check Box List
+        self.charger_sections_boxes = []
+        for i in range(len(self.charger_sections)):
+            self.charger_sections_boxes.append(QtWidgets.QCheckBox(self.charger_sections[i]))
+            layout.addWidget(self.charger_sections_boxes[i])
+        # Charger Sections GroupBox
+        group_box.setLayout(layout)
+        # Charger Sections Scroll
+        scroll = QtWidgets.QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(group_box)
+        # Charger Sections Layout
+        self.__DynamicWindow.StopslLayout.addWidget(scroll)
 
 
 # Inicio Programa

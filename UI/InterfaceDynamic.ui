@@ -979,7 +979,7 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QLabel" name="ChargingParameterLabel">
       <property name="geometry">
        <rect>
-        <x>340</x>
+        <x>170</x>
         <y>40</y>
         <width>261</width>
         <height>31</height>
@@ -1000,7 +1000,7 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QTableWidget" name="ImcChargingParametersTable">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>110</x>
         <y>110</y>
         <width>371</width>
         <height>291</height>
@@ -1215,6 +1215,59 @@ gridline-color: rgb(0, 0, 0);</string>
         </font>
        </property>
       </item>
+     </widget>
+     <widget class="QPushButton" name="RefreshSectionsButton">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>30</y>
+        <width>121</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="statusTip">
+       <string>Push to go to the Route tab</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(159, 159, 159);</string>
+      </property>
+      <property name="text">
+       <string>Load Charge
+Sections</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>579</x>
+        <y>110</y>
+        <width>241</width>
+        <height>291</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="StopslLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <item>
+        <widget class="QLabel" name="Fondo">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="OperationDiagramTab">
