@@ -773,12 +773,44 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         self.__OpportunityWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__OpportunityWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__OpportunityWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.__OpportunityWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
         self.__OpportunityWindow.OpportunityLoadSimButton.clicked.connect(self.__pressed_load_sim_opportunity_button)
         self.__OpportunityWindow.OpportunityGraphButton.clicked.connect(self.__pressed_graph_opportunity_button)
         # Setups Gráficas de Opportunity Window
         self.__setup_opportunity_diagram_figures()
 
     # Métodos
+    # Actualizar secciones electrificadas
+    def __pressed_refresh_sections_button(self):
+        # Limpiar contenido de Layout
+        for i in reversed(range(self.__OpportunityWindow.StopslLayout.count())):
+            self.__OpportunityWindow.StopslLayout.itemAt(i).widget().setParent(None)
+        # Definir Widgets
+        self.group_box = QtWidgets.QGroupBox("List")
+        self.group_box.setFont(QtGui.QFont("MS Sans Serif", 10, QtGui.QFont.Bold))
+        self.group_box.setStyleSheet("background-color:white;")
+        # Layout Interno del Group Box
+        self.group_box_layout = QtWidgets.QVBoxLayout()
+        # Route Data
+        label = RouteWindow.routeData[['LABEL']].iloc[:, -1].values
+        # Charger Sections
+        self.charger_sections = [label[i] for i in range(len(label)) if label[i] is not None]
+        print("Charger Sections: ")
+        print(self.charger_sections)
+        # Check Box List
+        self.charger_sections_boxes = []
+        for i in range(len(self.charger_sections)):
+            self.charger_sections_boxes.append(QtWidgets.QCheckBox(self.charger_sections[i]))
+            self.group_box_layout.addWidget(self.charger_sections_boxes[i])
+        # Charger Sections GroupBox
+        self.group_box.setLayout(self.group_box_layout)
+        # Charger Sections Scroll
+        self.charger_sections_scroll = QtWidgets.QScrollArea()
+        self.charger_sections_scroll.setWidgetResizable(True)
+        self.charger_sections_scroll.setWidget(self.group_box)
+        # Charger Sections Layout
+        self.__OpportunityWindow.StopslLayout.addWidget(self.charger_sections_scroll)
+
     # Definir Plots (Opportunity Window)
     def __setup_opportunity_diagram_figures(self):
         self.figureOppCharging = Figure(tight_layout=True)
@@ -1015,30 +1047,6 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.__DynamicWindow.ElementscomboBox.setCurrentIndex(0)
         self.__DynamicWindow.VariablescomboBox.setCurrentIndex(0)
 
-        """
-        formLayout = QtWidgets.QFormLayout()
-        groupBox = QtWidgets.QGroupBox("This is a Group Box")
-
-        labelList = []
-        buttonList = []
-
-        for i in range(20):
-            labelList.append(QtWidgets.QLabel(f'Label {i}'))
-            buttonList.append(QtWidgets.QPushButton(f'Button {i}'))
-            formLayout.addRow(labelList[i], buttonList[i])
-
-        groupBox.setLayout(formLayout)
-        scroll = QtWidgets.QScrollArea()
-        scroll.setWidget(groupBox)
-        scroll.setWidgetResizable(True)
-        scroll.setFixedHeight(400)
-
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(scroll)
-
-        self.setLayout(layout)
-        """
-
         # Llamadas a Métodos
         # Botones de Opportunity Window
         self.__DynamicWindow.actionAbout.triggered.connect(self.clicked_about)
@@ -1055,30 +1063,31 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         for i in reversed(range(self.__DynamicWindow.StopslLayout.count())):
             self.__DynamicWindow.StopslLayout.itemAt(i).widget().setParent(None)
         # Definir Widgets
-        group_box = QtWidgets.QGroupBox("Charge Sections")
-        group_box.setFont(QtGui.QFont("MS Sans Serif", 10, QtGui.QFont.Bold))
-        group_box.setStyleSheet("background-color:white;")
+        self.group_box = QtWidgets.QGroupBox("Charge Sections")
+        self.group_box.setFont(QtGui.QFont("MS Sans Serif", 10, QtGui.QFont.Bold))
+        self.group_box.setStyleSheet("background-color:white;")
         # Layout Interno del Group Box
-        layout = QtWidgets.QVBoxLayout()
+        self.group_box_layout = QtWidgets.QVBoxLayout()
         # Route Data
-        bus_stop = RouteWindow.routeData[['BUS STOP']]
         label = RouteWindow.routeData[['LABEL']].iloc[:, -1].values
         # Charger Sections
-        stop_list = [label[i] for i in range(len(label)) if label[i] is not None]
-        self.charger_sections = [f"{stop_list[i]}-{stop_list[i+1]}" for i in range(len(stop_list)-1)]
+        self.stop_list = [label[i] for i in range(len(label)) if label[i] is not None]
+        self.charger_sections = [f"{self.stop_list[i]}-{self.stop_list[i+1]}" for i in range(len(self.stop_list)-1)]
+        print("Charger Sections: ")
+        print(self.charger_sections)
         # Check Box List
         self.charger_sections_boxes = []
         for i in range(len(self.charger_sections)):
             self.charger_sections_boxes.append(QtWidgets.QCheckBox(self.charger_sections[i]))
-            layout.addWidget(self.charger_sections_boxes[i])
+            self.group_box_layout.addWidget(self.charger_sections_boxes[i])
         # Charger Sections GroupBox
-        group_box.setLayout(layout)
+        self.group_box.setLayout(self.group_box_layout)
         # Charger Sections Scroll
-        scroll = QtWidgets.QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setWidget(group_box)
+        self.charger_sections_scroll = QtWidgets.QScrollArea()
+        self.charger_sections_scroll.setWidgetResizable(True)
+        self.charger_sections_scroll.setWidget(self.group_box)
         # Charger Sections Layout
-        self.__DynamicWindow.StopslLayout.addWidget(scroll)
+        self.__DynamicWindow.StopslLayout.addWidget(self.charger_sections_scroll)
 
 
 # Inicio Programa

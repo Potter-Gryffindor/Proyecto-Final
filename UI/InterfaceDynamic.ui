@@ -1220,7 +1220,7 @@ gridline-color: rgb(0, 0, 0);</string>
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>30</y>
+        <y>370</y>
         <width>121</width>
         <height>51</height>
        </rect>
@@ -1234,7 +1234,7 @@ gridline-color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="statusTip">
-       <string>Push to go to the Route tab</string>
+       <string>Push to go load charge sections</string>
       </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(159, 159, 159);</string>
@@ -1248,9 +1248,9 @@ Sections</string>
       <property name="geometry">
        <rect>
         <x>579</x>
-        <y>110</y>
+        <y>80</y>
         <width>241</width>
-        <height>291</height>
+        <height>271</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="StopslLayout">
@@ -1268,6 +1268,27 @@ Sections</string>
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QLabel" name="ChargeSectionsLabel">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>40</y>
+        <width>171</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>CL: Charge Sections</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="OperationDiagramTab">
