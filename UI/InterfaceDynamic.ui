@@ -1414,7 +1414,7 @@ Sections</string>
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>90</y>
+        <y>80</y>
         <width>901</width>
         <height>311</height>
        </rect>
@@ -1437,6 +1437,9 @@ Sections</string>
       </property>
       <property name="statusTip">
        <string>Choose the element that prefer analyze</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <item>
        <property name="text">
@@ -1466,6 +1469,9 @@ Sections</string>
       </property>
       <property name="statusTip">
        <string>Choose the variable prefer to graph</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <item>
        <property name="text">

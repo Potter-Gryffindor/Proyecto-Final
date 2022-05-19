@@ -766,6 +766,11 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         self.__OpportunityWindow.SimulationOpportunityTab.setCurrentIndex(0)
         self.__OpportunityWindow.ElementscomboBox.setCurrentIndex(0)
         self.__OpportunityWindow.VariablescomboBox.setCurrentIndex(0)
+        self.group_box_layout = None
+        self.group_box = None
+        self.charger_sections = None
+        self.charger_sections_boxes = None
+        self.charger_sections_scroll = None
 
         # Llamadas a Métodos
         # Botones de Opportunity Window
@@ -777,6 +782,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         self.__OpportunityWindow.SaveSectionsButton.clicked.connect(self.__pressed_save_sections_button)
         self.__OpportunityWindow.OpportunityLoadSimButton.clicked.connect(self.__pressed_load_sim_opportunity_button)
         self.__OpportunityWindow.OpportunityGraphButton.clicked.connect(self.__pressed_graph_opportunity_button)
+        self.__OpportunityWindow.ElementscomboBox.currentTextChanged.connect(self.__selected_elements)
         # Setups Gráficas de Opportunity Window
         self.__setup_opportunity_diagram_figures()
 
@@ -815,17 +821,34 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
     # Guardar secciones electrificadas
     def __pressed_save_sections_button(self):
         self.section_select = []
+        self.charger_list = []
+        i = 0
         for section in self.charger_sections_boxes:
             if section.isChecked():
+                i += 1
                 self.section_select.append(section.text())
+                self.charger_list.append(f"C{i}")
         print("Charger Sections Selected: ")
         print(self.section_select)
+        print("Charger List: ")
+        print(self.charger_list)
         # Convertir la lista de Secciones a String
         text_stops = ','.join(self.section_select)
         # Crear Item de paradas para actualizar la tabla
         stops_item = QtWidgets.QTableWidgetItem(text_stops)
         stops_item.setFont(QtGui.QFont("MS Sans Serif", 8, QtGui.QFont.Bold))
         self.__OpportunityWindow.OppChargingParametersTable.setItem(2, 0, stops_item)
+
+    # Modificar valor de Variables dependiendo el Elemento
+    def __selected_elements(self):
+        self.__OpportunityWindow.VariablescomboBox.clear()
+        bus_variables = ['Energy', 'Power', 'Slope', '(SoC) State of Charge', 'Chargers', 'Charger vector']
+        charger_variables = self.charger_list
+        element_type = self.__OpportunityWindow.ElementscomboBox.currentIndex()
+        if element_type == 0:
+            self.__OpportunityWindow.VariablescomboBox.addItems(bus_variables)
+        elif element_type == 1:
+            self.__OpportunityWindow.VariablescomboBox.addItems(charger_variables)
 
     # Definir Plots (Opportunity Window)
     def __setup_opportunity_diagram_figures(self):
@@ -996,56 +1019,62 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
 
     # Graficar simulación de Oportunidad (Dropdown options)
     def __pressed_graph_opportunity_button(self):
-        plot_type = self.__OpportunityWindow.VariablescomboBox.currentIndex()
-        self.axOppCharging.cla()
-        if plot_type == 0:
-            i = 0
-            for x in BusWindow.arrayTime:
-                i += 1
-                self.axOppCharging.plot(x, self.energyVector, label=f'Bus {i}')
-            self.axOppCharging.set_title('Energy Curve', fontsize=12, fontweight="bold")
-            self.axOppCharging.set_ylabel('Energy (kWh)', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
-        elif plot_type == 1:
-            i = 0
-            for x in BusWindow.arrayTime:
-                i += 1
-                self.axOppCharging.plot(x, self.powerVector, label=f'Bus {i}')
-            self.axOppCharging.set_title('Power Curve', fontsize=12, fontweight="bold")
-            self.axOppCharging.set_ylabel('Power [kW]', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
-        elif plot_type == 2:
-            i = 0
-            for x in BusWindow.arrayTime:
-                i += 1
-                self.axOppCharging.plot(x, self.sinThetaVector, label=f'Bus {i}')
-            self.axOppCharging.set_title('Slope', fontsize=12, fontweight="bold")
-            self.axOppCharging.set_ylabel('sin(theta)', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
-        elif plot_type == 3:
-            i = 0
-            for x in BusWindow.arrayTime:
-                i += 1
-                self.axOppCharging.plot(x, 100 * np.array(self.SoCVector), label=f'Bus {i}')
-            self.axOppCharging.set_title('State of Charge', fontsize=12, fontweight="bold")
-            self.axOppCharging.set_ylabel('%', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
-        elif plot_type == 4:
-            i = 0
-            for x in BusWindow.arrayTime:
-                i += 1
-                self.axOppCharging.plot(x, BusWindow.stopVector, label=f'Bus {i}')
-            self.axOppCharging.set_title('Stop Vector', fontsize=12, fontweight="bold")
-            self.axOppCharging.set_ylabel('', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
-        elif plot_type == 5:
-            i = 0
-            for x in BusWindow.arrayTime:
-                i += 1
-                self.axOppCharging.plot(x, self.chargerVector, label=f'Bus {i}')
-            self.axOppCharging.set_title('Charger Vector', fontsize=12, fontweight="bold")
-            self.axOppCharging.set_ylabel('kW', fontsize=10, fontweight="bold")
-            self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        element_type = self.__OpportunityWindow.ElementscomboBox.currentIndex()
+        if element_type == 0:
+            plot_type = self.__OpportunityWindow.VariablescomboBox.currentIndex()
+            self.axOppCharging.cla()
+            if plot_type == 0:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axOppCharging.plot(x, self.energyVector, label=f'Bus {i}')
+                self.axOppCharging.set_title('Energy Curve', fontsize=12, fontweight="bold")
+                self.axOppCharging.set_ylabel('Energy (kWh)', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+            elif plot_type == 1:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axOppCharging.plot(x, self.powerVector, label=f'Bus {i}')
+                self.axOppCharging.set_title('Power Curve', fontsize=12, fontweight="bold")
+                self.axOppCharging.set_ylabel('Power [kW]', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+            elif plot_type == 2:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axOppCharging.plot(x, self.sinThetaVector, label=f'Bus {i}')
+                self.axOppCharging.set_title('Slope', fontsize=12, fontweight="bold")
+                self.axOppCharging.set_ylabel('sin(theta)', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+            elif plot_type == 3:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axOppCharging.plot(x, 100 * np.array(self.SoCVector), label=f'Bus {i}')
+                self.axOppCharging.set_title('State of Charge', fontsize=12, fontweight="bold")
+                self.axOppCharging.set_ylabel('%', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+            elif plot_type == 4:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axOppCharging.plot(x, BusWindow.stopVector, label=f'Bus {i}')
+                self.axOppCharging.set_title('Stop Vector', fontsize=12, fontweight="bold")
+                self.axOppCharging.set_ylabel('', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+            elif plot_type == 5:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axOppCharging.plot(x, self.chargerVector, label=f'Bus {i}')
+                self.axOppCharging.set_title('Charger Vector', fontsize=12, fontweight="bold")
+                self.axOppCharging.set_ylabel('kW', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        elif element_type == 1:
+            plot_type = self.__OpportunityWindow.VariablescomboBox.currentIndex()
+            self.axOppCharging.cla()
+            pass
 
         self.axOppCharging.tick_params(labelsize=10)
         self.axOppCharging.grid()
@@ -1072,6 +1101,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.__DynamicWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
         self.__DynamicWindow.SaveSectionsButton.clicked.connect(self.__pressed_save_sections_button)
         # Setups Gráficas de Opportunity Window
+        self.__setup_dynamic_diagram_figures()
 
     # Métodos
     # Actualizar secciones electrificadas
@@ -1120,6 +1150,16 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         stops_item = QtWidgets.QTableWidgetItem(text_stops)
         stops_item.setFont(QtGui.QFont("MS Sans Serif", 8, QtGui.QFont.Bold))
         self.__DynamicWindow.ImcChargingParametersTable.setItem(2, 0, stops_item)
+
+    # Definir Plots (Dynamic Window)
+    def __setup_dynamic_diagram_figures(self):
+        self.figureImcCharging = Figure(tight_layout=True)
+        self.canvasImcCharging = FigureCanvas(self.figureImcCharging)
+        self.toolbarImcCharging = NavigationToolbar(self.canvasImcCharging, self)
+        self.layoutImcCharging = QtWidgets.QVBoxLayout(self.__DynamicWindow.DynamicCurveWidget)
+        self.layoutImcCharging.addWidget(self.toolbarImcCharging)
+        self.layoutImcCharging.addWidget(self.canvasImcCharging)  #
+        self.axImcCharging = self.figureImcCharging.add_subplot(111)
 
 
 # Inicio Programa
