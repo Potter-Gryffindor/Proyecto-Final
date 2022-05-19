@@ -1017,6 +1017,30 @@ gridline-color: rgb(0, 0, 0);</string>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(255, 255, 255)</string>
       </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustIgnored</enum>
+      </property>
+      <property name="dragDropMode">
+       <enum>QAbstractItemView::NoDragDrop</enum>
+      </property>
+      <property name="textElideMode">
+       <enum>Qt::ElideRight</enum>
+      </property>
+      <property name="verticalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <property name="horizontalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
       <row>
        <property name="text">
         <string>BC [kwh]:Battery capacity per bus</string>
@@ -1152,7 +1176,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </item>
       <item row="2" column="0">
        <property name="text">
-        <string>S8,S18,S1</string>
+        <string>S8-S9,S9-S10,S16-S17</string>
        </property>
        <property name="font">
         <font>
@@ -1219,7 +1243,7 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QPushButton" name="RefreshSectionsButton">
       <property name="geometry">
        <rect>
-        <x>640</x>
+        <x>550</x>
         <y>370</y>
         <width>121</width>
         <height>51</height>
@@ -1288,6 +1312,34 @@ Sections</string>
       </property>
       <property name="text">
        <string>CL: Charge Sections</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="SaveSectionsButton">
+      <property name="geometry">
+       <rect>
+        <x>730</x>
+        <y>370</y>
+        <width>121</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="statusTip">
+       <string>Push to go load charge sections</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(159, 159, 159);</string>
+      </property>
+      <property name="text">
+       <string>Save Charge
+Sections</string>
       </property>
      </widget>
     </widget>

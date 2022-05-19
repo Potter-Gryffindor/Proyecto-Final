@@ -774,6 +774,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         self.__OpportunityWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__OpportunityWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
         self.__OpportunityWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
+        self.__OpportunityWindow.SaveSectionsButton.clicked.connect(self.__pressed_save_sections_button)
         self.__OpportunityWindow.OpportunityLoadSimButton.clicked.connect(self.__pressed_load_sim_opportunity_button)
         self.__OpportunityWindow.OpportunityGraphButton.clicked.connect(self.__pressed_graph_opportunity_button)
         # Setups Gráficas de Opportunity Window
@@ -810,6 +811,21 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         self.charger_sections_scroll.setWidget(self.group_box)
         # Charger Sections Layout
         self.__OpportunityWindow.StopslLayout.addWidget(self.charger_sections_scroll)
+
+    # Guardar secciones electrificadas
+    def __pressed_save_sections_button(self):
+        self.section_select = []
+        for section in self.charger_sections_boxes:
+            if section.isChecked():
+                self.section_select.append(section.text())
+        print("Charger Sections Selected: ")
+        print(self.section_select)
+        # Convertir la lista de Secciones a String
+        text_stops = ','.join(self.section_select)
+        # Crear Item de paradas para actualizar la tabla
+        stops_item = QtWidgets.QTableWidgetItem(text_stops)
+        stops_item.setFont(QtGui.QFont("MS Sans Serif", 8, QtGui.QFont.Bold))
+        self.__OpportunityWindow.OppChargingParametersTable.setItem(2, 0, stops_item)
 
     # Definir Plots (Opportunity Window)
     def __setup_opportunity_diagram_figures(self):
@@ -1054,6 +1070,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.__DynamicWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__DynamicWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__DynamicWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
+        self.__DynamicWindow.SaveSectionsButton.clicked.connect(self.__pressed_save_sections_button)
         # Setups Gráficas de Opportunity Window
 
     # Métodos
@@ -1088,6 +1105,21 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.charger_sections_scroll.setWidget(self.group_box)
         # Charger Sections Layout
         self.__DynamicWindow.StopslLayout.addWidget(self.charger_sections_scroll)
+
+    # Guardar secciones electrificadas
+    def __pressed_save_sections_button(self):
+        self.section_select = []
+        for section in self.charger_sections_boxes:
+            if section.isChecked():
+                self.section_select.append(section.text())
+        print("Charger Sections Selected: ")
+        print(self.section_select)
+        # Convertir la lista de Secciones a String
+        text_stops = ','.join(self.section_select)
+        # Crear Item de paradas para actualizar la tabla
+        stops_item = QtWidgets.QTableWidgetItem(text_stops)
+        stops_item.setFont(QtGui.QFont("MS Sans Serif", 8, QtGui.QFont.Bold))
+        self.__DynamicWindow.ImcChargingParametersTable.setItem(2, 0, stops_item)
 
 
 # Inicio Programa
