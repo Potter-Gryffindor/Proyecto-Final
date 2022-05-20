@@ -640,7 +640,7 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
             time_arr = []
             time_ = []
             frec = 0
-            print("Número de bus:"+str(y))
+            print("Número de bus:" + str(y))
             for idx, x in enumerate(self.timeVector):
                 # print("self.distVector: "+str(self.distVector[idx]),("self.speedVector: "+str(self.speedVector[idx])))
                 if t_ini_pico1 < x <= t_end_pico1 or t_ini_pico2 < x < t_end_pico2:
@@ -651,7 +651,7 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
                         frec = dispatch_frequency
                 time_ap = datetime.datetime.fromtimestamp(x + time_zone_colombia) + datetime.timedelta(seconds=frec * y)
                 time_arr.append(time_ap)
-                time_.append(time_arr[idx].strftime("%I:%M:%S %p"))
+                time_.append(time_arr[idx].strftime("%H:%M:%S"))
                 # print(time_[idx])
             self.arrayTime.append(time_arr)
             print(np.shape(self.arrayTime))
@@ -842,13 +842,12 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
     # Modificar valor de Variables dependiendo el Elemento
     def __selected_elements(self):
         self.__OpportunityWindow.VariablescomboBox.clear()
-        bus_variables = ['Energy', 'Power', 'Slope', '(SoC) State of Charge', 'Chargers', 'Charger vector']
-        charger_variables = self.charger_list
+        bus_variables = ['Energy', 'Power', 'Slope', '(SoC) State of Charge', 'Stop Vector', 'Charger vector']
         element_type = self.__OpportunityWindow.ElementscomboBox.currentIndex()
         if element_type == 0:
             self.__OpportunityWindow.VariablescomboBox.addItems(bus_variables)
         elif element_type == 1:
-            self.__OpportunityWindow.VariablescomboBox.addItems(charger_variables)
+            self.__OpportunityWindow.VariablescomboBox.addItem('Charger vector')
 
     # Definir Plots (Opportunity Window)
     def __setup_opportunity_diagram_figures(self):
@@ -930,7 +929,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         n_c = 0.01 * float(charging_table.item(4, 0).text())
         it = float(charging_table.item(5, 0).text())
         dt = float(charging_table.item(6, 0).text())
-        print('Stops Vector:')
+        print('Chargers Stops Vector:')
         print(cl)
 
         # Fleet operation time for extra loads
@@ -973,6 +972,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         energy_vector = []
         so_c_vector = [so_ci]
         charger_vector = []
+        charger_matrix = [[] for i in range(len(cl))]
 
         for n in range(0, len(time_vector) - 1):
 
@@ -981,8 +981,8 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
             else:
                 aux_onoff = 0
 
-            energy = (n_out * (fric * (mass+bc*11.1) * grav + 0.5 * rho * alpha * area * speed_vector[n] *
-                      speed_vector[n]) * speed_vector[n] * delta_t + n_in * mass * grav * sin_theta_vector[n] *
+            energy = (n_out * (fric * (mass + bc * 11.1) * grav + 0.5 * rho * alpha * area * speed_vector[n] *
+                               speed_vector[n]) * speed_vector[n] * delta_t + n_in * mass * grav * sin_theta_vector[n] *
                       speed_vector[n] * delta_t + mass * n_in * (speed_vector[n + 1] - speed_vector[n]) *
                       speed_vector[n] * delta_t + aux_onoff * p_aux * delta_t) / 36e5
             if n == 0:
@@ -991,31 +991,61 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 energy_vector.append(energy_vector[-1] + energy)
             if stop_vector[n] == 1:
                 if label_vector[n] in cl:
+                    index_stop = cl.index(label_vector[n])
                     ch_onoff = 1
                 else:
+                    index_stop = None
                     ch_onoff = 0
             else:
+                index_stop = None
                 ch_onoff = 0
 
             charger_vector.append(ch_onoff * cp)
 
+            for charger_num in range(len(charger_matrix)):
+                if charger_num == index_stop:
+                    charger_matrix[charger_num].append(ch_onoff * cp)
+                else:
+                    charger_matrix[charger_num].append(0)
+
             so_c_vector.append((so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc)
 
-            self.__OpportunityWindow.OpportunityprogressBar.setValue(int(100*n/(len(time_vector)-2)))
+            self.__OpportunityWindow.OpportunityprogressBar.setValue(int(100 * n / (len(time_vector) - 2)))
 
         energy_vector.append(energy_vector[-1])
         charger_vector.append(charger_vector[-1])
+        for charger_num in range(len(charger_matrix)):
+            charger_matrix[charger_num].append(charger_matrix[charger_num][-1])
         power_vector = [0]
 
         for n in range(1, len(time_vector) - 1):
             power_vector.append(-(energy_vector[n - 1] - energy_vector[n]) / (delta_t / 3600))
         power_vector.append(power_vector[-1])
 
+        num_chargers = len(charger_matrix)
+        inicio = BusWindow.arrayTime[0][0]
+        fin = BusWindow.arrayTime[-1][-1]
+        lista_tiempo = [inicio + datetime.timedelta(seconds=s) for s in range((fin - inicio).seconds + 1)]
+        charger_final_matrix = [[] for i in range(num_chargers)]
+        for t in lista_tiempo:
+            sum_c = [0 for i in range(num_chargers)]
+            for c in range(num_chargers):
+                for vect_t in BusWindow.arrayTime:
+                    try:
+                        indice = vect_t.index(t)
+                        sum_c[c] += charger_matrix[c][indice]
+                    except Exception as ex:
+                        continue
+                charger_final_matrix[c].append(sum_c[c])
+
         self.energyVector = energy_vector
         self.powerVector = power_vector
         self.sinThetaVector = sin_theta_vector
         self.SoCVector = so_c_vector
         self.chargerVector = charger_vector
+        self.charger_matrix = charger_matrix
+        self.lista_tiempo = lista_tiempo
+        self.charger_final_matrix = charger_final_matrix
 
     # Graficar simulación de Oportunidad (Dropdown options)
     def __pressed_graph_opportunity_button(self):
@@ -1074,7 +1104,15 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         elif element_type == 1:
             plot_type = self.__OpportunityWindow.VariablescomboBox.currentIndex()
             self.axOppCharging.cla()
-            pass
+
+            if plot_type == 0:
+                i = 0
+                for c in self.charger_final_matrix:
+                    self.axOppCharging.plot(self.lista_tiempo, c, label=f'C {i + 1}')
+                    i += 1
+                self.axOppCharging.set_title('Charger Vector', fontsize=12, fontweight="bold")
+                self.axOppCharging.set_ylabel('kW', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
 
         self.axOppCharging.tick_params(labelsize=10)
         self.axOppCharging.grid()
@@ -1119,7 +1157,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         label = RouteWindow.routeData[['LABEL']].iloc[:, -1].values
         # Charger Sections
         self.stop_list = [label[i] for i in range(len(label)) if label[i] is not None]
-        self.charger_sections = [f"{self.stop_list[i]}-{self.stop_list[i+1]}" for i in range(len(self.stop_list)-1)]
+        self.charger_sections = [f"{self.stop_list[i]}-{self.stop_list[i + 1]}" for i in range(len(self.stop_list) - 1)]
         print("Charger Sections: ")
         print(self.charger_sections)
         # Check Box List
@@ -1194,4 +1232,4 @@ if __name__ == "__main__":
     widget.show()
     sys.exit(app.exec_())
 
-#%%
+# %%
