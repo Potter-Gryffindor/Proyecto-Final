@@ -6,6 +6,7 @@ import pyarrow.feather as feather
 import numpy as np
 import datetime
 import time
+from collections import OrderedDict
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -842,7 +843,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
     # Modificar valor de Variables dependiendo el Elemento
     def __selected_elements(self):
         self.__OpportunityWindow.VariablescomboBox.clear()
-        bus_variables = ['Energy', 'Power', 'Slope', '(SoC) State of Charge', 'Stop Vector', 'Charger vector']
+        bus_variables = ['Energy', 'Power', 'Slope', '(SoC) State of Charge', 'Stop vector', 'Charger vector']
         element_type = self.__OpportunityWindow.ElementscomboBox.currentIndex()
         if element_type == 0:
             self.__OpportunityWindow.VariablescomboBox.addItems(bus_variables)
@@ -1138,6 +1139,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.__DynamicWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__DynamicWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
         self.__DynamicWindow.SaveSectionsButton.clicked.connect(self.__pressed_save_sections_button)
+        self.__DynamicWindow.ElementscomboBox.currentTextChanged.connect(self.__selected_elements)
         # Setups Gráficas de Opportunity Window
         self.__setup_dynamic_diagram_figures()
 
@@ -1177,17 +1179,45 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
     # Guardar secciones electrificadas
     def __pressed_save_sections_button(self):
         self.section_select = []
+        self.section_list = []
+        i = 0
         for section in self.charger_sections_boxes:
             if section.isChecked():
+                i += 1
                 self.section_select.append(section.text())
+        section_select_string = ','.join(self.section_select).replace('-', ',')
+        stop_list = section_select_string.split(',')
+        self.cl_list = tuple(OrderedDict.fromkeys(stop_list))
+        new_stop_list = list(OrderedDict.fromkeys(stop_list))
+        for i in range(len(stop_list)-1):
+            if stop_list[i] == stop_list[i+1]:
+                new_stop_list.remove(stop_list[i])
+        self.section_select = []
+        count = 1
+        for i in range(0, len(new_stop_list)-1, 2):
+            self.section_select.append(f"{new_stop_list[i]}-{new_stop_list[i+1]}")
+            self.section_list.append(f"S{count}")
+            count += 1
         print("Charger Sections Selected: ")
         print(self.section_select)
+        print("Charger Sections: ")
+        print(self.section_list)
         # Convertir la lista de Secciones a String
         text_stops = ','.join(self.section_select)
         # Crear Item de paradas para actualizar la tabla
         stops_item = QtWidgets.QTableWidgetItem(text_stops)
         stops_item.setFont(QtGui.QFont("MS Sans Serif", 8, QtGui.QFont.Bold))
         self.__DynamicWindow.ImcChargingParametersTable.setItem(2, 0, stops_item)
+
+    # Modificar valor de Variables dependiendo el Elemento
+    def __selected_elements(self):
+        self.__DynamicWindow.VariablescomboBox.clear()
+        bus_variables = ['Energy', 'Power', 'Slope', '(SoC) State of Charge', 'Stop vector', 'Charger vector']
+        element_type = self.__DynamicWindow.ElementscomboBox.currentIndex()
+        if element_type == 0:
+            self.__DynamicWindow.VariablescomboBox.addItems(bus_variables)
+        elif element_type == 1:
+            self.__DynamicWindow.VariablescomboBox.addItem('Section vector')
 
     # Definir Plots (Dynamic Window)
     def __setup_dynamic_diagram_figures(self):

@@ -1176,7 +1176,7 @@ gridline-color: rgb(0, 0, 0);</string>
       </item>
       <item row="2" column="0">
        <property name="text">
-        <string>S8-S9,S9-S10,S16-S17</string>
+        <string>S1-S3,S8-S11,S16-S18</string>
        </property>
        <property name="font">
         <font>
@@ -1495,7 +1495,7 @@ Sections</string>
       </item>
       <item>
        <property name="text">
-        <string>Chargers</string>
+        <string>Stop vector</string>
        </property>
       </item>
       <item>
