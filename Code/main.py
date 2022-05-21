@@ -1004,10 +1004,10 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
             charger_vector.append(ch_onoff * cp)
 
             for charger_num in range(len(charger_matrix)):
-                if charger_num == index_stop:
-                    charger_matrix[charger_num].append(ch_onoff * cp)
+                if (idx := charger_num) == index_stop:
+                    charger_matrix[idx].append(ch_onoff * cp)
                 else:
-                    charger_matrix[charger_num].append(0)
+                    charger_matrix[idx].append(0)
 
             if (soC := (so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc) <= 1:
                 so_c_vector.append(soC)
@@ -1038,7 +1038,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                     try:
                         indice = vect_t.index(t)
                         sum_c[c] += charger_matrix[c][indice]
-                    except Exception as ex:
+                    except Exception:
                         continue
                 charger_final_matrix[c].append(sum_c[c])
 
@@ -1197,8 +1197,8 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         print("Active Stops:")
         print(self.cl_aux)
         for i in range(len(stop_list)-1):
-            if stop_list[i] == stop_list[i+1]:
-                new_stop_list.remove(stop_list[i])
+            if (stop := stop_list[i]) == stop_list[i+1]:
+                new_stop_list.remove(stop)
         self.section_select = []
         count = 1
         for i in range(0, len(new_stop_list)-1, 2):
@@ -1383,14 +1383,14 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
             if n > 0:
                 power_vector.append(-(energy_vector[n - 1] - energy_vector[n]) / (delta_t / 3600))
             if stop_vector[n] == 1 or active_section == 1:
-                if (label_vector[n] in self.cl_aux) or (active_section == 1):
+                if ((label := label_vector[n]) in self.cl_aux) or (active_section == 1):
                     for i in range(len(self.stops_for_section)):
-                        if label_vector[n] in self.stops_for_section[i]:
+                        if label in self.stops_for_section[i]:
                             section_num = i
                             break
-                    if label_vector[n] == self.cl_list[section_num][0]:
+                    if label == self.cl_list[section_num][0]:
                         active_section = 1
-                    elif label_vector[n] == self.cl_list[section_num][1]:
+                    elif label == self.cl_list[section_num][1]:
                         active_section = 0
                     index_stop = section_num
                     ch_onoff = 1
@@ -1400,8 +1400,8 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
             else:
                 index_stop = None
                 ch_onoff = 0
-            if power_vector[n] >= 0:
-                charger_vector.append(ch_onoff * (cp + power_vector[n]))
+            if (power := power_vector[n]) >= 0:
+                charger_vector.append(ch_onoff * (cp + power))
             else:
                 charger_vector.append(ch_onoff * cp)
 
