@@ -1009,7 +1009,10 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 else:
                     charger_matrix[charger_num].append(0)
 
-            so_c_vector.append((so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc)
+            if soC := (so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc <= 1:
+                so_c_vector.append(soC)
+            else:
+                so_c_vector.append(1)
 
             self.__OpportunityWindow.OpportunityprogressBar.setValue(int(100 * n / (len(time_vector) - 2)))
 
@@ -1139,6 +1142,8 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.__DynamicWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__DynamicWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
         self.__DynamicWindow.SaveSectionsButton.clicked.connect(self.__pressed_save_sections_button)
+        self.__DynamicWindow.DynamicLoadSimButton.clicked.connect(self.__pressed_load_sim_imc_button)
+        self.__DynamicWindow.DynamicGraphButton.clicked.connect(self.__pressed_graph_imc_button)
         self.__DynamicWindow.ElementscomboBox.currentTextChanged.connect(self.__selected_elements)
         # Setups Gráficas de Opportunity Window
         self.__setup_dynamic_diagram_figures()
@@ -1187,8 +1192,10 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
                 self.section_select.append(section.text())
         section_select_string = ','.join(self.section_select).replace('-', ',')
         stop_list = section_select_string.split(',')
-        self.cl_list = tuple(OrderedDict.fromkeys(stop_list))
         new_stop_list = list(OrderedDict.fromkeys(stop_list))
+        self.cl_aux = tuple(new_stop_list)
+        print("Active Stops:")
+        print(self.cl_aux)
         for i in range(len(stop_list)-1):
             if stop_list[i] == stop_list[i+1]:
                 new_stop_list.remove(stop_list[i])
@@ -1198,8 +1205,18 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
             self.section_select.append(f"{new_stop_list[i]}-{new_stop_list[i+1]}")
             self.section_list.append(f"S{count}")
             count += 1
+        num_sections = len(self.section_list)
         print("Charger Sections Selected: ")
         print(self.section_select)
+        self.stops_for_section = [[] for i in range(num_sections)]
+        for section in self.section_select:
+            inicio_section = section.split('-')[0]
+            fin_section = section.split('-')[1]
+            for i in range(self.cl_aux.index(inicio_section), self.cl_aux.index(fin_section)+1):
+                self.stops_for_section[self.section_select.index(section)].append(self.cl_aux[i])
+        print("Stops for Section: ")
+        print(self.stops_for_section)
+        self.cl_list = [x.split('-') for x in self.section_select]
         print("Charger Sections: ")
         print(self.section_list)
         # Convertir la lista de Secciones a String
@@ -1228,6 +1245,282 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.layoutImcCharging.addWidget(self.toolbarImcCharging)
         self.layoutImcCharging.addWidget(self.canvasImcCharging)  #
         self.axImcCharging = self.figureImcCharging.add_subplot(111)
+
+    # Cargar simulación de IMC
+    def __pressed_load_sim_imc_button(self):
+        def calculate_angle(dist_vector_f, dist_route_f, alt_route_f):
+            sin_theta_vector_route = []
+            for N in range(0, len(dist_route_f) - 1):
+                # point route : N
+                sin_theta_part1 = alt_route_f.iloc[N + 1].values[0] - alt_route_f.iloc[N].values[0]
+                sin_theta_part2 = (1000 * dist_route_f.iloc[N + 1].values[0] - 1000 * dist_route_f.iloc[N].values[0])
+                sin_theta = sin_theta_part1 / sin_theta_part2
+                sin_theta_vector_route.append(sin_theta)
+
+            sin_theta_vector_route.append(sin_theta_vector_route[-1])
+            time.sleep(5)
+            sin_theta_vector_f = []
+            arr = []
+            for N in range(0, len(dist_route_f)):
+                arr.append(1000 * dist_route_f.iloc[N].values[0])
+            dist_route_np = np.array(arr)
+            print('dist_route_np: ')
+            print(dist_route_np)
+
+            for N in range(0, len(dist_vector_f) - 1):
+                # point1=dist_vector[n]
+                point2 = dist_vector_f[N + 1]
+                index = np.where(point2 >= dist_route_np)
+                k = index[0][-1]
+                sin_theta_tot = sin_theta_vector_route[k]
+                sin_theta_vector_f.append(sin_theta_tot)
+
+            sin_theta_vector_f.append(sin_theta_vector_f[-1])
+
+            print('len sin_theta_vector:')
+            print(len(sin_theta_vector_route))
+            return sin_theta_vector_f
+
+        # Parameters
+        # Simulation parameters
+        delta_t = 0.2
+
+        # Bus parameters
+        bus_table = BusWindow.BusParametersTable
+        fric = float(bus_table.item(0, 0).text())
+        print('fric: ', fric)
+        mass = float(bus_table.item(1, 0).text())
+        print('mass: ', mass)
+        grav = float(bus_table.item(2, 0).text())
+        print('grav: ', grav)
+        rho = float(bus_table.item(3, 0).text())
+        print('rho: ', rho)
+        alpha = float(bus_table.item(4, 0).text())
+        print('alpha: ', alpha)
+        area = float(bus_table.item(5, 0).text())
+        print('area: ', area)
+        p_aux = 1000 * float(bus_table.item(6, 0).text())
+        print('p_aux: ', p_aux)
+        n_out = 0.01 * float(bus_table.item(7, 0).text())
+        print('n_out: ', n_out)
+        n_in = 0.01 * float(bus_table.item(8, 0).text())
+        print('n_in: ', n_in)
+
+        # Opportunity charge parameters
+        charging_table = self.__DynamicWindow.ImcChargingParametersTable
+        bc = float(charging_table.item(0, 0).text())
+        so_ci = 0.01 * float(charging_table.item(1, 0).text())
+        text_stops = charging_table.item(2, 0).text()
+        cl = text_stops.split(',')
+        cp = float(charging_table.item(3, 0).text())
+        n_c = 0.01 * float(charging_table.item(4, 0).text())
+        it = float(charging_table.item(5, 0).text())
+        dt = float(charging_table.item(6, 0).text())
+        print('Chargers Stops Vector:')
+        print(cl)
+
+        # Fleet operation time for extra loads
+        fleet_table = BusWindow.FleetParametersTable
+        stop_delay = float(fleet_table.item(4, 0).text())
+        time_in_terminal = float(fleet_table.item(5, 0).text())
+        t_ini_fleet_qt = BusWindow.STFtimeEdit.time()
+        t_ini_fleet = t_ini_fleet_qt.hour() * 3600 + t_ini_fleet_qt.minute() * 60 + t_ini_fleet_qt.second()
+        t_end_fleet_qt = BusWindow.ETFtimeEdit.time()
+        t_end_fleet = t_end_fleet_qt.hour() * 3600 + t_end_fleet_qt.minute() * 60 + t_end_fleet_qt.second()
+
+        t_ini_pico1_qt = BusWindow.STPtimeEdit.time()
+        t_ini_pico1 = t_ini_pico1_qt.hour() * 3600 + t_ini_pico1_qt.minute() * 60 + t_ini_pico1_qt.second()
+        t_end_pico1_qt = BusWindow.ETPtimeEdit.time()
+        t_end_pico1 = t_end_pico1_qt.hour() * 3600 + t_end_pico1_qt.minute() * 60 + t_end_pico1_qt.second()
+
+        t_ini_pico2_qt = BusWindow.STMPtimeEdit.time()
+        t_ini_pico2 = t_ini_pico2_qt.hour() * 3600 + t_ini_pico2_qt.minute() * 60 + t_ini_pico2_qt.second()
+        t_end_pico2_qt = BusWindow.EMPtimeEdit.time()
+        t_end_pico2 = t_end_pico2_qt.hour() * 3600 + t_end_pico2_qt.minute() * 60 + t_end_pico1_qt.second()
+
+        # Fleet operation results
+        time_vector = BusWindow.timeVector
+        print('time vector:')
+        print(time_vector)
+        print('t_ini_fleet:', t_ini_fleet)
+        time_vector_dt = BusWindow.timeVectorDT
+        speed_vector = BusWindow.speedVector
+        dist_vector = BusWindow.distVector
+        state_vector = BusWindow.stateVector
+        stop_vector = BusWindow.stopVector
+        label_vector = BusWindow.labelVector
+
+        # Route Data
+        dist_route = RouteWindow.routeData[['DIST']]
+        alt_route = RouteWindow.routeData[['ALT']]
+
+        # Angle vector
+        sin_theta_vector = calculate_angle(dist_vector, dist_route, alt_route)
+        energy_vector = []
+        power_vector = [0]
+        so_c_vector = [so_ci]
+        charger_vector = []
+        charger_matrix = [[] for i in range(len(cl))]
+        active_section = 0
+        num_chargers = len(cl)
+        section_num = None
+
+        for n in range(0, len(time_vector) - 1):
+
+            if time_vector[n] > t_ini_fleet:
+                aux_onoff = 1
+            else:
+                aux_onoff = 0
+
+            energy = (n_out * (fric * (mass + bc * 11.1) * grav + 0.5 * rho * alpha * area * speed_vector[n] *
+                               speed_vector[n]) * speed_vector[n] * delta_t + n_in * mass * grav * sin_theta_vector[n] *
+                      speed_vector[n] * delta_t + mass * n_in * (speed_vector[n + 1] - speed_vector[n]) *
+                      speed_vector[n] * delta_t + aux_onoff * p_aux * delta_t) / 36e5
+            if n == 0:
+                energy_vector.append(energy)
+            else:
+                energy_vector.append(energy_vector[-1] + energy)
+            if n > 0:
+                power_vector.append(-(energy_vector[n - 1] - energy_vector[n]) / (delta_t / 3600))
+            if stop_vector[n] == 1 or active_section == 1:
+                if (label_vector[n] in self.cl_aux) or (active_section == 1):
+                    for i in range(len(self.stops_for_section)):
+                        if label_vector[n] in self.stops_for_section[i]:
+                            section_num = i
+                            break
+                    if label_vector[n] == self.cl_list[section_num][0]:
+                        active_section = 1
+                    elif label_vector[n] == self.cl_list[section_num][1]:
+                        active_section = 0
+                    index_stop = section_num
+                    ch_onoff = 1
+                else:
+                    index_stop = None
+                    ch_onoff = 0
+            else:
+                index_stop = None
+                ch_onoff = 0
+            if power_vector[n] >= 0:
+                charger_vector.append(ch_onoff * (cp + power_vector[n]))
+            else:
+                charger_vector.append(ch_onoff * cp)
+
+            for charger_num in range(len(charger_matrix)):
+                if charger_num == index_stop:
+                    if power_vector[n] >= 0:
+                        charger_matrix[charger_num].append(ch_onoff * (cp + power_vector[n]))
+                    else:
+                        charger_matrix[charger_num].append(ch_onoff * cp)
+                else:
+                    charger_matrix[charger_num].append(0)
+            if soC := (so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc <= 1:
+                so_c_vector.append(soC)
+            else:
+                so_c_vector.append(1)
+            self.__DynamicWindow.DynamicprogressBar.setValue(int(100 * n / (len(time_vector) - 2)))
+
+        energy_vector.append(energy_vector[-1])
+        charger_vector.append(charger_vector[-1])
+        power_vector.append(power_vector[-1])
+        for charger_num in range(len(charger_matrix)):
+            charger_matrix[charger_num].append(charger_matrix[charger_num][-1])
+
+        inicio = BusWindow.arrayTime[0][0]
+        fin = BusWindow.arrayTime[-1][-1]
+        lista_tiempo = [inicio + datetime.timedelta(seconds=s) for s in range((fin - inicio).seconds + 1)]
+        charger_final_matrix = [[] for i in range(num_chargers)]
+        for t in lista_tiempo:
+            sum_c = [0 for i in range(num_chargers)]
+            for c in range(num_chargers):
+                for vect_t in BusWindow.arrayTime:
+                    try:
+                        indice = vect_t.index(t)
+                        sum_c[c] += charger_matrix[c][indice]
+                    except Exception:
+                        continue
+                charger_final_matrix[c].append(sum_c[c])
+
+        self.energyVector = energy_vector
+        self.powerVector = power_vector
+        self.sinThetaVector = sin_theta_vector
+        self.SoCVector = so_c_vector
+        self.chargerVector = charger_vector
+        self.charger_matrix = charger_matrix
+        self.lista_tiempo = lista_tiempo
+        self.charger_final_matrix = charger_final_matrix
+
+    # Graficar simulación de IMC (Dropdown options)
+    def __pressed_graph_imc_button(self):
+        element_type = self.__DynamicWindow.ElementscomboBox.currentIndex()
+        if element_type == 0:
+            plot_type = self.__DynamicWindow.VariablescomboBox.currentIndex()
+            self.axImcCharging.cla()
+            if plot_type == 0:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axImcCharging.plot(x, self.energyVector, label=f'Bus {i}')
+                self.axImcCharging.set_title('Energy Curve', fontsize=12, fontweight="bold")
+                self.axImcCharging.set_ylabel('Energy (kWh)', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+            elif plot_type == 1:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axImcCharging.plot(x, self.powerVector, label=f'Bus {i}')
+                self.axImcCharging.set_title('Power Curve', fontsize=12, fontweight="bold")
+                self.axImcCharging.set_ylabel('Power [kW]', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+            elif plot_type == 2:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axImcCharging.plot(x, self.sinThetaVector, label=f'Bus {i}')
+                self.axImcCharging.set_title('Slope', fontsize=12, fontweight="bold")
+                self.axImcCharging.set_ylabel('sin(theta)', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+            elif plot_type == 3:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axImcCharging.plot(x, 100 * np.array(self.SoCVector), label=f'Bus {i}')
+                self.axImcCharging.set_title('State of Charge', fontsize=12, fontweight="bold")
+                self.axImcCharging.set_ylabel('%', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+            elif plot_type == 4:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axImcCharging.plot(x, BusWindow.stopVector, label=f'Bus {i}')
+                self.axImcCharging.set_title('Stop Vector', fontsize=12, fontweight="bold")
+                self.axImcCharging.set_ylabel('', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+            elif plot_type == 5:
+                i = 0
+                for x in BusWindow.arrayTime:
+                    i += 1
+                    self.axImcCharging.plot(x, self.chargerVector, label=f'Bus {i}')
+                self.axImcCharging.set_title('Section Vector', fontsize=12, fontweight="bold")
+                self.axImcCharging.set_ylabel('kW', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        elif element_type == 1:
+            plot_type = self.__DynamicWindow.VariablescomboBox.currentIndex()
+            self.axImcCharging.cla()
+
+            if plot_type == 0:
+                i = 0
+                for c in self.charger_final_matrix:
+                    self.axImcCharging.plot(self.lista_tiempo, c, label=f'S {i + 1}')
+                    i += 1
+                self.axImcCharging.set_title('Section Vector', fontsize=12, fontweight="bold")
+                self.axImcCharging.set_ylabel('kW', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+
+        self.axImcCharging.tick_params(labelsize=10)
+        self.axImcCharging.grid()
+        self.axImcCharging.legend(frameon=False, loc='best')
+        self.figureImcCharging.autofmt_xdate()
+        self.canvasImcCharging.draw()
 
 
 # Inicio Programa
@@ -1262,4 +1555,4 @@ if __name__ == "__main__":
     widget.show()
     sys.exit(app.exec_())
 
-# %%
+#%%

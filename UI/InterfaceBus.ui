@@ -1640,8 +1640,8 @@ gridline-color: rgb(0, 0, 0);</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>100</width>
-          <height>30</height>
+          <width>191</width>
+          <height>71</height>
          </rect>
         </property>
         <property name="font">
@@ -1926,8 +1926,8 @@ gridline-color: rgb(0, 0, 0);</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>100</width>
-          <height>30</height>
+          <width>191</width>
+          <height>66</height>
          </rect>
         </property>
         <property name="font">
