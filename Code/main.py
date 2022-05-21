@@ -1009,7 +1009,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 else:
                     charger_matrix[charger_num].append(0)
 
-            if soC := (so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc <= 1:
+            if (soC := (so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc) <= 1:
                 so_c_vector.append(soC)
             else:
                 so_c_vector.append(1)
@@ -1413,7 +1413,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
                         charger_matrix[charger_num].append(ch_onoff * cp)
                 else:
                     charger_matrix[charger_num].append(0)
-            if soC := (so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc <= 1:
+            if (soC := (so_c_vector[-1] * bc - energy + charger_vector[-1] * delta_t / 3600) / bc) <= 1:
                 so_c_vector.append(soC)
             else:
                 so_c_vector.append(1)
