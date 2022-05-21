@@ -145,16 +145,18 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QPushButton" name="PowerFlowButton">
       <property name="geometry">
        <rect>
-        <x>490</x>
-        <y>30</y>
-        <width>221</width>
+        <x>190</x>
+        <y>300</y>
+        <width>131</width>
         <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <family>Arial</family>
-        <pointsize>16</pointsize>
+        <family>MS Sans Serif</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
        </font>
       </property>
       <property name="toolTip">
@@ -173,16 +175,18 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="ChargingComboBox">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>30</y>
-        <width>251</width>
+        <x>160</x>
+        <y>250</y>
+        <width>181</width>
         <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <family>MS Sans Serif</family>
-        <pointsize>12</pointsize>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
        </font>
       </property>
       <property name="statusTip">
@@ -205,16 +209,16 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QLabel" name="NodeLabel">
       <property name="geometry">
        <rect>
-        <x>300</x>
-        <y>450</y>
-        <width>71</width>
-        <height>21</height>
+        <x>540</x>
+        <y>360</y>
+        <width>51</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <family>MS Sans Serif</family>
-        <pointsize>12</pointsize>
+        <pointsize>10</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -226,8 +230,8 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="NodeListComboBox">
       <property name="geometry">
        <rect>
-        <x>370</x>
-        <y>440</y>
+        <x>590</x>
+        <y>360</y>
         <width>151</width>
         <height>31</height>
        </rect>
@@ -235,7 +239,9 @@ gridline-color: rgb(0, 0, 0);</string>
       <property name="font">
        <font>
         <family>MS Sans Serif</family>
-        <pointsize>12</pointsize>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
        </font>
       </property>
       <property name="statusTip">
@@ -248,8 +254,8 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QPushButton" name="BusLocationButton">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>440</y>
+        <x>760</x>
+        <y>360</y>
         <width>121</width>
         <height>31</height>
        </rect>
@@ -257,7 +263,7 @@ gridline-color: rgb(0, 0, 0);</string>
       <property name="font">
        <font>
         <family>MS Sans Serif</family>
-        <pointsize>10</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -275,10 +281,10 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>120</y>
+        <x>540</x>
+        <y>110</y>
         <width>341</width>
-        <height>241</height>
+        <height>181</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="AssignmentLayout">
@@ -300,10 +306,10 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QLabel" name="ChargerLabel">
       <property name="geometry">
        <rect>
-        <x>360</x>
-        <y>90</y>
+        <x>580</x>
+        <y>70</y>
         <width>241</width>
-        <height>21</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="font">
@@ -314,6 +320,9 @@ gridline-color: rgb(0, 0, 0);</string>
         <bold>true</bold>
        </font>
       </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Charger Node Asignment</string>
       </property>
@@ -321,8 +330,8 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QPushButton" name="LoadChargersNodesButton">
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>370</y>
+        <x>540</x>
+        <y>310</y>
         <width>221</width>
         <height>31</height>
        </rect>
@@ -330,7 +339,7 @@ gridline-color: rgb(0, 0, 0);</string>
       <property name="font">
        <font>
         <family>MS Sans Serif</family>
-        <pointsize>10</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -351,8 +360,8 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QPushButton" name="SaveButton">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>370</y>
+        <x>770</x>
+        <y>310</y>
         <width>111</width>
         <height>31</height>
        </rect>
@@ -360,7 +369,7 @@ gridline-color: rgb(0, 0, 0);</string>
       <property name="font">
        <font>
         <family>MS Sans Serif</family>
-        <pointsize>10</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -373,6 +382,173 @@ gridline-color: rgb(0, 0, 0);</string>
       </property>
       <property name="text">
        <string>Save</string>
+      </property>
+     </widget>
+     <widget class="QFrame" name="DssFileLineFrame">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>160</y>
+        <width>241</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="Button">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="Button">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="Button">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>191</red>
+            <green>191</green>
+            <blue>191</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="accessibleName">
+       <string>.csv</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <widget class="QLineEdit" name="DssFileLine">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>221</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>MS Sans Serif</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(255, 255, 255);
+border-color: rgb(0, 0, 0);
+</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="SearchFileButton">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>110</y>
+        <width>81</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="statusTip">
+       <string>Push to Search Dss File </string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(159, 159, 159);</string>
+      </property>
+      <property name="text">
+       <string>Search
+File</string>
       </property>
      </widget>
     </widget>

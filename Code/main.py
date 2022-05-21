@@ -26,7 +26,7 @@ path_Code = Path.cwd()
 path_parent = path_Code.parent
 path_UI = Path(path_parent, "UI")
 path_Imgs = Path(path_parent, "Imgs")
-path_ieee37 = Path(path_parent, "TestCase", "i37Bus", "ieee37.dss")
+path_TestCase = Path(path_parent, "TestCase")
 path_Route = Path(path_parent, "Route")
 
 # Inicializar OpenDSS
@@ -66,7 +66,7 @@ class UiRouteWindow(QtWidgets.QMainWindow):
         self.__RouteWindow = uic.loadUi(ruta_ui, self)
         self.AboutTab = UiAboutWindow()
         # self.routeData = feather.read_feather('../Route/Template/ROUTE-Template.feather')
-        ruta_template = str(Path(path_Route, "Template/ROUTE-Template.feather")).replace('\\', '/')
+        ruta_template = str(Path(path_Route, "Template/ROUTE-Template.feather"))
         self.routeData = feather.read_feather(ruta_template)
 
         # Llamadas a Métodos
@@ -110,10 +110,6 @@ class UiRouteWindow(QtWidgets.QMainWindow):
     def pressed_grid_button(self):
         widget.setCurrentIndex(4)
         self.AboutTab.close()
-        DSSText.Command = 'clear'
-        DSSText.Command = 'Redirect ('+str(path_ieee37)+')'
-        # Flujo de carga ficticio para generar la lista de nodos
-        DSSText.Command = 'CalcVoltageBases'
 
     # Buscar y definir la extensión del archivo .feather or .csv
     def __pressed_search_file_button(self):
@@ -128,7 +124,7 @@ class UiRouteWindow(QtWidgets.QMainWindow):
         except IndexError as ex:
             print("Error:", ex)
 
-    # Leer y cargar el archivo .CSV
+    # Leer y cargar el archivo .feather or .csv
     def __pressed_simulate_file_button(self):
         file = self.__RouteWindow.RouteFileLine.text()
         print("File:", file)
@@ -1581,6 +1577,12 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.__GridWindow = uic.loadUi(ruta_ui, self)
         self.__GridWindow.ChargingComboBox.setCurrentIndex(0)
         self.__GridWindow.GridSimulationTab.setCurrentIndex(0)
+        # Inicialización OpenDSS
+        DSSText.Command = 'clear'
+        ruta_file_dss = str(Path(path_TestCase, "i37Bus", "ieee37.dss"))
+        DSSText.Command = f'Redirect ({ruta_file_dss})'
+        # Flujo de carga ficticio para generar la lista de nodos
+        DSSText.Command = 'CalcVoltageBases'
 
         # Llamadas a Métodos
         # Botones de Grid Window
@@ -1589,6 +1591,7 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.__GridWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__GridWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__GridWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.__GridWindow.SearchFileButton.clicked.connect(self.__pressed_search_file_button)
         self.__GridWindow.LoadChargersNodesButton.clicked.connect(self.__pressed_load_charger_nodes_button)
         # self.__GridWindow.SaveButton.clicked.connect(self.__pressed_save_button)
         self.__GridWindow.BusLocationButton.clicked.connect(self.__pressed_bus_location_button)
@@ -1599,6 +1602,34 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         # self.__GridWindow.CurrentButton.clicked.connect(self.__pressed_current_button)
 
     # Métodos
+    # Buscar y definir la extensión del archivo .dss
+    def __pressed_search_file_button(self):
+        file_filter = "dss file (*.dss)"
+        dss_route = str(path_TestCase)
+        try:
+            (filename, extension) = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', dss_route,
+                                                                          filter=self.tr(file_filter))
+            self.file_type = filename.split('.')[1]
+            print("File extension:", self.file_type)
+            self.__GridWindow.DssFileLine.setText(filename)
+
+            file = self.__GridWindow.DssFileLine.text()
+            print("File:", file)
+            try:
+                if self.file_type == 'dss':
+                    # Inicialización OpenDSS
+                    DSSText.Command = 'clear'
+                    DSSText.Command = f'Redirect ({file})'
+                    # Flujo de carga ficticio para generar la lista de nodos
+                    DSSText.Command = 'CalcVoltageBases'
+                else:
+                    raise Exception('File extension not supported')
+            except Exception as ex:
+                print(ex)
+                print('Not a valid dss file')
+        except IndexError as ex:
+            print("Error:", ex)
+
     def __pressed_load_charger_nodes_button(self):
         # Crear una lista de nodos personalizada
         self.AllBusNames = DSSCircuit.AllBusNames
