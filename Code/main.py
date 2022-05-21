@@ -1,6 +1,14 @@
 # Importar Paquetes
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
+import win32com.client
+from win32com.client import makepy
+import sys
+from pathlib import Path
+import os
+import gc
+from platform import node
+
 from pandas import read_csv
 import pyarrow.feather as feather
 import numpy as np
@@ -13,13 +21,33 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.ticker as ticker
 
+# Variables globales
+path_Code = Path.cwd()
+path_parent = path_Code.parent
+path_UI = Path(path_parent, "UI")
+path_Imgs = Path(path_parent, "Imgs")
+path_ieee37 = Path(path_parent, "TestCase", "i37Bus", "ieee37.dss")
+path_Route = Path(path_parent, "Route")
+
+# Inicializar OpenDSS
+sys.argv = ["makepy", "OpenDSSEngine.DSS"]
+makepy.main()
+DSSObj = win32com.client.Dispatch("OpenDSSEngine.DSS")
+DSSText = DSSObj.Text
+DSSCircuit = DSSObj.ActiveCircuit
+DSSSolution = DSSCircuit.Solution
+DSSBus = DSSCircuit.ActiveBus
+DSSCtrlQueue = DSSCircuit.CtrlQueue
+DSSObj.Start(0)
+
 
 # Clases
 class UiAboutWindow(QtWidgets.QDialog):
     # Constructor
     def __init__(self):
         super(UiAboutWindow, self).__init__()
-        self.__AboutWindow = uic.loadUi('../UI/About.ui', self)
+        ruta_ui = str(Path(path_UI, "About.ui"))
+        self.__AboutWindow = uic.loadUi(ruta_ui, self)
         self.__AboutWindow.setFixedSize(400, 449)
         self.__AboutWindow.setWindowFlags(
             QtCore.Qt.Window |
@@ -34,9 +62,12 @@ class UiRouteWindow(QtWidgets.QMainWindow):
     # Constructor
     def __init__(self):
         super(UiRouteWindow, self).__init__()
-        self.__RouteWindow = uic.loadUi('../UI/InterfaceRoute.ui', self)
+        ruta_ui = str(Path(path_UI, "InterfaceRoute.ui"))
+        self.__RouteWindow = uic.loadUi(ruta_ui, self)
         self.AboutTab = UiAboutWindow()
-        self.routeData = feather.read_feather('../Route/Template/ROUTE-Template.feather')
+        # self.routeData = feather.read_feather('../Route/Template/ROUTE-Template.feather')
+        ruta_template = str(Path(path_Route, "Template/ROUTE-Template.feather")).replace('\\', '/')
+        self.routeData = feather.read_feather(ruta_template)
 
         # Llamadas a Métodos
         # Botones de Route Window
@@ -44,6 +75,7 @@ class UiRouteWindow(QtWidgets.QMainWindow):
         self.__RouteWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__RouteWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__RouteWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.__RouteWindow.GridButton.clicked.connect(self.pressed_grid_button)
         self.__RouteWindow.SearchFileButton.clicked.connect(self.__pressed_search_file_button)
         self.__RouteWindow.SimulateFileButton.clicked.connect(self.__pressed_simulate_file_button)
         # Setups Gráficas de Route Window
@@ -74,14 +106,27 @@ class UiRouteWindow(QtWidgets.QMainWindow):
         widget.setCurrentIndex(3)
         self.AboutTab.close()
 
+    # Cambiar a Grid Window
+    def pressed_grid_button(self):
+        widget.setCurrentIndex(4)
+        self.AboutTab.close()
+        DSSText.Command = 'clear'
+        DSSText.Command = 'Redirect ('+str(path_ieee37)+')'
+        # Flujo de carga ficticio para generar la lista de nodos
+        DSSText.Command = 'CalcVoltageBases'
+
     # Buscar y definir la extensión del archivo .feather or .csv
     def __pressed_search_file_button(self):
         file_filter = "feather file (*.feather);;csv file (*.csv)"
-        (filename, extension) = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', '../Route/',
-                                                                      filter=self.tr(file_filter))
-        self.file_type = filename.split('.')[1]
-        print("File extension:", self.file_type)
-        self.__RouteWindow.RouteFileLine.setText(filename)
+        ruta_route = str(path_Route)
+        try:
+            (filename, extension) = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', ruta_route,
+                                                                          filter=self.tr(file_filter))
+            self.file_type = filename.split('.')[1]
+            print("File extension:", self.file_type)
+            self.__RouteWindow.RouteFileLine.setText(filename)
+        except IndexError as ex:
+            print("Error:", ex)
 
     # Leer y cargar el archivo .CSV
     def __pressed_simulate_file_button(self):
@@ -177,7 +222,8 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
     # Constructor
     def __init__(self):
         super(UiBusWindow, self).__init__()
-        self.__BusWindow = uic.loadUi('../UI/InterfaceBus.ui', self)
+        ruta_ui = str(Path(path_UI, "InterfaceBus.ui"))
+        self.__BusWindow = uic.loadUi(ruta_ui, self)
         self.__BusWindow.BusParametersTab.setCurrentIndex(0)
         self.__BusWindow.PeakTimesToolBox.setCurrentIndex(0)
         self.__BusWindow.StartEndTimesToolBox.setCurrentIndex(0)
@@ -189,6 +235,7 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
         self.__BusWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__BusWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__BusWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.__BusWindow.GridButton.clicked.connect(self.pressed_grid_button)
         self.PlotBusGenDataButton.clicked.connect(self.__pressed_plot_bus_gen_data_button)
         self.__BusWindow.GenOperationDiagramButton.clicked.connect(self.__pressed_gen_operation_diagram_button)
         # Setups Gráficas de Bus Window
@@ -763,7 +810,8 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
     # Constructor
     def __init__(self):
         super(UiOpportunityWindow, self).__init__()
-        self.__OpportunityWindow = uic.loadUi('../UI/InterfaceOpportunity.ui', self)
+        ruta_ui = str(Path(path_UI, "InterfaceOpportunity.ui"))
+        self.__OpportunityWindow = uic.loadUi(ruta_ui, self)
         self.__OpportunityWindow.SimulationOpportunityTab.setCurrentIndex(0)
         self.__OpportunityWindow.ElementscomboBox.setCurrentIndex(0)
         self.__OpportunityWindow.VariablescomboBox.setCurrentIndex(0)
@@ -779,6 +827,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         self.__OpportunityWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__OpportunityWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__OpportunityWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.__OpportunityWindow.GridButton.clicked.connect(self.pressed_grid_button)
         self.__OpportunityWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
         self.__OpportunityWindow.SaveSectionsButton.clicked.connect(self.__pressed_save_sections_button)
         self.__OpportunityWindow.OpportunityLoadSimButton.clicked.connect(self.__pressed_load_sim_opportunity_button)
@@ -1129,7 +1178,8 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
     # Constructor
     def __init__(self):
         super(UiDynamicWindow, self).__init__()
-        self.__DynamicWindow = uic.loadUi('../UI/InterfaceDynamic.ui', self)
+        ruta_ui = str(Path(path_UI, "InterfaceDynamic.ui"))
+        self.__DynamicWindow = uic.loadUi(ruta_ui, self)
         self.__DynamicWindow.SimulationDynamicTab.setCurrentIndex(0)
         self.__DynamicWindow.ElementscomboBox.setCurrentIndex(0)
         self.__DynamicWindow.VariablescomboBox.setCurrentIndex(0)
@@ -1140,6 +1190,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.__DynamicWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__DynamicWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__DynamicWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+        self.__DynamicWindow.GridButton.clicked.connect(self.pressed_grid_button)
         self.__DynamicWindow.RefreshSectionsButton.clicked.connect(self.__pressed_refresh_sections_button)
         self.__DynamicWindow.SaveSectionsButton.clicked.connect(self.__pressed_save_sections_button)
         self.__DynamicWindow.DynamicLoadSimButton.clicked.connect(self.__pressed_load_sim_imc_button)
@@ -1523,6 +1574,114 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.canvasImcCharging.draw()
 
 
+class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
+    def __init__(self):
+        super(UiGridWindow, self).__init__()
+        ruta_ui = str(Path(path_UI, "InterfaceGrid.ui"))
+        self.__GridWindow = uic.loadUi(ruta_ui, self)
+        self.__GridWindow.ChargingComboBox.setCurrentIndex(0)
+        self.__GridWindow.GridSimulationTab.setCurrentIndex(0)
+
+        # Llamadas a Métodos
+        # Botones de Grid Window
+        self.__GridWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__GridWindow.RouteButton.clicked.connect(self.pressed_route_button)
+        self.__GridWindow.BusButton.clicked.connect(self.pressed_bus_button)
+        self.__GridWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
+        self.__GridWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
+        self.__GridWindow.LoadChargersNodesButton.clicked.connect(self.__pressed_load_charger_nodes_button)
+        # self.__GridWindow.SaveButton.clicked.connect(self.__pressed_save_button)
+        self.__GridWindow.BusLocationButton.clicked.connect(self.__pressed_bus_location_button)
+        # self.__GridWindow.PowerFlowButton.clicked.connect(self.__pressed_power_flow_button)
+        # self.__GridWindow.SummaryButton.clicked.connect(self.__pressed_summary_button)
+        # self.__GridWindow.VoltageProfileButton.clicked.connect(self.__pressed_voltage_profile_button)
+        # self.__GridWindow.VoltagesButton.clicked.connect(self.__pressed_voltages_button)
+        # self.__GridWindow.CurrentButton.clicked.connect(self.__pressed_current_button)
+
+    # Métodos
+    def __pressed_load_charger_nodes_button(self):
+        # Crear una lista de nodos personalizada
+        self.AllBusNames = DSSCircuit.AllBusNames
+        for i in range(0, len(self.AllBusNames), 1):
+            if len(self.NodeListComboBox) < len(self.AllBusNames):
+                option = self.AllBusNames[i]
+                self.NodeListComboBox.addItem(option)
+            else:
+                break
+        # Mostrar cuadro de asignación de nodos dependiendo del tipo de recarga
+        if self.ChargingComboBox.currentText() == "Opportunity Charging":
+            # Limpiar contenido de Layout
+            for i in reversed(range(self.__GridWindow.AssignmentLayout.count())):
+                self.__GridWindow.AssignmentLayout.itemAt(i).widget().setParent(None)
+            # Definir Widgets
+            self.group_box_assignment = QtWidgets.QGroupBox("Assignment")
+            self.group_box_assignment.setFont(QtGui.QFont("MS Sans Serif", 10, QtGui.QFont.Bold))
+            self.group_box_assignment.setStyleSheet("background-color:white;")
+            # Layout Interno del Group Box
+            self.group_box_layout = QtWidgets.QFormLayout()
+            # Llenar QFormLayout
+            self.charger_list = []
+            self.nodes_combo_box_list = []
+            assignment_labels = OpportunityWindow.charger_list
+            print (assignment_labels)
+            for i in range(len(assignment_labels)):
+                # Guardar nombres de cargadores
+                self.charger_list.append(QtWidgets.QLabel(assignment_labels[i]))
+                # Agregar un combo box por cada cargador
+                self.nodes_combo_box_list.append(QtWidgets.QComboBox())
+                # Agregar nodos al combo box
+                self.nodes_combo_box_list[i].addItems(self.AllBusNames)
+                GridWindow.group_box_layout.addRow(self.charger_list[i], self.nodes_combo_box_list[i])
+
+            # Assignment GroupBox
+            GridWindow.group_box_assignment.setLayout(GridWindow.group_box_layout)
+            # Assignment Scroll
+            self.assignment_scroll_area=QtWidgets.QScrollArea()
+            self.assignment_scroll_area.setWidgetResizable(True)
+            self.assignment_scroll_area.setWidget(GridWindow.group_box_assignment)
+            # Assignment Layout
+            self.__GridWindow.AssignmentLayout.addWidget(self.assignment_scroll_area)
+
+        elif self.ChargingComboBox.currentText() == "In Motion Charging":
+            # Limpiar contenido de Layout
+            for i in reversed(range(self.__GridWindow.AssignmentLayout.count())):
+                self.__GridWindow.AssignmentLayout.itemAt(i).widget().setParent(None)
+            # Definir Widgets
+            self.group_box_assignment = QtWidgets.QGroupBox("Assignment")
+            self.group_box_assignment.setFont(QtGui.QFont("MS Sans Serif", 10, QtGui.QFont.Bold))
+            self.group_box_assignment.setStyleSheet("background-color:white;")
+            # Layout Interno del Group Box
+            self.group_box_layout = QtWidgets.QFormLayout()
+            # Llenar QFormLayout
+            self.charger_list = []
+            self.nodes_combo_box_list = []
+            assignment_labels = DynamicWindow.section_list
+            print(assignment_labels)
+            for i in range(len(assignment_labels)):
+                # Guardar nombres de cargadores
+                self.charger_list.append(QtWidgets.QLabel(assignment_labels[i]))
+                # Agregar un combo box por cada cargador
+                self.nodes_combo_box_list.append(QtWidgets.QComboBox())
+                # Agregar nodos al combo box
+                self.nodes_combo_box_list[i].addItems(self.AllBusNames)
+                self.group_box_layout.addRow(self.charger_list[i], self.nodes_combo_box_list[i])
+
+            # Assignment GroupBox
+            self.group_box_assignment.setLayout(self.group_box_layout)
+            # Assignment Scroll
+            self.assignment_scroll_area = QtWidgets.QScrollArea()
+            self.assignment_scroll_area.setWidgetResizable(True)
+            self.assignment_scroll_area.setWidget(self.group_box_assignment)
+            # Assignment Layout
+            self.__GridWindow.AssignmentLayout.addWidget(self.assignment_scroll_area)
+
+    def __pressed_bus_location_button(self):
+        nodo = self.NodeListComboBox.currentText()
+        DSSText.Command = 'AddBusMarker Bus=[' + nodo + '] code=16 color=Olive size=10'
+        DSSText.Command = 'plot daisy Power max=2000 n n C1=$00FF0000'
+        DSSText.Command = 'clearBusMarkers'
+
+
 # Inicio Programa
 if __name__ == "__main__":
     import sys
@@ -1535,17 +1694,20 @@ if __name__ == "__main__":
     BusWindow = UiBusWindow()
     OpportunityWindow = UiOpportunityWindow()
     DynamicWindow = UiDynamicWindow()
+    GridWindow = UiGridWindow()
 
     # Añadir Ventanas
     widget.addWidget(RouteWindow)
     widget.addWidget(BusWindow)
     widget.addWidget(OpportunityWindow)
     widget.addWidget(DynamicWindow)
+    widget.addWidget(GridWindow)
 
     # Setup de widgets
     widget.setFixedSize(964, 677)
     icon = QtGui.QIcon()
-    icon.addPixmap(QtGui.QPixmap("../Imgs/iconBus.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    ruta_icon = str(Path(path_Imgs, "iconBus.png"))
+    icon.addPixmap(QtGui.QPixmap(ruta_icon), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     widget.setWindowIcon(icon)
     _translate = QtCore.QCoreApplication.translate
     widget.setWindowTitle(_translate("MainWindow", "Electric Bus Charging Analyzer"))

@@ -1048,7 +1048,7 @@ gridline-color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="statusTip">
-       <string>Push to go load charge sections</string>
+       <string>Push to load charge sections</string>
       </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(159, 159, 159);</string>
@@ -1122,7 +1122,7 @@ Sections</string>
        </font>
       </property>
       <property name="statusTip">
-       <string>Push to go load charge sections</string>
+       <string>Push to save charge sections</string>
       </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(159, 159, 159);</string>
@@ -1312,7 +1312,7 @@ Sections</string>
        </font>
       </property>
       <property name="statusTip">
-       <string>Push to load the simulation</string>
+       <string>Push to graph the simulation</string>
       </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(159, 159, 159);</string>
@@ -1375,7 +1375,13 @@ Sections</string>
      <height>26</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
    <widget class="QMenu" name="menuHelp">
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(191, 191, 191)</string>
+    </property>
     <property name="title">
      <string>Help</string>
     </property>

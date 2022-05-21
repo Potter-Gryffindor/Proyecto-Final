@@ -817,7 +817,7 @@ Impact</string>
      </font>
     </property>
     <property name="statusTip">
-     <string>Push to Search .csv File </string>
+     <string>Push to Search Route File </string>
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(159, 159, 159);</string>
@@ -1015,6 +1015,9 @@ border-color: rgb(0, 0, 0);
      <height>26</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
    <widget class="QMenu" name="menuHelp">
     <property name="focusPolicy">
      <enum>Qt::NoFocus</enum>
@@ -1024,6 +1027,9 @@ border-color: rgb(0, 0, 0);
     </property>
     <property name="statusTip">
      <string/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(191, 191, 191)</string>
     </property>
     <property name="title">
      <string>Help</string>
