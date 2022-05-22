@@ -28,6 +28,7 @@ path_UI = Path(path_parent, "UI")
 path_Imgs = Path(path_parent, "Imgs")
 path_TestCase = Path(path_parent, "TestCase")
 path_Route = Path(path_parent, "Route")
+path_Manual = Path(path_parent, "User_Manual", "User_Manual.pdf")
 
 # Inicializar OpenDSS
 sys.argv = ["makepy", "OpenDSSEngine.DSS"]
@@ -72,6 +73,7 @@ class UiRouteWindow(QtWidgets.QMainWindow):
         # Llamadas a Métodos
         # Botones de Route Window
         self.__RouteWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__RouteWindow.actionUser_Manual.triggered.connect(self.clicked_manual)
         self.__RouteWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__RouteWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__RouteWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
@@ -85,6 +87,10 @@ class UiRouteWindow(QtWidgets.QMainWindow):
     # Abrir Pestaña About
     def clicked_about(self):
         self.AboutTab.show()
+
+    @staticmethod
+    def clicked_manual():
+        os.startfile(path_Manual)
 
     # Cambiar a Bus Window
     def pressed_bus_button(self):
@@ -228,6 +234,7 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
         # Llamadas a Métodos
         # Botones de Bus Window
         self.__BusWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__BusWindow.actionUser_Manual.triggered.connect(self.clicked_manual)
         self.__BusWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__BusWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__BusWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
@@ -820,6 +827,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         # Llamadas a Métodos
         # Botones de Opportunity Window
         self.__OpportunityWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__OpportunityWindow.actionUser_Manual.triggered.connect(self.clicked_manual)
         self.__OpportunityWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__OpportunityWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__OpportunityWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
@@ -1018,7 +1026,7 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         energy_vector = []
         so_c_vector = [so_ci]
         charger_vector = []
-        charger_matrix = [[] for i in range(len(cl))]
+        charger_matrix = [[] for _ in range(len(cl))]
 
         for n in range(0, len(time_vector) - 1):
 
@@ -1075,9 +1083,9 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         inicio = BusWindow.arrayTime[0][0]
         fin = BusWindow.arrayTime[-1][-1]
         lista_tiempo = [inicio + datetime.timedelta(seconds=s) for s in range((fin - inicio).seconds + 1)]
-        charger_final_matrix = [[] for i in range(num_chargers)]
+        charger_final_matrix = [[] for _ in range(num_chargers)]
         for t in lista_tiempo:
-            sum_c = [0 for i in range(num_chargers)]
+            sum_c = [0 for _ in range(num_chargers)]
             for c in range(num_chargers):
                 for vect_t in BusWindow.arrayTime:
                     try:
@@ -1183,6 +1191,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         # Llamadas a Métodos
         # Botones de Opportunity Window
         self.__DynamicWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__DynamicWindow.actionUser_Manual.triggered.connect(self.clicked_manual)
         self.__DynamicWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__DynamicWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__DynamicWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
@@ -1255,7 +1264,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         num_sections = len(self.section_list)
         print("Charger Sections Selected: ")
         print(self.section_select)
-        self.stops_for_section = [[] for i in range(num_sections)]
+        self.stops_for_section = [[] for _ in range(num_sections)]
         for section in self.section_select:
             inicio_section = section.split('-')[0]
             fin_section = section.split('-')[1]
@@ -1587,17 +1596,18 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         # Llamadas a Métodos
         # Botones de Grid Window
         self.__GridWindow.actionAbout.triggered.connect(self.clicked_about)
+        self.__GridWindow.actionUser_Manual.triggered.connect(self.clicked_manual)
         self.__GridWindow.RouteButton.clicked.connect(self.pressed_route_button)
         self.__GridWindow.BusButton.clicked.connect(self.pressed_bus_button)
         self.__GridWindow.OpportunityButton.clicked.connect(self.pressed_opportunity_button)
         self.__GridWindow.DynamicButton.clicked.connect(self.pressed_dynamic_button)
         self.__GridWindow.SearchFileButton.clicked.connect(self.__pressed_search_file_button)
         self.__GridWindow.LoadChargersNodesButton.clicked.connect(self.__pressed_load_charger_nodes_button)
-        # self.__GridWindow.SaveButton.clicked.connect(self.__pressed_save_button)
-        self.__GridWindow.BusLocationButton.clicked.connect(self.__pressed_bus_location_button)
-        # self.__GridWindow.PowerFlowButton.clicked.connect(self.__pressed_power_flow_button)
-        # self.__GridWindow.SummaryButton.clicked.connect(self.__pressed_summary_button)
-        # self.__GridWindow.VoltageProfileButton.clicked.connect(self.__pressed_voltage_profile_button)
+        self.__GridWindow.SaveButton.clicked.connect(self.__pressed_save_button)
+        self.__GridWindow.NodeLocationButton.clicked.connect(self.__pressed_node_location_button)
+        self.__GridWindow.PowerFlowButton.clicked.connect(self.__pressed_power_flow_button)
+        self.__GridWindow.SummaryButton.clicked.connect(self.__pressed_summary_button)
+        self.__GridWindow.VoltageProfileButton.clicked.connect(self.__pressed_voltage_profile_button)
         # self.__GridWindow.VoltagesButton.clicked.connect(self.__pressed_voltages_button)
         # self.__GridWindow.CurrentButton.clicked.connect(self.__pressed_current_button)
 
@@ -1613,13 +1623,13 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             print("File extension:", self.file_type)
             self.__GridWindow.DssFileLine.setText(filename)
 
-            file = self.__GridWindow.DssFileLine.text()
-            print("File:", file)
+            self.file = self.__GridWindow.DssFileLine.text()
+            print("File:", self.file)
             try:
                 if self.file_type == 'dss':
                     # Inicialización OpenDSS
                     DSSText.Command = 'clear'
-                    DSSText.Command = f'Redirect ({file})'
+                    DSSText.Command = f'Redirect ({self.file})'
                     # Flujo de carga ficticio para generar la lista de nodos
                     DSSText.Command = 'CalcVoltageBases'
                 else:
@@ -1654,7 +1664,6 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             self.charger_list = []
             self.nodes_combo_box_list = []
             assignment_labels = OpportunityWindow.charger_list
-            print (assignment_labels)
             for i in range(len(assignment_labels)):
                 # Guardar nombres de cargadores
                 self.charger_list.append(QtWidgets.QLabel(assignment_labels[i]))
@@ -1667,7 +1676,7 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             # Assignment GroupBox
             GridWindow.group_box_assignment.setLayout(GridWindow.group_box_layout)
             # Assignment Scroll
-            self.assignment_scroll_area=QtWidgets.QScrollArea()
+            self.assignment_scroll_area = QtWidgets.QScrollArea()
             self.assignment_scroll_area.setWidgetResizable(True)
             self.assignment_scroll_area.setWidget(GridWindow.group_box_assignment)
             # Assignment Layout
@@ -1687,7 +1696,6 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             self.charger_list = []
             self.nodes_combo_box_list = []
             assignment_labels = DynamicWindow.section_list
-            print(assignment_labels)
             for i in range(len(assignment_labels)):
                 # Guardar nombres de cargadores
                 self.charger_list.append(QtWidgets.QLabel(assignment_labels[i]))
@@ -1706,11 +1714,46 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             # Assignment Layout
             self.__GridWindow.AssignmentLayout.addWidget(self.assignment_scroll_area)
 
-    def __pressed_bus_location_button(self):
-        nodo = self.NodeListComboBox.currentText()
-        DSSText.Command = 'AddBusMarker Bus=[' + nodo + '] code=16 color=Olive size=10'
+    def __pressed_save_button(self):
+        self.node_connection = []
+        for i in range(len(self.nodes_combo_box_list)):
+            self.node_connection.append(self.nodes_combo_box_list[i].currentText())
+
+    def __pressed_node_location_button(self):
+        node_selected = self.NodeListComboBox.currentText()
+        DSSText.Command = 'AddBusMarker Bus=[' + node_selected + '] code=16 color=Olive size=10'
         DSSText.Command = 'plot daisy Power max=2000 n n C1=$00FF0000'
         DSSText.Command = 'clearBusMarkers'
+
+    def __pressed_power_flow_button(self):
+        DSSText.Command = 'clear'
+        DSSText.Command = 'Redirect (' + self.file + ')'
+
+        # Crear LoadShape con intervalos de 1 minuto y asignarlo a una carga a conectar
+        DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
+        DSSText.Command = 'set mode=daily'
+        DSSSolution.Solve()
+
+    def __pressed_summary_button(self):
+        DSSText.Command = 'Summary'
+        self.results = DSSText.Result
+        # Limpiar contenido de Layout
+        for i in reversed(range(self.__GridWindow.SummaryLayout.count())):
+            self.__GridWindow.SummaryLayout.itemAt(i).widget().setParent(None)
+        self.group_box_summary_layout = QtWidgets.QLabel()
+        self.group_box_summary_layout.setText(self.results)
+        # Assignment Scroll
+        self.summary_scroll_area = QtWidgets.QScrollArea()
+        self.summary_scroll_area.setWidgetResizable(True)
+        self.summary_scroll_area.setWidget(self.group_box_summary_layout)
+        self.summary_scroll_area.setFont(QtGui.QFont("MS Sans Serif", 10, QtGui.QFont.Bold))
+        self.summary_scroll_area.setStyleSheet("background-color:white;")
+        # Assignment Layout
+        self.__GridWindow.SummaryLayout.addWidget(self.summary_scroll_area)
+
+    @staticmethod
+    def __pressed_voltage_profile_button():
+        DSSText.Command = 'Plot Profile Phases=All'
 
 
 # Inicio Programa
@@ -1747,5 +1790,4 @@ if __name__ == "__main__":
     # Mostrar Aplicación
     widget.show()
     sys.exit(app.exec_())
-
 #%%

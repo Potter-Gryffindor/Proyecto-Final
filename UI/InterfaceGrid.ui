@@ -145,7 +145,7 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QPushButton" name="PowerFlowButton">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>180</x>
         <y>300</y>
         <width>131</width>
         <height>41</height>
@@ -175,9 +175,9 @@ gridline-color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="ChargingComboBox">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>150</x>
         <y>250</y>
-        <width>181</width>
+        <width>191</width>
         <height>41</height>
        </rect>
       </property>
@@ -251,7 +251,7 @@ gridline-color: rgb(0, 0, 0);</string>
        <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="BusLocationButton">
+     <widget class="QPushButton" name="NodeLocationButton">
       <property name="geometry">
        <rect>
         <x>760</x>
@@ -390,9 +390,9 @@ gridline-color: rgb(0, 0, 0);</string>
       </property>
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>120</x>
         <y>160</y>
-        <width>241</width>
+        <width>251</width>
         <height>31</height>
        </rect>
       </property>
@@ -501,7 +501,7 @@ gridline-color: rgb(0, 0, 0);</string>
         <rect>
          <x>10</x>
          <y>0</y>
-         <width>221</width>
+         <width>231</width>
          <height>31</height>
         </rect>
        </property>
@@ -526,9 +526,9 @@ border-color: rgb(0, 0, 0);
       </property>
       <property name="geometry">
        <rect>
-        <x>210</x>
+        <x>200</x>
         <y>110</y>
-        <width>81</width>
+        <width>91</width>
         <height>41</height>
        </rect>
       </property>
@@ -606,29 +606,6 @@ File</string>
        <string>Summary</string>
       </property>
      </widget>
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>80</y>
-        <width>311</width>
-        <height>351</height>
-       </rect>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>309</width>
-         <height>349</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
      <widget class="QPushButton" name="VoltagesButton">
       <property name="geometry">
        <rect>
@@ -678,6 +655,31 @@ File</string>
       <property name="text">
        <string>Currents</string>
       </property>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>80</y>
+        <width>311</width>
+        <height>351</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="SummaryLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <item>
+        <widget class="QLabel" name="FondoAssignment_2">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </widget>
@@ -1043,7 +1045,7 @@ Impact</string>
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionUser_manual"/>
+    <addaction name="actionUser_Manual"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuHelp"/>
@@ -1061,7 +1063,7 @@ Impact</string>
     <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
   </widget>
-  <action name="actionUser_manual">
+  <action name="actionUser_Manual">
    <property name="text">
     <string>User Manual</string>
    </property>
