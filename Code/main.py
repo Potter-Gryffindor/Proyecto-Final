@@ -472,7 +472,8 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
         print("Time in Terminal: ", time_in_terminal)
         t_ini_fleet_qt = self.__BusWindow.STFtimeEdit.time()
         t_ini_fleet = t_ini_fleet_qt.hour() * 3600 + t_ini_fleet_qt.minute() * 60 + t_ini_fleet_qt.second()
-        print("Time ini fleet: ", t_ini_fleet)
+        self.init_sec = t_ini_fleet
+        print("Time init fleet: ", self.init_sec)
         t_end_fleet_qt = self.__BusWindow.ETFtimeEdit.time()
         t_end_fleet = t_end_fleet_qt.hour() * 3600 + t_end_fleet_qt.minute() * 60 + t_end_fleet_qt.second()
         print("Time end fleet: ", t_end_fleet)
@@ -1116,8 +1117,8 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                     i += 1
                     self.axOppCharging.plot(x, self.energyVector, label=f'Bus {i}')
                 self.axOppCharging.set_title('Energy Curve', fontsize=12, fontweight="bold")
-                self.axOppCharging.set_ylabel('Energy (kWh)', fontsize=10, fontweight="bold")
-                self.axOppCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_ylabel('Energy [kWh]', fontsize=10, fontweight="bold")
+                self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
             elif plot_type == 1:
                 i = 0
                 for x in BusWindow.arrayTime:
@@ -1201,7 +1202,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.__DynamicWindow.DynamicLoadSimButton.clicked.connect(self.__pressed_load_sim_imc_button)
         self.__DynamicWindow.DynamicGraphButton.clicked.connect(self.__pressed_graph_imc_button)
         self.__DynamicWindow.ElementscomboBox.currentTextChanged.connect(self.__selected_elements)
-        # Setups Gráficas de Opportunity Window
+        # Setups Gráficas de In Motion Window
         self.__setup_dynamic_diagram_figures()
 
     # Métodos
@@ -1252,13 +1253,13 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         self.cl_aux = tuple(new_stop_list)
         print("Active Stops:")
         print(self.cl_aux)
-        for i in range(len(stop_list)-1):
-            if (stop := stop_list[i]) == stop_list[i+1]:
+        for i in range(len(stop_list) - 1):
+            if (stop := stop_list[i]) == stop_list[i + 1]:
                 new_stop_list.remove(stop)
         self.section_select = []
         count = 1
-        for i in range(0, len(new_stop_list)-1, 2):
-            self.section_select.append(f"{new_stop_list[i]}-{new_stop_list[i+1]}")
+        for i in range(0, len(new_stop_list) - 1, 2):
+            self.section_select.append(f"{new_stop_list[i]}-{new_stop_list[i + 1]}")
             self.section_list.append(f"S{count}")
             count += 1
         num_sections = len(self.section_list)
@@ -1268,7 +1269,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         for section in self.section_select:
             inicio_section = section.split('-')[0]
             fin_section = section.split('-')[1]
-            for i in range(self.cl_aux.index(inicio_section), self.cl_aux.index(fin_section)+1):
+            for i in range(self.cl_aux.index(inicio_section), self.cl_aux.index(fin_section) + 1):
                 self.stops_for_section[self.section_select.index(section)].append(self.cl_aux[i])
         print("Stops for Section: ")
         print(self.stops_for_section)
@@ -1517,8 +1518,8 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
                     i += 1
                     self.axImcCharging.plot(x, self.energyVector, label=f'Bus {i}')
                 self.axImcCharging.set_title('Energy Curve', fontsize=12, fontweight="bold")
-                self.axImcCharging.set_ylabel('Energy (kWh)', fontsize=10, fontweight="bold")
-                self.axImcCharging.set_xlabel('Time (h)', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_ylabel('Energy [kWh]', fontsize=10, fontweight="bold")
+                self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
             elif plot_type == 1:
                 i = 0
                 for x in BusWindow.arrayTime:
@@ -1608,8 +1609,11 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.__GridWindow.PowerFlowButton.clicked.connect(self.__pressed_power_flow_button)
         self.__GridWindow.SummaryButton.clicked.connect(self.__pressed_summary_button)
         self.__GridWindow.VoltageProfileButton.clicked.connect(self.__pressed_voltage_profile_button)
+        self.__GridWindow.VoltagesGraphButton.clicked.connect(self.__pressed_voltages_graph_button)
         # self.__GridWindow.VoltagesButton.clicked.connect(self.__pressed_voltages_button)
         # self.__GridWindow.CurrentButton.clicked.connect(self.__pressed_current_button)
+        # Setups Gráficas de In Motion Window
+        self.__setup_grid_diagram_figures()
 
     # Métodos
     # Buscar y definir la extensión del archivo .dss
@@ -1640,6 +1644,7 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         except IndexError as ex:
             print("Error:", ex)
 
+    # Cargar cargadores o secciones y nodos
     def __pressed_load_charger_nodes_button(self):
         # Crear una lista de nodos personalizada
         self.AllBusNames = DSSCircuit.AllBusNames
@@ -1647,6 +1652,7 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             if len(self.NodeListComboBox) < len(self.AllBusNames):
                 option = self.AllBusNames[i]
                 self.NodeListComboBox.addItem(option)
+                self.NodeListComboBoxVoltages.addItem(option)
             else:
                 break
         # Mostrar cuadro de asignación de nodos dependiendo del tipo de recarga
@@ -1714,26 +1720,82 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             # Assignment Layout
             self.__GridWindow.AssignmentLayout.addWidget(self.assignment_scroll_area)
 
+    # Guardar ubicación en nodos de los cargadores o secciones
     def __pressed_save_button(self):
         self.node_connection = []
         for i in range(len(self.nodes_combo_box_list)):
             self.node_connection.append(self.nodes_combo_box_list[i].currentText())
 
+    # Graficar posición del nodo seleccionado (OpenDSS)
     def __pressed_node_location_button(self):
         node_selected = self.NodeListComboBox.currentText()
         DSSText.Command = 'AddBusMarker Bus=[' + node_selected + '] code=16 color=Olive size=10'
         DSSText.Command = 'plot daisy Power max=2000 n n C1=$00FF0000'
         DSSText.Command = 'clearBusMarkers'
 
+    # Power Flow de OpenDSS
     def __pressed_power_flow_button(self):
         DSSText.Command = 'clear'
         DSSText.Command = 'Redirect (' + self.file + ')'
 
         # Crear LoadShape con intervalos de 1 minuto y asignarlo a una carga a conectar
-        DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
-        DSSText.Command = 'set mode=daily'
-        DSSSolution.Solve()
+        for i in range(len(self.charger_list)):
+            load_shape = [0.0]*96
+            self.minute_average = []
+            condition = int(((len(OpportunityWindow.lista_tiempo) - 1) / 900))
+            for j in range(condition):
+                k = 900 * j
+                self.minute_sum = 0
+                for x in range(900):
+                    self.minute_sum = self.minute_sum + OpportunityWindow.charger_final_matrix[i][k + x]
+                self.minute_average.append(self.minute_sum / (900 * 1000))  # División entre 1000 momentanea
 
+            # for m in range(1440):
+            # load_shape.append(0.0)
+
+            for n in range(condition):
+                load_position = int(BusWindow.init_sec / 900 + n)
+                load_shape[load_position] = self.minute_average[n]
+
+            current_load = str(i)
+            current_load_shape = str(load_shape)
+            current_node = str(self.node_connection[i])
+            DSSText.Command = 'New LoadShape.Shape_' + current_load + ' npts=96 interval=0.25 mult=' + \
+                              current_load_shape
+            DSSText.Command = 'New Load.LOAD_' + current_load + ' Phases=1 Bus1=' \
+                              + current_node + '.1 kV=4.800 kW=1 PF=1 Daily=Shape_' + current_load
+
+            print(self.minute_average)
+            print(len(self.minute_average))
+            print(load_shape)
+            print(len(load_shape))
+
+        DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
+        DSSText.Command = 'set mode=daily stepsize=1h number=1'
+        DSSText.Command = 'Set hour=0'
+
+        self.v1pu = []
+        self.v2pu = []
+        self.v3pu = []
+        for i in range(24):
+            DSSText.Command = 'get hour'
+            hour = DSSText.Result
+            DSSText.Command = 'Solve'
+            self.v1pu.append(DSSCircuit.AllNodeVmagPUByPhase(1))
+            self.v2pu.append(DSSCircuit.AllNodeVmagPUByPhase(2))
+            self.v3pu.append(DSSCircuit.AllNodeVmagPUByPhase(3))
+        print(self.v1pu)
+        print(self.v2pu)
+        print(self.v3pu)
+
+        # plot(tiempo,graficav1nodex)
+
+        # DSSSolution.Solve()
+        # a=len(OpportunityWindow.lista_tiempo)
+        # a=int((len(OpportunityWindow.lista_tiempo)-1)/60)
+        # print(a)
+
+    # Summary de OpenDSS
     def __pressed_summary_button(self):
         DSSText.Command = 'Summary'
         self.results = DSSText.Result
@@ -1751,9 +1813,45 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         # Assignment Layout
         self.__GridWindow.SummaryLayout.addWidget(self.summary_scroll_area)
 
+    # Perfiles de tensión de OpenDSS
     @staticmethod
     def __pressed_voltage_profile_button():
         DSSText.Command = 'Plot Profile Phases=All'
+
+    # Definir Plots (Grid Window)
+    def __setup_grid_diagram_figures(self):
+        # Gráficas de pestaña Voltages
+        self.figureGridVoltages = Figure(tight_layout=True)
+        self.canvasGridVoltages = FigureCanvas(self.figureGridVoltages)
+        self.toolbarGridVoltages = NavigationToolbar(self.canvasGridVoltages, self)
+        self.layoutGridVoltages = QtWidgets.QVBoxLayout(self.__GridWindow.VoltagesCurveWidget)
+        self.layoutGridVoltages.addWidget(self.toolbarGridVoltages)
+        self.layoutGridVoltages.addWidget(self.canvasGridVoltages)  #
+        self.axGridVoltages = self.figureGridVoltages.add_subplot(111)
+
+    # Graficar tensiones por fase del nodo seleccionado
+    def __pressed_voltages_graph_button(self):
+        self.axGridVoltages.cla()
+        day_time = [hour for hour in range(24)]
+        selected_node = self.NodeListComboBoxVoltages.currentIndex()
+
+        # Tensión Fase 1 en nodo seleccionado
+        v1_graph = [hour[selected_node] for hour in self.v1pu]
+        self.axGridVoltages.plot(day_time, v1_graph, label='v1')
+        # Tensión Fase 2 en nodo seleccionado
+        v2_graph = [hour[selected_node] for hour in self.v2pu]
+        self.axGridVoltages.plot(day_time, v2_graph, label='v2')
+        # Tensión Fase 3 en nodo seleccionado
+        v3_graph = [hour[selected_node] for hour in self.v3pu]
+        self.axGridVoltages.plot(day_time, v3_graph, label='v3')
+
+        self.axGridVoltages.tick_params(labelsize=10)
+        self.axGridVoltages.set_title('Voltages Curve', fontsize=12, fontweight="bold")
+        self.axGridVoltages.set_ylabel('Voltages [pu]', fontsize=10, fontweight="bold")
+        self.axGridVoltages.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
+        self.axGridVoltages.grid()
+        self.axGridVoltages.legend(frameon=False, loc='best')
+        self.canvasGridVoltages.draw()
 
 
 # Inicio Programa
@@ -1790,4 +1888,4 @@ if __name__ == "__main__":
     # Mostrar Aplicación
     widget.show()
     sys.exit(app.exec_())
-#%%
+# %%
