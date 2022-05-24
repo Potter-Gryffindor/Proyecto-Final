@@ -1735,65 +1735,113 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
 
     # Power Flow de OpenDSS
     def __pressed_power_flow_button(self):
-        DSSText.Command = 'clear'
-        DSSText.Command = 'Redirect (' + self.file + ')'
+        if self.ChargingComboBox.currentText() == "Opportunity Charging":
+            DSSText.Command = 'clear'
+            DSSText.Command = 'Redirect (' + self.file + ')'
 
-        # Crear LoadShape con intervalos de 1 minuto y asignarlo a una carga a conectar
-        for i in range(len(self.charger_list)):
-            load_shape = [0.0]*96
-            self.minute_average = []
-            condition = int(((len(OpportunityWindow.lista_tiempo) - 1) / 900))
-            for j in range(condition):
-                k = 900 * j
-                self.minute_sum = 0
-                for x in range(900):
-                    self.minute_sum = self.minute_sum + OpportunityWindow.charger_final_matrix[i][k + x]
-                self.minute_average.append(self.minute_sum / (900 * 1000))  # División entre 1000 momentanea
+            # Crear LoadShape con intervalos de 1 minuto y asignarlo a una carga a conectar
+            for i in range(len(self.charger_list)):
+                load_shape = [0.0]*96
+                self.minute_average = []
+                condition = int(((len(OpportunityWindow.lista_tiempo) - 1) / 900))
+                for j in range(condition):
+                    k = 900 * j
+                    self.minute_sum = 0
+                    for x in range(900):
+                        self.minute_sum = self.minute_sum + OpportunityWindow.charger_final_matrix[i][k + x]
+                    self.minute_average.append(self.minute_sum /900)
 
             # for m in range(1440):
             # load_shape.append(0.0)
 
-            for n in range(condition):
-                load_position = int(BusWindow.init_sec / 900 + n)
-                load_shape[load_position] = self.minute_average[n]
+                for n in range(condition):
+                    load_position = int(BusWindow.init_sec / 900 + n)
+                    load_shape[load_position] = self.minute_average[n]
 
-            current_load = str(i)
-            current_load_shape = str(load_shape)
-            current_node = str(self.node_connection[i])
-            DSSText.Command = 'New LoadShape.Shape_' + current_load + ' npts=96 interval=0.25 mult=' + \
-                              current_load_shape
-            DSSText.Command = 'New Load.LOAD_' + current_load + ' Phases=1 Bus1=' \
-                              + current_node + '.1 kV=4.800 kW=1 PF=1 Daily=Shape_' + current_load
+                current_load = str(i)
+                current_load_shape = str(load_shape)
+                current_node = str(self.node_connection[i])
+                DSSText.Command = 'New LoadShape.Shape_' + current_load + ' npts=96 interval=0.25 mult=' + \
+                                current_load_shape +' Action=Normalize'
+                DSSText.Command = 'New Load.LOAD_' + current_load + ' Phases=1 Bus1=' \
+                                + current_node + '.1 kV=4.800 kW=1 PF=1 Daily=Shape_' + current_load
 
-            print(self.minute_average)
-            print(len(self.minute_average))
-            print(load_shape)
-            print(len(load_shape))
+                print(self.minute_average)
+                print(len(self.minute_average))
+                print(load_shape)
+                print(len(load_shape))
 
-        DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
-        DSSText.Command = 'set mode=daily stepsize=1h number=1'
-        DSSText.Command = 'Set hour=0'
+            DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
+            DSSText.Command = 'set mode=daily stepsize=1h number=1'
+            DSSText.Command = 'Set hour=0'
 
-        self.v1pu = []
-        self.v2pu = []
-        self.v3pu = []
-        for i in range(24):
-            DSSText.Command = 'get hour'
-            hour = DSSText.Result
-            DSSText.Command = 'Solve'
-            self.v1pu.append(DSSCircuit.AllNodeVmagPUByPhase(1))
-            self.v2pu.append(DSSCircuit.AllNodeVmagPUByPhase(2))
-            self.v3pu.append(DSSCircuit.AllNodeVmagPUByPhase(3))
-        print(self.v1pu)
-        print(self.v2pu)
-        print(self.v3pu)
+            self.v1pu = []
+            self.v2pu = []
+            self.v3pu = []
+            for i in range(24):
+                DSSText.Command = 'get hour'
+                hour = DSSText.Result
+                DSSText.Command = 'Solve'
+                self.v1pu.append(DSSCircuit.AllNodeVmagPUByPhase(1))
+                self.v2pu.append(DSSCircuit.AllNodeVmagPUByPhase(2))
+                self.v3pu.append(DSSCircuit.AllNodeVmagPUByPhase(3))
+            print(self.v1pu)
+            print(self.v2pu)
+            print(self.v3pu)
+        
+        elif self.ChargingComboBox.currentText() == "In Motion Charging":
+            DSSText.Command = 'clear'
+            DSSText.Command = 'Redirect (' + self.file + ')'
 
-        # plot(tiempo,graficav1nodex)
+            # Crear LoadShape con intervalos de 1 minuto y asignarlo a una carga a conectar
+            for i in range(len(self.charger_list)):
+                load_shape = [0.0]*96
+                self.minute_average = []
+                condition = int(((len(DynamicWindow.lista_tiempo) - 1) / 900))
+                for j in range(condition):
+                    k = 900 * j
+                    self.minute_sum = 0
+                    for x in range(900):
+                        self.minute_sum = self.minute_sum + DynamicWindow.charger_final_matrix[i][k + x]
+                    self.minute_average.append(self.minute_sum /900)
 
-        # DSSSolution.Solve()
-        # a=len(OpportunityWindow.lista_tiempo)
-        # a=int((len(OpportunityWindow.lista_tiempo)-1)/60)
-        # print(a)
+            # for m in range(1440):
+            # load_shape.append(0.0)
+
+                for n in range(condition):
+                    load_position = int(BusWindow.init_sec / 900 + n)
+                    load_shape[load_position] = self.minute_average[n]
+
+                current_load = str(i)
+                current_load_shape = str(load_shape)
+                current_node = str(self.node_connection[i])
+                DSSText.Command = 'New LoadShape.Shape_' + current_load + ' npts=96 interval=0.25 mult=' + \
+                                current_load_shape +' Action=Normalize'
+                DSSText.Command = 'New Load.LOAD_' + current_load + ' Phases=1 Bus1=' \
+                                + current_node + '.1 kV=4.800 kW=1 PF=1 Daily=Shape_' + current_load
+
+                print(self.minute_average)
+                print(len(self.minute_average))
+                print(load_shape)
+                print(len(load_shape))
+
+            DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
+            DSSText.Command = 'set mode=daily stepsize=1h number=1'
+            DSSText.Command = 'Set hour=0'
+
+            self.v1pu = []
+            self.v2pu = []
+            self.v3pu = []
+            for i in range(24):
+                DSSText.Command = 'get hour'
+                hour = DSSText.Result
+                DSSText.Command = 'Solve'
+                self.v1pu.append(DSSCircuit.AllNodeVmagPUByPhase(1))
+                self.v2pu.append(DSSCircuit.AllNodeVmagPUByPhase(2))
+                self.v3pu.append(DSSCircuit.AllNodeVmagPUByPhase(3))
+            print(self.v1pu)
+            print(self.v2pu)
+            print(self.v3pu)
 
     # Summary de OpenDSS
     def __pressed_summary_button(self):
