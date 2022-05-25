@@ -552,23 +552,25 @@ File</string>
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="OperationDiagramTab">
+    <widget class="QWidget" name="ResultsTab">
      <attribute name="title">
       <string>Results</string>
      </attribute>
      <widget class="QPushButton" name="VoltageProfileButton">
       <property name="geometry">
        <rect>
-        <x>550</x>
-        <y>200</y>
-        <width>271</width>
-        <height>51</height>
+        <x>280</x>
+        <y>410</y>
+        <width>191</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <family>Arial</family>
-        <pointsize>16</pointsize>
+        <family>MS Sans Serif</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
        </font>
       </property>
       <property name="statusTip">
@@ -584,16 +586,18 @@ File</string>
      <widget class="QPushButton" name="SummaryButton">
       <property name="geometry">
        <rect>
-        <x>550</x>
-        <y>130</y>
-        <width>271</width>
-        <height>51</height>
+        <x>120</x>
+        <y>410</y>
+        <width>151</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <family>Arial</family>
-        <pointsize>16</pointsize>
+        <family>MS Sans Serif</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
        </font>
       </property>
       <property name="statusTip">
@@ -606,62 +610,12 @@ File</string>
        <string>Summary</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="VoltagesButton">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>340</y>
-        <width>271</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>16</pointsize>
-       </font>
-      </property>
-      <property name="statusTip">
-       <string>Push to see the Voltages</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(159, 159, 159);</string>
-      </property>
-      <property name="text">
-       <string>Voltages</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="CurrentsButton">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>270</y>
-        <width>271</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>16</pointsize>
-       </font>
-      </property>
-      <property name="statusTip">
-       <string>Push to see the Currents</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(159, 159, 159);</string>
-      </property>
-      <property name="text">
-       <string>Currents</string>
-      </property>
-     </widget>
      <widget class="QWidget" name="verticalLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>130</x>
-        <y>80</y>
-        <width>311</width>
+        <x>120</x>
+        <y>40</y>
+        <width>351</width>
         <height>351</height>
        </rect>
       </property>
@@ -681,17 +635,12 @@ File</string>
        </item>
       </layout>
      </widget>
-    </widget>
-    <widget class="QWidget" name="VoltagesTab">
-     <attribute name="title">
-      <string>Voltages</string>
-     </attribute>
-     <widget class="QLabel" name="NodeLabelVoltages">
+     <widget class="QComboBox" name="NodeListComboBoxVoltages">
       <property name="geometry">
        <rect>
-        <x>360</x>
-        <y>20</y>
-        <width>51</width>
+        <x>600</x>
+        <y>160</y>
+        <width>151</width>
         <height>31</height>
        </rect>
       </property>
@@ -703,15 +652,18 @@ File</string>
         <bold>true</bold>
        </font>
       </property>
-      <property name="text">
-       <string>Node</string>
+      <property name="statusTip">
+       <string>Choose the node that prefer see</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="NodeListComboBoxVoltages">
+     <widget class="QComboBox" name="LineListComboBox">
       <property name="geometry">
        <rect>
-        <x>410</x>
-        <y>20</y>
+        <x>600</x>
+        <y>320</y>
         <width>151</width>
         <height>31</height>
        </rect>
@@ -734,10 +686,10 @@ File</string>
      <widget class="QPushButton" name="VoltagesGraphButton">
       <property name="geometry">
        <rect>
-        <x>410</x>
-        <y>420</y>
-        <width>121</width>
-        <height>41</height>
+        <x>770</x>
+        <y>160</y>
+        <width>101</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="font">
@@ -758,16 +710,128 @@ File</string>
        <string>Graph</string>
       </property>
      </widget>
-     <widget class="QWidget" name="VoltagesCurveWidget" native="true">
+     <widget class="QLabel" name="NodeLabelVoltages">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>80</y>
-        <width>901</width>
-        <height>311</height>
+        <x>550</x>
+        <y>160</y>
+        <width>51</width>
+        <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Node</string>
+      </property>
      </widget>
+     <widget class="QLabel" name="LineLabel">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>320</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Line</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="VoltageLabel">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>110</y>
+        <width>181</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Voltages Behavior</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CurrentLabel">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>270</y>
+        <width>181</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Currents Behavior</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="CurrentsGraphButton">
+      <property name="geometry">
+       <rect>
+        <x>770</x>
+        <y>320</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="statusTip">
+       <string>Push to graph the simulation</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(159, 159, 159);</string>
+      </property>
+      <property name="text">
+       <string>Graph</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="VoltagesTab">
+     <attribute name="title">
+      <string>Voltages and currents</string>
+     </attribute>
     </widget>
    </widget>
    <widget class="QFrame" name="ButtonsFrame">

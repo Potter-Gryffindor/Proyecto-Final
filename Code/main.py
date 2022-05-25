@@ -8,6 +8,7 @@ from pathlib import Path
 import os
 import gc
 from platform import node
+import opendssdirect
 
 from pandas import read_csv
 import pyarrow.feather as feather
@@ -29,6 +30,7 @@ path_Imgs = Path(path_parent, "Imgs")
 path_TestCase = Path(path_parent, "TestCase")
 path_Route = Path(path_parent, "Route")
 path_Manual = Path(path_parent, "User_Manual", "User_Manual.pdf")
+path_Results = Path(path_parent, "Results")
 
 # Inicializar OpenDSS
 sys.argv = ["makepy", "OpenDSSEngine.DSS"]
@@ -1610,10 +1612,7 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.__GridWindow.SummaryButton.clicked.connect(self.__pressed_summary_button)
         self.__GridWindow.VoltageProfileButton.clicked.connect(self.__pressed_voltage_profile_button)
         self.__GridWindow.VoltagesGraphButton.clicked.connect(self.__pressed_voltages_graph_button)
-        # self.__GridWindow.VoltagesButton.clicked.connect(self.__pressed_voltages_button)
-        # self.__GridWindow.CurrentButton.clicked.connect(self.__pressed_current_button)
-        # Setups Gráficas de In Motion Window
-        self.__setup_grid_diagram_figures()
+        self.__GridWindow.CurrentsGraphButton.clicked.connect(self.__pressed_currents_graph_button)
 
     # Métodos
     # Buscar y definir la extensión del archivo .dss
@@ -1648,6 +1647,17 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
     def __pressed_load_charger_nodes_button(self):
         # Crear una lista de nodos personalizada
         self.AllBusNames = DSSCircuit.AllBusNames
+
+        #Obtener una lista de lineas
+        self.AllLineNames = []
+        LineIndex = DSSCircuit.Lines.First
+        while LineIndex > 0 :
+            self.AllLineNames.append(DSSCircuit.Lines.Name)
+            LineIndex = DSSCircuit.Lines.Next
+
+        #print(self.AllLineNames)
+
+        #Asignar lista de nodos a combo box correspondiente
         for i in range(0, len(self.AllBusNames), 1):
             if len(self.NodeListComboBox) < len(self.AllBusNames):
                 option = self.AllBusNames[i]
@@ -1655,6 +1665,15 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
                 self.NodeListComboBoxVoltages.addItem(option)
             else:
                 break
+
+        #Asignar lista de líneas a combo box correspondiente
+        for i in range(0, len(self.AllLineNames), 1):
+            if len(self.LineListComboBox) < len(self.AllLineNames):
+                LineName = self.AllLineNames[i]
+                self.LineListComboBox.addItem(LineName)
+            else:
+                break
+
         # Mostrar cuadro de asignación de nodos dependiendo del tipo de recarga
         if self.ChargingComboBox.currentText() == "Opportunity Charging":
             # Limpiar contenido de Layout
@@ -1729,119 +1748,125 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
     # Graficar posición del nodo seleccionado (OpenDSS)
     def __pressed_node_location_button(self):
         node_selected = self.NodeListComboBox.currentText()
-        DSSText.Command = 'AddBusMarker Bus=[' + node_selected + '] code=16 color=Olive size=10'
+        DSSText.Command = 'AddBusMarker Bus=[' + node_selected + '] code=16 color=Black size=10'
         DSSText.Command = 'plot daisy Power max=2000 n n C1=$00FF0000'
         DSSText.Command = 'clearBusMarkers'
 
     # Power Flow de OpenDSS
     def __pressed_power_flow_button(self):
+        
+        #Caso recarga de oportunidad
         if self.ChargingComboBox.currentText() == "Opportunity Charging":
+            #Limpiar circuitos guardados en la memoria
             DSSText.Command = 'clear'
             DSSText.Command = 'Redirect (' + self.file + ')'
 
+            #Agregar carga de valor cero y medidores de corriente y tensión para graficar las tensiones en el tiempo
+            for i in range (len(self.AllBusNames)):
+                self.node = str(self.AllBusNames[i])
+                DSSText.Command = 'New Load.' + self.node + ' phases=3 Conn=Delta Bus=' + self.node + '.1.2.3 kV=4.8 kW=0 pf=1'
+                DSSText.Command = 'New monitor.' + self.node + ' element=load.' + self.node + ' terminal=1 mode=0'
+
+            #Agregar medidor de corriente y tensión en todas las líneas
+            for i in range(len(self.AllLineNames)):
+                self.line=self.AllLineNames[i]
+                DSSText.Command = 'New monitor.' + self.line + ' element=line.' + self.line + ' terminal=1 mode=0'
+
             # Crear LoadShape con intervalos de 1 minuto y asignarlo a una carga a conectar
             for i in range(len(self.charger_list)):
-                load_shape = [0.0]*96
+                load_shape = [0.0]*1440
                 self.minute_average = []
-                condition = int(((len(OpportunityWindow.lista_tiempo) - 1) / 900))
+                condition = int(((len(OpportunityWindow.lista_tiempo) - 1) / 60))
                 for j in range(condition):
-                    k = 900 * j
+                    k = 60 * j
                     self.minute_sum = 0
-                    for x in range(900):
+                    for x in range(60):
                         self.minute_sum = self.minute_sum + OpportunityWindow.charger_final_matrix[i][k + x]
-                    self.minute_average.append(self.minute_sum /900)
+                    self.minute_average.append(self.minute_sum /60)
+                
+                #Normalizar el vector de promedio por minuto
+                self.minute_average=list(np.array(self.minute_average)/max(self.minute_average))
 
-            # for m in range(1440):
-            # load_shape.append(0.0)
-
+                #Ingresar los promedios calculados dentro del LoadShape haciendo que concuerde con las horas de operación de la flota de buses
                 for n in range(condition):
-                    load_position = int(BusWindow.init_sec / 900 + n)
+                    load_position = int(BusWindow.init_sec / 60 + n)
                     load_shape[load_position] = self.minute_average[n]
 
                 current_load = str(i)
                 current_load_shape = str(load_shape)
                 current_node = str(self.node_connection[i])
-                DSSText.Command = 'New LoadShape.Shape_' + current_load + ' npts=96 interval=0.25 mult=' + \
+                DSSText.Command = 'New LoadShape.Shape_' + current_load + ' npts=1440 minterval=1 mult=' + \
                                 current_load_shape +' Action=Normalize'
                 DSSText.Command = 'New Load.LOAD_' + current_load + ' Phases=1 Bus1=' \
-                                + current_node + '.1 kV=4.800 kW=1 PF=1 Daily=Shape_' + current_load
+                                + current_node + '.1.2 kV=4.800 kW=450 PF=1 Daily=Shape_' + current_load
 
-                print(self.minute_average)
-                print(len(self.minute_average))
-                print(load_shape)
-                print(len(load_shape))
+                #print(self.minute_average)
+                #print(len(self.minute_average))
+                #print(load_shape)
+                #print(len(load_shape))
 
+            #Modo de simulación y comando para correr la simulación
             DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
-            DSSText.Command = 'set mode=daily stepsize=1h number=1'
-            DSSText.Command = 'Set hour=0'
-
-            self.v1pu = []
-            self.v2pu = []
-            self.v3pu = []
-            for i in range(24):
-                DSSText.Command = 'get hour'
-                hour = DSSText.Result
-                DSSText.Command = 'Solve'
-                self.v1pu.append(DSSCircuit.AllNodeVmagPUByPhase(1))
-                self.v2pu.append(DSSCircuit.AllNodeVmagPUByPhase(2))
-                self.v3pu.append(DSSCircuit.AllNodeVmagPUByPhase(3))
-            print(self.v1pu)
-            print(self.v2pu)
-            print(self.v3pu)
+            DSSText.Command = 'set mode=daily stepsize=1m number=1440'
+            DSSText.Command = 'Solve'
         
+        #Caso recarga dinámica
         elif self.ChargingComboBox.currentText() == "In Motion Charging":
             DSSText.Command = 'clear'
             DSSText.Command = 'Redirect (' + self.file + ')'
 
+            #Agregar carga de valor cero y medidores de corriente y tensión para graficar las tensiones en el tiempo
+            for i in range (len(self.AllBusNames)):
+                self.node = str(self.AllBusNames[i])
+                DSSText.Command = 'New Load.' + self.node + ' phases=3 Conn=Delta Bus=' + self.node + '.1.2.3 kV=4.8 kW=0 pf=1'
+                DSSText.Command = 'New monitor.' + self.node + ' element=load.' + self.node + ' terminal=1 mode=0'
+
+            #Agregar medidor de corriente y tensión en todas las líneas
+            for i in range(len(self.AllLineNames)):
+                self.line=self.AllLineNames[i]
+                DSSText.Command = 'New monitor.' + self.line + ' element=line.' + self.line + ' terminal=1 mode=0'
+
             # Crear LoadShape con intervalos de 1 minuto y asignarlo a una carga a conectar
             for i in range(len(self.charger_list)):
-                load_shape = [0.0]*96
+                load_shape = [0.0]*1440
                 self.minute_average = []
-                condition = int(((len(DynamicWindow.lista_tiempo) - 1) / 900))
+                condition = int(((len(DynamicWindow.lista_tiempo) - 1) / 60))
                 for j in range(condition):
-                    k = 900 * j
+                    k = 60 * j
                     self.minute_sum = 0
-                    for x in range(900):
+                    for x in range(60):
                         self.minute_sum = self.minute_sum + DynamicWindow.charger_final_matrix[i][k + x]
-                    self.minute_average.append(self.minute_sum /900)
+                    self.minute_average.append(self.minute_sum /60)
+
+                #Normalizar el vector de promedio por minuto
+                self.minute_average=list(np.array(self.minute_average)/max(self.minute_average))
 
             # for m in range(1440):
             # load_shape.append(0.0)
 
+                #Ingresar los promedios calculados dentro del LoadShape haciendo que concuerde con las horas de operación de la flota de buses
                 for n in range(condition):
-                    load_position = int(BusWindow.init_sec / 900 + n)
+                    load_position = int(BusWindow.init_sec / 60 + n)
                     load_shape[load_position] = self.minute_average[n]
 
                 current_load = str(i)
                 current_load_shape = str(load_shape)
                 current_node = str(self.node_connection[i])
-                DSSText.Command = 'New LoadShape.Shape_' + current_load + ' npts=96 interval=0.25 mult=' + \
+                DSSText.Command = 'New LoadShape.Shape_' + current_load + ' npts=1440 minterval=1 mult=' + \
                                 current_load_shape +' Action=Normalize'
                 DSSText.Command = 'New Load.LOAD_' + current_load + ' Phases=1 Bus1=' \
-                                + current_node + '.1 kV=4.800 kW=1 PF=1 Daily=Shape_' + current_load
+                                + current_node + '.1.2 kV=4.800 kW=150 PF=1 Daily=Shape_' + current_load
 
                 print(self.minute_average)
                 print(len(self.minute_average))
                 print(load_shape)
                 print(len(load_shape))
 
+            #Modo de simulación y comando para correr la simulación
             DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
-            DSSText.Command = 'set mode=daily stepsize=1h number=1'
-            DSSText.Command = 'Set hour=0'
+            DSSText.Command = 'set mode=daily stepsize=1m number=1440'
+            DSSText.Command = 'Solve'
 
-            self.v1pu = []
-            self.v2pu = []
-            self.v3pu = []
-            for i in range(24):
-                DSSText.Command = 'get hour'
-                hour = DSSText.Result
-                DSSText.Command = 'Solve'
-                self.v1pu.append(DSSCircuit.AllNodeVmagPUByPhase(1))
-                self.v2pu.append(DSSCircuit.AllNodeVmagPUByPhase(2))
-                self.v3pu.append(DSSCircuit.AllNodeVmagPUByPhase(3))
-            print(self.v1pu)
-            print(self.v2pu)
-            print(self.v3pu)
 
     # Summary de OpenDSS
     def __pressed_summary_button(self):
@@ -1866,40 +1891,22 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
     def __pressed_voltage_profile_button():
         DSSText.Command = 'Plot Profile Phases=All'
 
-    # Definir Plots (Grid Window)
-    def __setup_grid_diagram_figures(self):
-        # Gráficas de pestaña Voltages
-        self.figureGridVoltages = Figure(tight_layout=True)
-        self.canvasGridVoltages = FigureCanvas(self.figureGridVoltages)
-        self.toolbarGridVoltages = NavigationToolbar(self.canvasGridVoltages, self)
-        self.layoutGridVoltages = QtWidgets.QVBoxLayout(self.__GridWindow.VoltagesCurveWidget)
-        self.layoutGridVoltages.addWidget(self.toolbarGridVoltages)
-        self.layoutGridVoltages.addWidget(self.canvasGridVoltages)  #
-        self.axGridVoltages = self.figureGridVoltages.add_subplot(111)
-
     # Graficar tensiones por fase del nodo seleccionado
     def __pressed_voltages_graph_button(self):
-        self.axGridVoltages.cla()
-        day_time = [hour for hour in range(24)]
-        selected_node = self.NodeListComboBoxVoltages.currentIndex()
+        #Llamar función para evitar correr numerosas veces la simulación
+        self.__pressed_power_flow_button()
 
-        # Tensión Fase 1 en nodo seleccionado
-        v1_graph = [hour[selected_node] for hour in self.v1pu]
-        self.axGridVoltages.plot(day_time, v1_graph, label='v1')
-        # Tensión Fase 2 en nodo seleccionado
-        v2_graph = [hour[selected_node] for hour in self.v2pu]
-        self.axGridVoltages.plot(day_time, v2_graph, label='v2')
-        # Tensión Fase 3 en nodo seleccionado
-        v3_graph = [hour[selected_node] for hour in self.v3pu]
-        self.axGridVoltages.plot(day_time, v3_graph, label='v3')
+        #Plotear canales 1, 3 y 5 del monitor del nodo seleccionado
+        selected_node = str(self.NodeListComboBoxVoltages.currentText())
+        DSSText.Command = 'Plot monitor object=' + selected_node
 
-        self.axGridVoltages.tick_params(labelsize=10)
-        self.axGridVoltages.set_title('Voltages Curve', fontsize=12, fontweight="bold")
-        self.axGridVoltages.set_ylabel('Voltages [pu]', fontsize=10, fontweight="bold")
-        self.axGridVoltages.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
-        self.axGridVoltages.grid()
-        self.axGridVoltages.legend(frameon=False, loc='best')
-        self.canvasGridVoltages.draw()
+    def __pressed_currents_graph_button(self):
+        #Llamar función para evitar correr numerosas veces la simulación
+        self.__pressed_power_flow_button()
+
+        #Plotear canales 7, 9 y 11 (corrientes) de línea seleccionada
+        selected_line= str(self.LineListComboBox.currentText())
+        DSSText.Command = 'Plot monitor object=' + selected_line + ' channels=(7,9,11)'
 
 
 # Inicio Programa
