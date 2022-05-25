@@ -1573,9 +1573,10 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.AllBusNames = DSSCircuit.AllBusNames
         # Extraer nombre del sistema
         self.system_name = self.file.split('/')[-1].split('.')[0]
-        DSSText.Command = f'Export voltages {self.system_name}_EXP_VOLTAGES.CSV'
+        file_name = f'{self.system_name}_EXP_VOLTAGES.CSV'
+        DSSText.Command = f'Export voltages {file_name}'
         # Extraer base de las tensiones de cada nodo
-        voltages_bases_file = str(Path(path_Results, f'{self.system_name}_EXP_VOLTAGES.CSV'))
+        voltages_bases_file = str(Path(path_Results, file_name))
         try:
             voltages_data = read_csv(voltages_bases_file, usecols=("Bus", " BasekV"))
         except Exception as ex:
@@ -1745,7 +1746,6 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
             DSSText.Command = 'set mode=daily stepsize=1m number=1440'
             DSSText.Command = 'Solve'
-            DSSText.Command = 'Export voltages'
 
         # Caso recarga dinámica
         elif self.ChargingComboBox.currentText() == "In Motion Charging":
@@ -1803,7 +1803,6 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
             DSSText.Command = 'set mode=daily stepsize=1m number=1440'
             DSSText.Command = 'Solve'
-            DSSText.Command = 'Export voltages'
 
     # Summary de OpenDSS
     def __pressed_summary_button(self):
@@ -1836,9 +1835,10 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         # Plotear canales del 1 al 5 del monitor del nodo seleccionado
         selected_node = str(self.NodeListComboBoxVoltages.currentText())
         node_index = self.NodeListComboBoxVoltages.currentIndex()
+        file_name = f'{self.system_name}_Mon_{selected_node}_1.csv'
         DSSText.Command = f'Export monitor object={selected_node}'
 
-        voltages_file = str(Path(path_Results, f'{self.system_name}_Mon_{selected_node}_1.csv'))
+        voltages_file = str(Path(path_Results, file_name))
         try:
             voltages_data = read_csv(voltages_file, usecols=(" V1", " VAngle1", " V2", " VAngle2", " V3", " VAngle3"))
         except Exception as ex:
@@ -1887,9 +1887,9 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
 
         # Plotear canales del 7 al 11 (corrientes) de línea seleccionada
         selected_line = str(self.LineListComboBox.currentText())
+        file_name = f'{self.system_name}_Mon_{selected_line}_1.csv'
         DSSText.Command = f'Export monitor object={selected_line}'
-
-        currents_file = str(Path(path_Results, f'{self.system_name}_Mon_{selected_line}_1.csv'))
+        currents_file = str(Path(path_Results, file_name))
         try:
             currents_data = read_csv(currents_file, usecols=(" I1", " IAngle1", " I2", " IAngle2", " I3", " IAngle3"))
         except Exception as ex:
