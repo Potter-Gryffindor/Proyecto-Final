@@ -190,3 +190,4 @@ Load.d846_848b.vminpu=0.85 daily=default
 ! Allow the DSS to estimate the voltage bases from this list
 Set VoltageBases = [69, 24.9, 4.16, 0.48]
 CalcVoltageBases
+BusCoords IEEE34_BusXY.csv
