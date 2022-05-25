@@ -1591,6 +1591,13 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             self.AllLineNames.append(DSSCircuit.Lines.Name)
             line_index = DSSCircuit.Lines.Next
 
+        # Obtener una lista de transformadores
+        self.AllTransformerNames = []
+        transformer_index = DSSCircuit.Transformers.First
+        while transformer_index > 0:
+            self.AllTransformerNames.append(DSSCircuit.Transformers.Name)
+            transformer_index = DSSCircuit.Transformers.Next
+
         # Asignar lista de nodos a combo box correspondiente
         self.NodeListComboBox.clear()
         self.NodeListComboBoxVoltages.clear()
@@ -1743,7 +1750,7 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
                                   f' kW={max_power_charger} PF=1 Daily=Shape_{current_load}'
 
             # Modo de simulación y comando para correr la simulación
-            DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
+            DSSText.Command = f'New Energymeter.m1 element=Transformer.{self.AllTransformerNames[0]} terminal=1'
             DSSText.Command = 'set mode=daily stepsize=1m number=1440'
             DSSText.Command = 'Solve'
 
@@ -1800,7 +1807,7 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
                                   f' kW={max_power_charger} PF=1 Daily=Shape_{current_load}'
 
             # Modo de simulación y comando para correr la simulación
-            DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
+            DSSText.Command = f'New Energymeter.m1 element=Transformer.{self.AllTransformerNames[0]} terminal=1'
             DSSText.Command = 'set mode=daily stepsize=1m number=1440'
             DSSText.Command = 'Solve'
 
