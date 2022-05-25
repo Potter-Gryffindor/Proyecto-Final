@@ -6,8 +6,6 @@ from win32com.client import makepy
 import sys
 from pathlib import Path
 import os
-import gc
-from platform import node
 
 from pandas import read_csv
 import pyarrow.feather as feather
@@ -147,8 +145,6 @@ class UiRouteWindow(QtWidgets.QMainWindow):
             print('Not a valid data vector')
             self.routeData = None
 
-        print("Route data:")
-        print(self.routeData)
         self.__plot_route()
 
     # Definir Plots (MAPA Y PERFIL)
@@ -468,37 +464,25 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
         # Fleet parameters
         fleet_table = self.__BusWindow.FleetParametersTable
         stop_delay = float(fleet_table.item(4, 0).text())
-        print("Stop Delay: ", stop_delay)
         time_in_terminal = float(fleet_table.item(5, 0).text())
-        print("Time in Terminal: ", time_in_terminal)
         t_ini_fleet_qt = self.__BusWindow.STFtimeEdit.time()
         t_ini_fleet = t_ini_fleet_qt.hour() * 3600 + t_ini_fleet_qt.minute() * 60 + t_ini_fleet_qt.second()
         self.init_sec = t_ini_fleet
-        print("Time init fleet: ", self.init_sec)
         t_end_fleet_qt = self.__BusWindow.ETFtimeEdit.time()
         t_end_fleet = t_end_fleet_qt.hour() * 3600 + t_end_fleet_qt.minute() * 60 + t_end_fleet_qt.second()
-        print("Time end fleet: ", t_end_fleet)
         t_ini_pico1_qt = self.__BusWindow.STPtimeEdit.time()
         t_ini_pico1 = t_ini_pico1_qt.hour() * 3600 + t_ini_pico1_qt.minute() * 60 + t_ini_pico1_qt.second()
-        print("Time ini pico 1: ", t_ini_pico1)
         t_end_pico1_qt = self.__BusWindow.ETPtimeEdit.time()
         t_end_pico1 = t_end_pico1_qt.hour() * 3600 + t_end_pico1_qt.minute() * 60 + t_end_pico1_qt.second()
-        print("Time end pico 1: ", t_end_pico1)
 
         t_ini_pico2_qt = self.__BusWindow.STMPtimeEdit.time()
         t_ini_pico2 = t_ini_pico2_qt.hour() * 3600 + t_ini_pico2_qt.minute() * 60 + t_ini_pico2_qt.second()
-        print("Time ini pico 2: ", t_ini_pico2)
         t_end_pico2_qt = self.__BusWindow.EMPtimeEdit.time()
         t_end_pico2 = t_end_pico2_qt.hour() * 3600 + t_end_pico2_qt.minute() * 60 + t_end_pico1_qt.second()
-        print("Time end pico 2: ", t_end_pico2)
         num_buses = int(fleet_table.item(6, 0).text())
-        print("Number of buses: ", num_buses)
         dispatch_frequency = int(fleet_table.item(7, 0).text())
-        print("Dispatch frequency: ", dispatch_frequency)
         num_buses_peak = int(fleet_table.item(0, 0).text())
-        print("Number of buses peak: ", num_buses_peak)
         dispatch_frequency_peak = int(fleet_table.item(3, 0).text())
-        print("Dispatch frequency peak: ", dispatch_frequency_peak)
 
         # Simulation parameters
         delta_t = 0.2
@@ -507,15 +491,9 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
 
         # Bus parameters
         accel_bus = self.accelCurve
-        print("Acceleration curve: ")
-        print(accel_bus)
         decel_bus = self.decelCurve
-        print("Deceleration curve: ")
-        print(decel_bus)
         dist_brake = calculate_braking_distance(decel_bus, delta_t)
-        print("Distance to brake: ", dist_brake)
         max_speed_bus = accel_bus[-1]
-        print("Max speed: ", max_speed_bus)
 
         # Initial conditions
         state = 0
@@ -695,9 +673,7 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
             time_arr = []
             time_ = []
             frec = 0
-            print("Número de bus:" + str(y))
             for idx, x in enumerate(self.timeVector):
-                # print("self.distVector: "+str(self.distVector[idx]),("self.speedVector: "+str(self.speedVector[idx])))
                 if t_ini_pico1 < x <= t_end_pico1 or t_ini_pico2 < x < t_end_pico2:
                     if self.distVector[idx] == 0 and self.stateVector[idx] == 2:
                         frec = dispatch_frequency
@@ -707,9 +683,7 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
                 time_ap = datetime.datetime.fromtimestamp(stamp+x) + datetime.timedelta(seconds=frec * y)
                 time_arr.append(time_ap)
                 time_.append(time_arr[idx].strftime("%H:%M:%S"))
-                # print(time_[idx])
             self.arrayTime.append(time_arr)
-            print(np.shape(self.arrayTime))
 
         self.stopTicks, self.stopLabels = stop_position_labels(dist_route, bus_stop_route, label_route)
 
@@ -776,10 +750,6 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
     def __plot_op_diagram(self):
         self.axOPSpeed.cla()
         self.axOPPosition.cla()
-        print("Distance vector:")
-        print(self.distVector)
-        print('Speed vector:')
-        print(self.speedVector)
         i = 0
         for x in self.arrayTime:
             i += 1
@@ -860,8 +830,6 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         label = RouteWindow.routeData[['LABEL']].iloc[:, -1].values
         # Charger Sections
         self.charger_sections = [label[i] for i in range(len(label)) if label[i] is not None]
-        print("Charger Sections: ")
-        print(self.charger_sections)
         # Check Box List
         self.charger_sections_boxes = []
         for i in range(len(self.charger_sections)):
@@ -886,10 +854,6 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 i += 1
                 self.section_select.append(section.text())
                 self.charger_list.append(f"C{i}")
-        print("Charger Sections Selected: ")
-        print(self.section_select)
-        print("Charger List: ")
-        print(self.charger_list)
         # Convertir la lista de Secciones a String
         text_stops = ','.join(self.section_select)
         # Crear Item de paradas para actualizar la tabla
@@ -935,8 +899,6 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
             for N in range(0, len(dist_route_f)):
                 arr.append(1000 * dist_route_f.iloc[N].values[0])
             dist_route_np = np.array(arr)
-            print('dist_route_np: ')
-            print(dist_route_np)
 
             for N in range(0, len(dist_vector_f) - 1):
                 # point1=dist_vector[n]
@@ -948,8 +910,6 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
 
             sin_theta_vector_f.append(sin_theta_vector_f[-1])
 
-            print('len sin_theta_vector:')
-            print(len(sin_theta_vector_route))
             return sin_theta_vector_f
 
         # Parameters
@@ -959,23 +919,14 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         # Bus parameters
         bus_table = BusWindow.BusParametersTable
         fric = float(bus_table.item(0, 0).text())
-        print('fric: ', fric)
         mass = float(bus_table.item(1, 0).text())
-        print('mass: ', mass)
         grav = float(bus_table.item(2, 0).text())
-        print('grav: ', grav)
         rho = float(bus_table.item(3, 0).text())
-        print('rho: ', rho)
         alpha = float(bus_table.item(4, 0).text())
-        print('alpha: ', alpha)
         area = float(bus_table.item(5, 0).text())
-        print('area: ', area)
         p_aux = 1000 * float(bus_table.item(6, 0).text())
-        print('p_aux: ', p_aux)
         n_out = 0.01 * float(bus_table.item(7, 0).text())
-        print('n_out: ', n_out)
         n_in = 0.01 * float(bus_table.item(8, 0).text())
-        print('n_in: ', n_in)
 
         # Opportunity charge parameters
         charging_table = self.__OpportunityWindow.OppChargingParametersTable
@@ -987,8 +938,6 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
         n_c = 0.01 * float(charging_table.item(4, 0).text())
         it = float(charging_table.item(5, 0).text())
         dt = float(charging_table.item(6, 0).text())
-        print('Chargers Stops Vector:')
-        print(cl)
 
         # Fleet operation time for extra loads
         fleet_table = BusWindow.FleetParametersTable
@@ -1011,9 +960,6 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
 
         # Fleet operation results
         time_vector = BusWindow.timeVector
-        print('time vector:')
-        print(time_vector)
-        print('t_ini_fleet:', t_ini_fleet)
         time_vector_dt = BusWindow.timeVectorDT
         speed_vector = BusWindow.speedVector
         dist_vector = BusWindow.distVector
@@ -1225,8 +1171,6 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         # Charger Sections
         self.stop_list = [label[i] for i in range(len(label)) if label[i] is not None]
         self.charger_sections = [f"{self.stop_list[i]}-{self.stop_list[i + 1]}" for i in range(len(self.stop_list) - 1)]
-        print("Charger Sections: ")
-        print(self.charger_sections)
         # Check Box List
         self.charger_sections_boxes = []
         for i in range(len(self.charger_sections)):
@@ -1254,8 +1198,6 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         stop_list = section_select_string.split(',')
         new_stop_list = list(OrderedDict.fromkeys(stop_list))
         self.cl_aux = tuple(new_stop_list)
-        print("Active Stops:")
-        print(self.cl_aux)
         for i in range(len(stop_list) - 1):
             if (stop := stop_list[i]) == stop_list[i + 1]:
                 new_stop_list.remove(stop)
@@ -1266,19 +1208,13 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
             self.section_list.append(f"S{count}")
             count += 1
         num_sections = len(self.section_list)
-        print("Charger Sections Selected: ")
-        print(self.section_select)
         self.stops_for_section = [[] for _ in range(num_sections)]
         for section in self.section_select:
             inicio_section = section.split('-')[0]
             fin_section = section.split('-')[1]
             for i in range(self.cl_aux.index(inicio_section), self.cl_aux.index(fin_section) + 1):
                 self.stops_for_section[self.section_select.index(section)].append(self.cl_aux[i])
-        print("Stops for Section: ")
-        print(self.stops_for_section)
         self.cl_list = [x.split('-') for x in self.section_select]
-        print("Charger Sections: ")
-        print(self.section_list)
         # Convertir la lista de Secciones a String
         text_stops = ','.join(self.section_select)
         # Crear Item de paradas para actualizar la tabla
@@ -1324,8 +1260,6 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
             for N in range(0, len(dist_route_f)):
                 arr.append(1000 * dist_route_f.iloc[N].values[0])
             dist_route_np = np.array(arr)
-            print('dist_route_np: ')
-            print(dist_route_np)
 
             for N in range(0, len(dist_vector_f) - 1):
                 # point1=dist_vector[n]
@@ -1337,8 +1271,6 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
 
             sin_theta_vector_f.append(sin_theta_vector_f[-1])
 
-            print('len sin_theta_vector:')
-            print(len(sin_theta_vector_route))
             return sin_theta_vector_f
 
         # Parameters
@@ -1348,23 +1280,14 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         # Bus parameters
         bus_table = BusWindow.BusParametersTable
         fric = float(bus_table.item(0, 0).text())
-        print('fric: ', fric)
         mass = float(bus_table.item(1, 0).text())
-        print('mass: ', mass)
         grav = float(bus_table.item(2, 0).text())
-        print('grav: ', grav)
         rho = float(bus_table.item(3, 0).text())
-        print('rho: ', rho)
         alpha = float(bus_table.item(4, 0).text())
-        print('alpha: ', alpha)
         area = float(bus_table.item(5, 0).text())
-        print('area: ', area)
         p_aux = 1000 * float(bus_table.item(6, 0).text())
-        print('p_aux: ', p_aux)
         n_out = 0.01 * float(bus_table.item(7, 0).text())
-        print('n_out: ', n_out)
         n_in = 0.01 * float(bus_table.item(8, 0).text())
-        print('n_in: ', n_in)
 
         # Opportunity charge parameters
         charging_table = self.__DynamicWindow.ImcChargingParametersTable
@@ -1376,8 +1299,6 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         n_c = 0.01 * float(charging_table.item(4, 0).text())
         it = float(charging_table.item(5, 0).text())
         dt = float(charging_table.item(6, 0).text())
-        print('Chargers Stops Vector:')
-        print(cl)
 
         # Fleet operation time for extra loads
         fleet_table = BusWindow.FleetParametersTable
@@ -1400,9 +1321,6 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
 
         # Fleet operation results
         time_vector = BusWindow.timeVector
-        print('time vector:')
-        print(time_vector)
-        print('t_ini_fleet:', t_ini_fleet)
         time_vector_dt = BusWindow.timeVectorDT
         speed_vector = BusWindow.speedVector
         dist_vector = BusWindow.distVector
@@ -1653,9 +1571,9 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
     def __pressed_load_charger_nodes_button(self):
         # Crear una lista de nodos personalizada
         self.AllBusNames = DSSCircuit.AllBusNames
-        DSSText.Command = 'Export voltages'
         # Extraer nombre del sistema
         self.system_name = self.file.split('/')[-1].split('.')[0]
+        DSSText.Command = f'Export voltages {self.system_name}_EXP_VOLTAGES.CSV'
         # Extraer base de las tensiones de cada nodo
         voltages_bases_file = str(Path(path_Results, f'{self.system_name}_EXP_VOLTAGES.CSV'))
         try:
@@ -1672,9 +1590,9 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
             self.AllLineNames.append(DSSCircuit.Lines.Name)
             line_index = DSSCircuit.Lines.Next
 
-        # print(self.AllLineNames)
-
         # Asignar lista de nodos a combo box correspondiente
+        self.NodeListComboBox.clear()
+        self.NodeListComboBoxVoltages.clear()
         for i in range(0, len(self.AllBusNames), 1):
             if len(self.NodeListComboBox) < len(self.AllBusNames):
                 option = self.AllBusNames[i]
@@ -1684,6 +1602,7 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
                 break
 
         # Asignar lista de líneas a combo box correspondiente
+        self.LineListComboBox.clear()
         for i in range(0, len(self.AllLineNames), 1):
             if len(self.LineListComboBox) < len(self.AllLineNames):
                 line_name = self.AllLineNames[i]
@@ -1817,15 +1736,10 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
                 current_load_shape = str(load_shape)
                 current_node = str(self.node_connection[i])
                 current_base = str(self.voltages_bases[i])
-                DSSText.Command = f'New LoadShape.Shape_{current_load} npts=1440 minterval=1 mult={current_load_shape}' \
+                DSSText.Command = f'New LoadShape.Shape_{current_load} npts=1440 minterval=1 mult={current_load_shape}'\
                                   + ' Action=Normalize'
                 DSSText.Command = f'New Load.LOAD_{current_load} Phases=1 Bus1={current_node}.1.2 kV={current_base}' + \
                                   f' kW={max_power_charger} PF=1 Daily=Shape_{current_load}'
-
-                # print(self.minute_average)
-                # print(len(self.minute_average))
-                # print(load_shape)
-                # print(len(load_shape))
 
             # Modo de simulación y comando para correr la simulación
             DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
@@ -1880,15 +1794,10 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
                 current_load_shape = str(load_shape)
                 current_node = str(self.node_connection[i])
                 current_base = str(self.voltages_bases[i])
-                DSSText.Command = f'New LoadShape.Shape_{current_load} npts=1440 minterval=1 mult={current_load_shape}' \
+                DSSText.Command = f'New LoadShape.Shape_{current_load} npts=1440 minterval=1 mult={current_load_shape}'\
                                   + ' Action=Normalize'
                 DSSText.Command = f'New Load.LOAD_{current_load} Phases=1 Bus1={current_node}.1.2 kV={current_base}' + \
                                   f' kW={max_power_charger} PF=1 Daily=Shape_{current_load}'
-
-                # print(self.minute_average)
-                # print(len(self.minute_average))
-                # print(load_shape)
-                # print(len(load_shape))
 
             # Modo de simulación y comando para correr la simulación
             DSSText.Command = 'New Energymeter.m1 element=Transformer.SubXF terminal=1'
@@ -2095,4 +2004,6 @@ if __name__ == "__main__":
     # Mostrar Aplicación
     widget.show()
     sys.exit(app.exec_())
-# %%
+
+
+#%%
