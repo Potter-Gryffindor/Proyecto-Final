@@ -1,0 +1,1547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1547</width>
+    <height>706</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(2, 3, 57);</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>50</y>
+      <width>1321</width>
+      <height>651</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="tabPosition">
+     <enum>QTabWidget::North</enum>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <property name="elideMode">
+     <enum>Qt::ElideNone</enum>
+    </property>
+    <property name="usesScrollButtons">
+     <bool>true</bool>
+    </property>
+    <property name="documentMode">
+     <bool>false</bool>
+    </property>
+    <property name="tabsClosable">
+     <bool>false</bool>
+    </property>
+    <property name="movable">
+     <bool>false</bool>
+    </property>
+    <property name="tabBarAutoHide">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Ruta</string>
+     </attribute>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>650</x>
+        <y>0</y>
+        <width>221</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(85, 170, 0);</string>
+      </property>
+      <property name="text">
+       <string>OPP-GREEN </string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::AutoText</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>120</y>
+        <width>151</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Myanmar Text</family>
+        <pointsize>16</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+color: rgb(0, 0, 127);</string>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="text">
+       <string>Ingresa la ruta: </string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widgetRoute1" native="true">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>110</y>
+        <width>471</width>
+        <height>471</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-top-color: rgb(85, 170, 0);</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widgetRoute2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>110</y>
+        <width>481</width>
+        <height>471</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-top-color: rgb(85, 170, 0);</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditRouteFile">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>170</y>
+        <width>201</width>
+        <height>41</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonRouteSearch">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>230</y>
+        <width>93</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue; cursor: pointer; padding: 5px; border-radius: 5px; color: white;</string>
+      </property>
+      <property name="text">
+       <string>Buscar archivo</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonRouteLoad">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>230</y>
+        <width>93</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: blue; cursor: pointer; padding: 5px; border-radius: 5px; color: white;</string>
+      </property>
+      <property name="text">
+       <string>Simular</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>-80</x>
+        <y>360</y>
+        <width>42</width>
+        <height>12</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_15">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>350</y>
+        <width>221</width>
+        <height>231</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-image: url(:/cct/autobus.jpg);</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_19">
+      <property name="geometry">
+       <rect>
+        <x>520</x>
+        <y>50</y>
+        <width>481</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>26</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(85, 170, 0);</string>
+      </property>
+      <property name="text">
+       <string>&quot;El futuro es la innovación&quot; </string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::AutoText</enum>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Bus</string>
+     </attribute>
+     <widget class="QTabWidget" name="tabWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>1301</width>
+        <height>571</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="tab_7">
+       <attribute name="title">
+        <string>Datos generales del Bus</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidgetBusSimParameters">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>80</y>
+          <width>451</width>
+          <height>141</height>
+         </rect>
+        </property>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>fr: Coeficiente de fricción de rodadura</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>m: Masa total del vehículo [kg]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>g: Aceleración por gravedad [m/s2]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>rho: Densidad del aire [kg/m3]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>alpha: Coeficiente de resistencia del aire</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>A: Área frontal del vehículo [m2]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Paux: Consumo de energía de cargas auxiliares [kW]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>nout: Eficiencia del consumo de energía [%]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>nin: Eficiencia de regeneración energética [%]</string>
+         </property>
+         <property name="font">
+          <font>
+           <family>Myanmar Text</family>
+          </font>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string/>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>0.02</string>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string>15900</string>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string>9.81</string>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string>1.29</string>
+         </property>
+        </item>
+        <item row="4" column="0">
+         <property name="text">
+          <string>0.66</string>
+         </property>
+        </item>
+        <item row="5" column="0">
+         <property name="text">
+          <string>8.28</string>
+         </property>
+        </item>
+        <item row="6" column="0">
+         <property name="text">
+          <string>5.03</string>
+         </property>
+        </item>
+        <item row="7" column="0">
+         <property name="text">
+          <string>85</string>
+         </property>
+        </item>
+        <item row="8" column="0">
+         <property name="text">
+          <string>75</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QTableWidget" name="tableWidgetSpeedPar">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>360</y>
+          <width>251</width>
+          <height>121</height>
+         </rect>
+        </property>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>Acceleración [m/s2]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Frenado [m/s2]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Velocidad máxima [km/h]</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string/>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string>1.2</string>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string>50</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QPushButton" name="pushButtonSimGenCurve">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>390</y>
+          <width>101</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: blue; cursor: pointer; padding: 5px; border-radius: 5px; color: white;</string>
+        </property>
+        <property name="text">
+         <string>Graficar</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>110</x>
+          <y>290</y>
+          <width>231</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string>Curva de velocidad</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>30</y>
+          <width>251</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);
+</string>
+        </property>
+        <property name="text">
+         <string>Parámetros del Bus</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="widgetBusCurve2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>590</x>
+          <y>270</y>
+          <width>521</width>
+          <height>231</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QWidget" name="widgetBusCurve1" native="true">
+        <property name="geometry">
+         <rect>
+          <x>590</x>
+          <y>20</y>
+          <width>521</width>
+          <height>231</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_8">
+       <attribute name="title">
+        <string>Datos de la Flota</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidgetFleetPar">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>90</y>
+          <width>601</width>
+          <height>331</height>
+         </rect>
+        </property>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>NBP: Número total de buses valle</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>STF: Hora de inicio de la operación de la flota</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>ETF: Hora de finalización de la operación de la flota (último despacho)</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>NP: Número de períodos pico</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>NMP: Número de períodos de pico medio</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>FPP: Frecuencia de despacho valle [S]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>ITS: Tiempo de inactividad en cada parada [s]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>ITT: Tiempo de inactividad en la parada terminal [s]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>NBV: Número total de buses pico </string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>FPV: Frecuencia de despacho pico [S]</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string/>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>6</string>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string>2</string>
+         </property>
+        </item>
+        <item row="4" column="0">
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item row="5" column="0">
+         <property name="text">
+          <string>180</string>
+         </property>
+        </item>
+        <item row="6" column="0">
+         <property name="text">
+          <string>20</string>
+         </property>
+        </item>
+        <item row="7" column="0">
+         <property name="text">
+          <string>240</string>
+         </property>
+        </item>
+        <item row="8" column="0">
+         <property name="text">
+          <string>7</string>
+         </property>
+        </item>
+        <item row="9" column="0">
+         <property name="text">
+          <string>120</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QTimeEdit" name="timeEditEnd">
+        <property name="geometry">
+         <rect>
+          <x>440</x>
+          <y>170</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(157, 157, 157);</string>
+        </property>
+        <property name="dateTime">
+         <datetime>
+          <hour>9</hour>
+          <minute>30</minute>
+          <second>0</second>
+          <year>2000</year>
+          <month>1</month>
+          <day>1</day>
+         </datetime>
+        </property>
+        <property name="time">
+         <time>
+          <hour>9</hour>
+          <minute>30</minute>
+          <second>0</second>
+         </time>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="timeEditStart">
+        <property name="geometry">
+         <rect>
+          <x>440</x>
+          <y>140</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 0, 0);
+color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="dateTime">
+         <datetime>
+          <hour>5</hour>
+          <minute>0</minute>
+          <second>0</second>
+          <year>2000</year>
+          <month>1</month>
+          <day>1</day>
+         </datetime>
+        </property>
+        <property name="time">
+         <time>
+          <hour>5</hour>
+          <minute>0</minute>
+          <second>0</second>
+         </time>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>790</x>
+          <y>60</y>
+          <width>271</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>STP: Hora de inicio de las horas pico</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>790</x>
+          <y>220</y>
+          <width>301</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>EMP:Hora final de las horas medias pico</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>790</x>
+          <y>200</y>
+          <width>321</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>STMP: Hora de inicio de las horas medias  pico</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>790</x>
+          <y>40</y>
+          <width>221</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>ETP: Hora final de las horas pico</string>
+        </property>
+       </widget>
+       <widget class="QToolBox" name="toolBox">
+        <property name="geometry">
+         <rect>
+          <x>790</x>
+          <y>90</y>
+          <width>391</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(85, 170, 0);
+background-color: rgb(85, 170, 0);</string>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="page_3">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>391</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Período Pico 1</string>
+         </attribute>
+         <widget class="QTimeEdit" name="timeEdit">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>0</y>
+            <width>91</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 255, 255);</string>
+          </property>
+          <property name="time">
+           <time>
+            <hour>6</hour>
+            <minute>0</minute>
+            <second>0</second>
+           </time>
+          </property>
+         </widget>
+         <widget class="QTimeEdit" name="timeEdit_7">
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>0</y>
+            <width>91</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 255, 255);</string>
+          </property>
+          <property name="time">
+           <time>
+            <hour>8</hour>
+            <minute>0</minute>
+            <second>0</second>
+           </time>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+       <widget class="QToolBox" name="toolBox_3">
+        <property name="geometry">
+         <rect>
+          <x>790</x>
+          <y>270</y>
+          <width>391</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 170, 0);</string>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="page_10">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>391</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Período Pico 2</string>
+         </attribute>
+         <widget class="QTimeEdit" name="timeEdit_10">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>0</y>
+            <width>91</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="time">
+           <time>
+            <hour>15</hour>
+            <minute>30</minute>
+            <second>0</second>
+           </time>
+          </property>
+         </widget>
+         <widget class="QTimeEdit" name="timeEdit_22">
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>0</y>
+            <width>91</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="time">
+           <time>
+            <hour>17</hour>
+            <minute>0</minute>
+            <second>0</second>
+           </time>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>180</x>
+          <y>30</y>
+          <width>301</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string>Parámetros del Bus</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_17">
+        <property name="geometry">
+         <rect>
+          <x>810</x>
+          <y>360</y>
+          <width>341</width>
+          <height>161</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border-image: url(:/cct/transmetro.png);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_9">
+       <attribute name="title">
+        <string>Diagrama de operación</string>
+       </attribute>
+       <widget class="QPushButton" name="pushButtonOperDiagram">
+        <property name="geometry">
+         <rect>
+          <x>370</x>
+          <y>10</y>
+          <width>231</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color:blue; cursor: pointer; padding: 5px; border-radius: 5px; color: white;</string>
+        </property>
+        <property name="text">
+         <string>Generar diagrama de operación</string>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="progressBarRoute">
+        <property name="geometry">
+         <rect>
+          <x>630</x>
+          <y>10</y>
+          <width>251</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);</string>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+       <widget class="QTabWidget" name="tabWidget_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>1221</width>
+          <height>511</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 255);</string>
+        </property>
+        <property name="tabPosition">
+         <enum>QTabWidget::West</enum>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab_5">
+         <attribute name="title">
+          <string>Posición</string>
+         </attribute>
+         <widget class="QWidget" name="widgetOperationDiagram2" native="true">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>10</y>
+            <width>1111</width>
+            <height>451</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="tab_4">
+         <attribute name="title">
+          <string>Velocidad</string>
+         </attribute>
+         <widget class="QWidget" name="widgetOperationDiagram" native="true">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>10</y>
+            <width>1081</width>
+            <height>461</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>Carga de oportunidad</string>
+     </attribute>
+     <widget class="QTabWidget" name="tabWidget_8">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>10</y>
+        <width>1321</width>
+        <height>561</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(0, 0, 255);</string>
+      </property>
+      <property name="tabPosition">
+       <enum>QTabWidget::West</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab_6">
+       <attribute name="title">
+        <string>Paramétros</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidgetOppCharParameters">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>160</y>
+          <width>441</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);</string>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>170</number>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>28</number>
+        </attribute>
+        <attribute name="verticalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string>BC: Capacidad de batería por bus [kWh]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>SoCi: Estado de carga inicial [%]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>CL: Secciones de carga</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>CP: Potencia del cargador [kW]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>nC: Eficiencia de Carga [%]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>IT: Tiempo de conexión a recarga [s]</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>DT: Tiempo de desconexión [s]</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string/>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>250</string>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string>80</string>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string>P8,P18,P1</string>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string>250</string>
+         </property>
+        </item>
+        <item row="4" column="0">
+         <property name="text">
+          <string>90</string>
+         </property>
+        </item>
+        <item row="5" column="0">
+         <property name="text">
+          <string>8</string>
+         </property>
+        </item>
+        <item row="6" column="0">
+         <property name="text">
+          <string>4</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QLabel" name="label_13">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>70</y>
+          <width>471</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>24</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string>Parámetros de Carga</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_18">
+        <property name="geometry">
+         <rect>
+          <x>660</x>
+          <y>160</y>
+          <width>421</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border-image: url(:/cct/carga.jpg);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_10">
+       <attribute name="title">
+        <string>Simulación</string>
+       </attribute>
+       <widget class="QLabel" name="label_16">
+        <property name="geometry">
+         <rect>
+          <x>440</x>
+          <y>10</y>
+          <width>611</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>22</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);</string>
+        </property>
+        <property name="text">
+         <string>Simulación de carga de oportunidad</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonOppChargeSim">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>130</y>
+          <width>191</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: blue; cursor: pointer; padding: 5px; border-radius: 5px; color: white;</string>
+        </property>
+        <property name="text">
+         <string>Cargar simulación</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBox">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>290</y>
+          <width>151</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color:rgb(0, 0, 0)</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>Bus</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cargador</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>240</y>
+          <width>111</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0)</string>
+        </property>
+        <property name="text">
+         <string>Elemento</string>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="progressBarOppCharg">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>190</y>
+          <width>201</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(0, 0, 0);</string>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButtonPlotOppChargeSim">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>440</y>
+          <width>111</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color:blue; cursor: pointer; padding: 5px; border-radius: 5px; color: white;</string>
+        </property>
+        <property name="text">
+         <string>Graficar</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBoxOppChargeSimVar">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>390</y>
+          <width>191</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color:rgb(0, 0, 0)</string>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Energía</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Potencia</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Pendiente</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>(SoC) Estado de carga</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cargadores</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Vector de cargador</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>340</y>
+          <width>121</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color:rgb(0, 0, 0)</string>
+        </property>
+        <property name="text">
+         <string>Variable</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="widgetOppChargSim" native="true">
+        <property name="geometry">
+         <rect>
+          <x>250</x>
+          <y>70</y>
+          <width>981</width>
+          <height>451</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>10</y>
+      <width>911</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>18</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(2, 3, 57);</string>
+    </property>
+    <property name="text">
+     <string>¡BIENVENIDO A LA RUTA U-30 DEL TRANSMETRO DE BARRANQUILLA!</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources>
+  <include location="Imagenes.qrc"/>
+ </resources>
+ <connections/>
+</ui>
