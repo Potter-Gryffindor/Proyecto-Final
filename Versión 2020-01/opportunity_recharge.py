@@ -741,3 +741,4 @@ app.setStyle('Fusion')
 widget = charger_window()  ####here
 widget.show()
 sys.exit(app.exec_())
+#%%

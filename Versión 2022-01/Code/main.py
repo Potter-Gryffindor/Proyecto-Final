@@ -662,15 +662,18 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
         self.timeVectorDT = []
         today = datetime.date.fromtimestamp(time.time())
         date = datetime.datetime(today.year, today.month, today.day, 0, 0, 0)
+        self.initial_time = datetime.datetime(today.year, today.month, today.day, 0, 0, 0, 0)
         stamp = datetime.datetime.timestamp(date)
 
         for n in range(0, len(self.timeVector)):
             self.timeVectorDT.append(datetime.datetime.fromtimestamp(stamp+n))
 
         self.arrayTime = []
+        self.arrayTimeSeconds = []
 
         for y in range(num_buses):
             time_arr = []
+            time_arr_seconds = []
             time_ = []
             frec = 0
             for idx, x in enumerate(self.timeVector):
@@ -682,8 +685,10 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
                         frec = dispatch_frequency
                 time_ap = datetime.datetime.fromtimestamp(stamp+x) + datetime.timedelta(seconds=frec * y)
                 time_arr.append(time_ap)
+                time_arr_seconds.append((time_ap - self.initial_time).total_seconds())
                 time_.append(time_arr[idx].strftime("%H:%M:%S"))
             self.arrayTime.append(time_arr)
+            self.arrayTimeSeconds.append(time_arr_seconds)
 
         self.stopTicks, self.stopLabels = stop_position_labels(dist_route, bus_stop_route, label_route)
 
@@ -750,11 +755,22 @@ class UiBusWindow(UiRouteWindow, QtWidgets.QMainWindow):
     def __plot_op_diagram(self):
         self.axOPSpeed.cla()
         self.axOPPosition.cla()
+        path_results_aux = str(path_Results).replace("\\", "/")
+        path_op_diagram = f"{path_results_aux}/Op_Diagram.txt"
+        self.txt_matriz_times = np.array(self.arrayTimeSeconds)
+        # print(list(map(list, zip(self.arrayTimeSeconds))))
+        dist_vector_km = np.array([0.001*self.distVector])
+        txt_matriz_op_diagram = np.concatenate((self.txt_matriz_times.T, dist_vector_km.T), axis=1)
         i = 0
+        txt_vector_titles = []
         for x in self.arrayTime:
             i += 1
+            txt_vector_titles.append('Time' + str(i))
             self.axOPSpeed.plot(x, 3.6 * self.speedVector, label=f'Bus {i}')
             self.axOPPosition.plot(x, 0.001 * self.distVector, label=f'Bus {i}')
+        txt_vector_titles.append('Distance')
+        txt_matriz_op_diagram = np.concatenate(([txt_vector_titles], txt_matriz_op_diagram), axis=0)
+        np.savetxt(path_op_diagram, txt_matriz_op_diagram, delimiter=",", fmt='% s')
 
         self.axOPSpeed.set_title('Operating curve (Speed)', fontsize=12, fontweight="bold")
         self.axOPSpeed.set_ylabel('Speed [km/h]', fontsize=10, fontweight="bold")
@@ -1085,10 +1101,20 @@ class UiOpportunityWindow(UiBusWindow, QtWidgets.QMainWindow):
                 self.axOppCharging.set_ylabel('sin(theta)', fontsize=10, fontweight="bold")
                 self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
             elif plot_type == 3:
+                path_results_aux = str(path_Results).replace("\\", "/")
+                path_soc_diagram = f"{path_results_aux}/SoC_Diagram_Opp.txt"
+                soc_vector = np.array([100 * np.array(self.SoCVector)])
+                txt_matriz_times = BusWindow.txt_matriz_times.T
+                txt_matriz_soc_diagram = np.concatenate((txt_matriz_times, soc_vector.T), axis=1)
+                txt_vector_titles = []
                 i = 0
                 for x in BusWindow.arrayTime:
                     i += 1
+                    txt_vector_titles.append('Time' + str(i))
                     self.axOppCharging.plot(x, 100 * np.array(self.SoCVector), label=f'Bus {i}')
+                txt_vector_titles.append('SoC')
+                txt_matriz_soc_diagram = np.concatenate(([txt_vector_titles], txt_matriz_soc_diagram), axis=0)
+                np.savetxt(path_soc_diagram, txt_matriz_soc_diagram, delimiter=",", fmt='% s')
                 self.axOppCharging.set_title('State of Charge', fontsize=12, fontweight="bold")
                 self.axOppCharging.set_ylabel('%', fontsize=10, fontweight="bold")
                 self.axOppCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
@@ -1338,7 +1364,7 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         power_vector = [0]
         so_c_vector = [so_ci]
         charger_vector = []
-        charger_matrix = [[] for i in range(len(cl))]
+        charger_matrix = [[] for _ in range(len(cl))]
         active_section = 0
         num_chargers = len(cl)
         section_num = None
@@ -1406,9 +1432,9 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
         inicio = BusWindow.arrayTime[0][0]
         fin = BusWindow.arrayTime[-1][-1]
         lista_tiempo = [inicio + datetime.timedelta(seconds=s) for s in range((fin - inicio).seconds + 1)]
-        charger_final_matrix = [[] for i in range(num_chargers)]
+        charger_final_matrix = [[] for _ in range(num_chargers)]
         for t in lista_tiempo:
-            sum_c = [0 for i in range(num_chargers)]
+            sum_c = [0 for _ in range(num_chargers)]
             for c in range(num_chargers):
                 for vect_t in BusWindow.arrayTime:
                     try:
@@ -1458,10 +1484,20 @@ class UiDynamicWindow(UiOpportunityWindow, QtWidgets.QMainWindow):
                 self.axImcCharging.set_ylabel('sin(theta)', fontsize=10, fontweight="bold")
                 self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
             elif plot_type == 3:
+                path_results_aux = str(path_Results).replace("\\", "/")
+                path_soc_diagram = f"{path_results_aux}/SoC_Diagram_IMC.txt"
+                soc_vector = np.array([100 * np.array(self.SoCVector)])
+                txt_matriz_times = BusWindow.txt_matriz_times.T
+                txt_matriz_soc_diagram = np.concatenate((txt_matriz_times, soc_vector.T), axis=1)
+                txt_vector_titles = []
                 i = 0
                 for x in BusWindow.arrayTime:
                     i += 1
+                    txt_vector_titles.append('Time' + str(i))
                     self.axImcCharging.plot(x, 100 * np.array(self.SoCVector), label=f'Bus {i}')
+                txt_vector_titles.append('SoC')
+                txt_matriz_soc_diagram = np.concatenate(([txt_vector_titles], txt_matriz_soc_diagram), axis=0)
+                np.savetxt(path_soc_diagram, txt_matriz_soc_diagram, delimiter=",", fmt='% s')
                 self.axImcCharging.set_title('State of Charge', fontsize=12, fontweight="bold")
                 self.axImcCharging.set_ylabel('%', fontsize=10, fontweight="bold")
                 self.axImcCharging.set_xlabel('Time [h]', fontsize=10, fontweight="bold")
@@ -1746,8 +1782,8 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
                 current_base = str(self.voltages_bases[i])
                 DSSText.Command = f'New LoadShape.Shape_{current_load} npts=1440 minterval=1 mult={current_load_shape}'\
                                   + ' Action=Normalize'
-                DSSText.Command = f'New Load.LOAD_{current_load} Phases=1 Bus1={current_node}.1.2 kV={current_base}' + \
-                                  f' kW={max_power_charger} PF=1 Daily=Shape_{current_load}'
+                DSSText.Command = f'New Load.LOAD_{current_load} Phases=3 Conn=Delta Bus1={current_node} ' +\
+                                  f'kV={current_base}' + f' kW={max_power_charger} PF=1 Daily=Shape_{current_load}'
 
             # Modo de simulación y comando para correr la simulación
             DSSText.Command = f'New Energymeter.m1 element=Transformer.{self.AllTransformerNames[0]} terminal=1'
@@ -1803,8 +1839,8 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
                 current_base = str(self.voltages_bases[i])
                 DSSText.Command = f'New LoadShape.Shape_{current_load} npts=1440 minterval=1 mult={current_load_shape}'\
                                   + ' Action=Normalize'
-                DSSText.Command = f'New Load.LOAD_{current_load} Phases=1 Bus1={current_node}.1.2 kV={current_base}' + \
-                                  f' kW={max_power_charger} PF=1 Daily=Shape_{current_load}'
+                DSSText.Command = f'New Load.LOAD_{current_load} Phases=3 Conn=Delta Bus1={current_node} ' + \
+                                  f'kV={current_base}' + f' kW={max_power_charger} PF=1 Daily=Shape_{current_load}'
 
             # Modo de simulación y comando para correr la simulación
             DSSText.Command = f'New Energymeter.m1 element=Transformer.{self.AllTransformerNames[0]} terminal=1'
@@ -1866,7 +1902,6 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.axVoltages.plot(range(1440), v1, label='V1')
         self.axVoltages.plot(range(1440), v2, label='V2')
         self.axVoltages.plot(range(1440), v3, label='V3')
-        self.axVoltages.set_title('Voltages Behavior', fontsize=12, fontweight="bold")
         self.axVoltages.set_ylabel('V [pu]', fontsize=10, fontweight="bold")
         self.axVoltages.set_xlabel('Time [m]', fontsize=10, fontweight="bold")
         self.axVoltages.tick_params(labelsize=10)
@@ -1879,7 +1914,6 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.axVoltagesAngle.plot(range(1440), v1_angle, label='V1')
         self.axVoltagesAngle.plot(range(1440), v2_angle, label='V2')
         self.axVoltagesAngle.plot(range(1440), v3_angle, label='V3')
-        self.axVoltagesAngle.set_title('Voltages Angle', fontsize=12, fontweight="bold")
         self.axVoltagesAngle.set_ylabel('Angle [deg]', fontsize=10, fontweight="bold")
         self.axVoltagesAngle.set_xlabel('Time [m]', fontsize=10, fontweight="bold")
         self.axVoltagesAngle.tick_params(labelsize=10)
@@ -1917,7 +1951,6 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.axCurrents.plot(range(1440), i1, label='I1')
         self.axCurrents.plot(range(1440), i2, label='I2')
         self.axCurrents.plot(range(1440), i3, label='I3')
-        self.axCurrents.set_title('Currents Behavior', fontsize=12, fontweight="bold")
         self.axCurrents.set_ylabel('I [A]', fontsize=10, fontweight="bold")
         self.axCurrents.set_xlabel('Time [m]', fontsize=10, fontweight="bold")
         self.axCurrents.tick_params(labelsize=10)
@@ -1930,7 +1963,6 @@ class UiGridWindow(UiDynamicWindow, QtWidgets.QMainWindow):
         self.axCurrentsAngle.plot(range(1440), i1_angle, label='I1')
         self.axCurrentsAngle.plot(range(1440), i2_angle, label='I2')
         self.axCurrentsAngle.plot(range(1440), i3_angle, label='I3')
-        self.axCurrentsAngle.set_title('Currents Angle', fontsize=12, fontweight="bold")
         self.axCurrentsAngle.set_ylabel('Angle [deg]', fontsize=10, fontweight="bold")
         self.axCurrentsAngle.set_xlabel('Time [m]', fontsize=10, fontweight="bold")
         self.axCurrentsAngle.tick_params(labelsize=10)
